@@ -1,0 +1,12 @@
+# Sidecar metadata for the sample FAQ. One manifest per source document.
+# The loader will look for <stem>.manifest.yml next to <stem>.md|.pdf.
+
+source: admissions_faq.md
+doc_type: faq
+program: null          # transversal — not tied to one filière
+year: 2026
+title: "Admissions Ynov 2026 — FAQ"
+language: fr
+# Optional extras the indexer copies into the Qdrant payload
+extra:
+  campus: paris

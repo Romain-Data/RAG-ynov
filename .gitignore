@@ -70,8 +70,10 @@ venv.bak/
 .DS_Store
 Thumbs.db
 
-# Data (corpus, can be large or sensitive)
-data/
+# Corpus: ignore real documents, keep the sample used by tests
+data/**
+!data/samples/
+!data/samples/**
 
 # Qdrant local storage (if we ever use local, but we use docker volume)
 # qdrant_storage/
