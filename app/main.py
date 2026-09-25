@@ -1,19 +1,26 @@
 from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 
-from app.core.config import settings
+from app.api import health, ingest, query
 from app.core.logging import setup_logging
-from app.api import health, query, ingest
+from graph.builder import get_graph
+from ingestion.embedder import get_embedding_model
+from ingestion.indexer import get_qdrant_client
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
     setup_logging()
-    # TODO: Initialize Qdrant client, FastEmbed model, graph
+    # Initialize Qdrant client (validates connection)
+    get_qdrant_client()
+    # Warm up FastEmbed model (downloads ONNX if needed)
+    get_embedding_model()
+    # Compile LangGraph singleton
+    get_graph()
     yield
-    # Shutdown
-    # TODO: Close connections
+    # Shutdown - nothing to close for these singletons
 
 
 app = FastAPI(
