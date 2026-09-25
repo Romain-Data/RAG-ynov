@@ -1,10 +1,35 @@
+from app.core.config import settings
 from graph.state import GraphState
+from ingestion.embedder import embed_query
+from ingestion.indexer import get_qdrant_client
 
 
-def retrieve_node(state: GraphState) -> GraphState:
+def retrieve_node(state: GraphState) -> dict:
     """Embed question and search Qdrant for relevant chunks."""
-    # TODO: Implement with FastEmbed + Qdrant client
-    # 1. Embed the question (with "query: " prefix for e5)
-    # 2. Search Qdrant collection with k=5
-    # 3. Return chunks with scores and metadata
-    return {"retrieved": []}
+    question = state.get("question", "")
+    if not question:
+        return {"retrieved": []}
+
+    query_vector = embed_query(question)
+    client = get_qdrant_client()
+
+    response = client.query_points(
+        collection_name=settings.qdrant_collection_name,
+        query=query_vector,
+        limit=5,
+        with_payload=True,
+    )
+
+    retrieved = []
+    for point in response.points:
+        payload = point.payload or {}
+        retrieved.append({
+            "text": payload.get("text", ""),
+            "score": point.score,
+            "source": payload.get("source", ""),
+            "page": payload.get("page"),
+            "section": payload.get("section"),
+            "metadata": payload,
+        })
+
+    return {"retrieved": retrieved}
