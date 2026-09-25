@@ -1,7 +1,7 @@
-from fastapi import APIRouter, HTTPException, Depends, status
-from app.core.config import settings
+from fastapi import APIRouter
+
 from app.schemas import QueryRequest, QueryResponse
-from app.graph.builder import get_graph  # to be created later
+from graph.builder import get_graph
 
 router = APIRouter(tags=["query"])
 
@@ -11,8 +11,12 @@ async def query_rag(request: QueryRequest) -> QueryResponse:
     """
     Main RAG endpoint: question -> answer with sources.
     """
-    # TODO: Implement using LangGraph
-    raise HTTPException(
-        status_code=status.HTTP_501_NOT_IMPLEMENTED,
-        detail="RAG query pipeline not yet implemented. Will be added in feat/graph and feat/api branches.",
+    graph = get_graph()
+    initial_state = {"question": request.question}
+    result = await graph.ainvoke(initial_state)
+
+    return QueryResponse(
+        answer=result.get("answer", ""),
+        sources=result.get("sources", []),
+        grade=result.get("grade", "refuse"),
     )
