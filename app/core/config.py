@@ -1,3 +1,5 @@
+"""Application configuration via Pydantic Settings."""
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -19,8 +21,11 @@ class Settings(BaseSettings):
     qdrant_collection_name: str = "ynov_rag"
 
     # Embedding (local FastEmbed)
-    embedding_model: str = "intfloat/multilingual-e5-small"
+    embedding_model: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
     fast_embed_cache_dir: str = "/app/.fastembed_cache"
+
+    # Ingest (CLI-only in V1 — header X-Ingest-Key)
+    ingest_api_key: str = "changeme"
 
     # Misc
     log_level: str = "INFO"
