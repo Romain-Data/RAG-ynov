@@ -4,17 +4,19 @@ FROM python:3.12-slim AS builder
 # Install uv
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
-# Set workdir
 WORKDIR /app
 
-# Copy only dependency files first (cache layer)
-COPY pyproject.toml uv.lock* ./
-
-# Install dependencies
-RUN uv sync --frozen --no-dev
+# Copy only dependency files first (cache layer).
+# --no-install-project: hatchling would otherwise require README.md + source
+# at this stage; we copy the app in the runtime image and run via uvicorn.
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen --no-dev --no-install-project
 
 # ---- Runtime stage ----
 FROM python:3.12-slim
+
+# Install curl for healthcheck
+RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user
 RUN groupadd -r appuser && useradd -r -g appuser appuser
@@ -28,7 +30,7 @@ COPY --from=builder /app/.venv /app/.venv
 COPY . .
 
 # Create cache directory for FastEmbed model (persisted via volume in compose if needed)
-RUN mkdir -p /app/.fastembed_cache && chown -R appuser:appuser /app/.fastembed_cache
+RUN mkdir -p /app/.fastembed_cache && chown -R appuser:appuser /app
 ENV FAST_EMBED_CACHE_DIR=/app/.fastembed_cache
 
 # Switch to non-root user
