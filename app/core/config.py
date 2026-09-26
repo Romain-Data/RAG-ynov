@@ -27,8 +27,22 @@ class Settings(BaseSettings):
     # Ingest (CLI-only in V1 — header X-Ingest-Key)
     ingest_api_key: str = "changeme"
 
+    # CORS — comma-separated origins, or "*" for all (dev only)
+    cors_origins: str = "*"
+
+    # Rate limiting (requests per minute per IP)
+    rate_limit_query: int = 30
+    rate_limit_ingest: int = 5
+    rate_limit_health: int = 120
+
     # Misc
     log_level: str = "INFO"
+
+    def cors_origin_list(self) -> list[str]:
+        raw = self.cors_origins.strip()
+        if raw in {"*", '["*"]'}:
+            return ["*"]
+        return [o.strip() for o in raw.split(",") if o.strip()]
 
 
 settings = Settings()

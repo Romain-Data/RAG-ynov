@@ -1,14 +1,17 @@
-from fastapi import APIRouter
+"""Health endpoint with rate limiting."""
+
+from fastapi import APIRouter, Depends, Request
 from httpx import AsyncClient
 
 from app.core.config import settings
+from app.core.security import rate_limit_health
 from app.schemas import HealthResponse
 
 router = APIRouter(tags=["health"])
 
 
-@router.get("/health", response_model=HealthResponse)
-async def health_check() -> HealthResponse:
+@router.get("/health", response_model=HealthResponse, dependencies=[Depends(rate_limit_health)])
+async def health_check(request: Request) -> HealthResponse:
     """Health check endpoint that verifies API and Qdrant connectivity."""
     # Check Qdrant
     qdrant_status = "unreachable"
