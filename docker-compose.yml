@@ -21,6 +21,12 @@ services:
       qdrant:
         condition: service_healthy
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     # No network declaration — Coolify/Traefik handles external routing
 
   qdrant:

@@ -1,13 +1,22 @@
-from fastapi import APIRouter, Header, HTTPException, status
+"""Ingest endpoint with rate limiting."""
+
+from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
 
 from app.core.config import settings
+from app.core.security import rate_limit_ingest
 from app.schemas import IngestRequest, IngestResponse
 
 router = APIRouter(tags=["ingest"])
 
 
-@router.post("/ingest", response_model=IngestResponse, status_code=status.HTTP_202_ACCEPTED)
+@router.post(
+    "/ingest",
+    response_model=IngestResponse,
+    status_code=status.HTTP_202_ACCEPTED,
+    dependencies=[Depends(rate_limit_ingest)],
+)
 async def ingest_documents(
+    _request: Request,
     request: IngestRequest,
     x_ingest_key: str | None = Header(None),
 ) -> IngestResponse:
