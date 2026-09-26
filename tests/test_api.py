@@ -12,7 +12,7 @@ class TestHealthEndpoint:
         assert data["embedding_model"] == (
             "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
         )
-        assert data["chat_model"] == "mistral-medium-2407"
+        assert data["chat_model"] == "mistral-medium-3-5"
 
     def test_health_root(self, client):
         """Root endpoint returns API metadata."""
