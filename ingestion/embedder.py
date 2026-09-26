@@ -29,7 +29,6 @@ def embed_passages(texts: list[str]) -> list[list[float]]:
     Note: paraphrase-multilingual-MiniLM-L12-v2 does not require e5 prefixes.
     """
     model = get_embedding_model()
-    # Type: ignore because FastEmbed returns numpy arrays but they are convertible
     return [list(vec) for vec in model.embed(texts)]  # type: ignore[arg-type]
 
 
