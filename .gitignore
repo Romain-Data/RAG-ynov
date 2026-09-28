@@ -91,3 +91,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# AI
+.claude/
+.mcp*
