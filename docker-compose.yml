@@ -40,8 +40,8 @@ services:
       test: ["CMD", "wget", "-q", "--spider", "http://localhost:6333/healthz"]
       interval: 10s
       timeout: 5s
-      retries: 5
-      start_period: 10s
+      retries: 15
+      start_period: 30s
     restart: unless-stopped
 
 volumes:
