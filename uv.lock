@@ -1725,7 +1725,7 @@ dev = [
 requires-dist = [
     { name = "beautifulsoup4", specifier = ">=4.15.0" },
     { name = "fastapi", specifier = ">=0.115" },
-    { name = "fastembed", specifier = ">=0.5" },
+    { name = "fastembed", specifier = "==0.8.0" },
     { name = "httpx", specifier = ">=0.28" },
     { name = "httpx", marker = "extra == 'dev'", specifier = ">=0.28" },
     { name = "langchain-text-splitters", specifier = ">=0.3" },
@@ -1739,7 +1739,7 @@ requires-dist = [
     { name = "python-dotenv", specifier = ">=1.0" },
     { name = "python-multipart", specifier = ">=0.0.9" },
     { name = "pyyaml", specifier = ">=6.0" },
-    { name = "qdrant-client", specifier = ">=1.13" },
+    { name = "qdrant-client", specifier = ">=1.19,<1.20" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.8" },
     { name = "slowapi", specifier = ">=0.1.9" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.34" },

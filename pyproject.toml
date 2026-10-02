@@ -10,8 +10,12 @@ dependencies = [
     "pydantic>=2.10",
     "pydantic-settings>=2.8",
     "langgraph>=0.2",
-    "qdrant-client>=1.13",
-    "fastembed>=0.5",
+    # Same minor version as the Qdrant server (docker-compose.yml: qdrant/qdrant:v1.19.1):
+    # the client supports a server at most one minor version apart.
+    "qdrant-client>=1.19,<1.20",
+    # Pinned: an upgrade can change the vectors (after 0.5.1 this model moved to mean pooling),
+    # making query vectors inconsistent with the indexed ones until a re-ingestion.
+    "fastembed==0.8.0",
     "python-multipart>=0.0.9",
     "pypdf>=5.0",
     "python-dotenv>=1.0",
