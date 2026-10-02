@@ -89,3 +89,12 @@ class TestChunking:
             chunk_overlap=50,
         )
         assert chunks == []
+
+
+def test_load_directory_skips_excluded_doc_types(tmp_path: Path):
+    for name, doc_type in (("keep", "faq"), ("skip", "referentiel")):
+        (tmp_path / f"{name}.md").write_text(f"# {name}\nbody", encoding="utf-8")
+        (tmp_path / f"{name}.manifest.yml").write_text(f"doc_type: {doc_type}\n", encoding="utf-8")
+    docs = load_directory(tmp_path, exclude_doc_types=["referentiel"])
+    assert [d["metadata"]["doc_type"] for d in docs] == ["faq"]
+    assert len(load_directory(tmp_path)) == 2

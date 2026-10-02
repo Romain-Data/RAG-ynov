@@ -1,5 +1,6 @@
 """Document loaders for various formats."""
 import re
+from collections.abc import Iterable
 from pathlib import Path
 
 import yaml
@@ -12,6 +13,7 @@ from ingestion.html_loader import (
     parse_generic_page,
     parse_info_page,
 )
+from ingestion.rncp_loader import is_rncp_page, parse_rncp_page
 
 HTML_SUFFIXES = (".html", ".htm")
 SUPPORTED_SUFFIXES = (".md", ".pdf", *HTML_SUFFIXES)
@@ -100,6 +102,21 @@ def load_html(path: Path) -> list[dict]:
     html = path.read_text(encoding="utf-8")
     manifest = _load_manifest(path)
 
+    if is_rncp_page(html):
+        fiche = parse_rncp_page(html)
+        return [
+            {
+                "text": body,
+                "metadata": _merge_metadata(
+                    {"source": path.name, "page": 1, "section": title,
+                     "rncp_status": fiche["status"]},
+                    manifest,
+                ),
+                "prefix": f"{fiche['rncp']} {fiche['title']} — {title}\n",
+            }
+            for title, body in fiche["sections"]
+        ]
+
     if is_info_page(html):
         info = parse_info_page(html)
         return [
@@ -154,10 +171,16 @@ def load_file(path: Path) -> list[dict]:
         raise ValueError(f"Unsupported file type: {suffix}")
 
 
-def load_directory(dir_path: Path) -> list[dict]:
-    """Load all supported files in a directory."""
+def load_directory(dir_path: Path, exclude_doc_types: Iterable[str] = ()) -> list[dict]:
+    """Load all supported files in a directory.
+
+    Files whose manifest doc_type is in `exclude_doc_types` are skipped before parsing.
+    """
+    excluded = set(exclude_doc_types)
     all_chunks = []
     for path in dir_path.rglob("*"):
         if path.is_file() and path.suffix.lower() in SUPPORTED_SUFFIXES:
+            if excluded and _load_manifest(path).get("doc_type") in excluded:
+                continue
             all_chunks.extend(load_file(path))
     return all_chunks

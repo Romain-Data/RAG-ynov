@@ -26,6 +26,10 @@ class Settings(BaseSettings):
 
     # Ingest (CLI-only in V1 — header X-Ingest-Key)
     ingest_api_key: str = "changeme"
+    # Manifest doc_types left out of ingestion, comma-separated. V1 skips the RNCP
+    # référentiel PDFs: their tables extract as interleaved columns, and the RNCP fiches
+    # already carry the skill blocs cleanly.
+    ingest_exclude_doc_types: str = "referentiel"
 
     # CORS — comma-separated origins, or "*" for all (dev only)
     cors_origins: str = "*"
@@ -37,6 +41,9 @@ class Settings(BaseSettings):
 
     # Misc
     log_level: str = "INFO"
+
+    def ingest_exclude_doc_type_list(self) -> list[str]:
+        return [t.strip() for t in self.ingest_exclude_doc_types.split(",") if t.strip()]
 
     def cors_origin_list(self) -> list[str]:
         raw = self.cors_origins.strip()
