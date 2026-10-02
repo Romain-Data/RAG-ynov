@@ -1,0 +1,207 @@
+{
+  "schema_version": 1,
+  "run_id": "2026-10-02_07_retrieval-prefixe-long-k10",
+  "date": "2026-10-02",
+  "kind": "retrieval",
+  "environment": "local",
+  "git_commit": "1822c72+dirty",
+  "question_set": "v1",
+  "milestone": false,
+  "label": "retrieval-prefixe-long-k10",
+  "source": "backfill",
+  "notes": "Préfixe avec durée et liste complète des campus ; sections d'équivalences RNCP retirées ; « villes » dans la phrase de lieux. Reconstitué le 2026-10-02 à partir des sorties de la session de test (non enregistré automatiquement à l'époque).",
+  "config": {
+    "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "chunk_size": 500,
+    "chunk_overlap": 50,
+    "n_chunks": 3813,
+    "prefix": "« formation (durée, liste complète des campus) — section »",
+    "limit": 10,
+    "candidates": 10,
+    "max_per_section": null,
+    "grade_threshold": 0.5
+  },
+  "results": [
+    {
+      "question_id": "q01",
+      "question": "Combien coûte le Mastère Expert en intelligence artificielle ?",
+      "passed": true,
+      "rank": 2,
+      "in_context": false,
+      "distinct_sections": 1,
+      "min_distinct": 1,
+      "top_score": null,
+      "refused_by_threshold": null
+    },
+    {
+      "question_id": "q02",
+      "question": "Dans quelles villes est proposé le Mastère Expert en intelligence artificielle ?",
+      "passed": false,
+      "rank": null,
+      "in_context": false,
+      "distinct_sections": 0,
+      "min_distinct": 1,
+      "top_score": null,
+      "refused_by_threshold": null
+    },
+    {
+      "question_id": "q03",
+      "question": "Le Mastère Game Programmer est-il proposé à Lyon ?",
+      "passed": false,
+      "rank": null,
+      "in_context": false,
+      "distinct_sections": 0,
+      "min_distinct": 1,
+      "top_score": null,
+      "refused_by_threshold": null
+    },
+    {
+      "question_id": "q04",
+      "question": "Le Mastère Expert en cybersécurité - Pentester se fait-il en présentiel ?",
+      "passed": false,
+      "rank": null,
+      "in_context": false,
+      "distinct_sections": 0,
+      "min_distinct": 1,
+      "top_score": null,
+      "refused_by_threshold": null
+    },
+    {
+      "question_id": "q05",
+      "question": "Où peut-on suivre le BTS ERA ?",
+      "passed": true,
+      "rank": 10,
+      "in_context": false,
+      "distinct_sections": 1,
+      "min_distinct": 1,
+      "top_score": null,
+      "refused_by_threshold": null
+    },
+    {
+      "question_id": "q06",
+      "question": "Combien de temps dure le Bachelor Informatique ?",
+      "passed": false,
+      "rank": null,
+      "in_context": false,
+      "distinct_sections": 0,
+      "min_distinct": 1,
+      "top_score": null,
+      "refused_by_threshold": null
+    },
+    {
+      "question_id": "q07",
+      "question": "Peut-on payer les frais de scolarité en plusieurs fois ?",
+      "passed": true,
+      "rank": 3,
+      "in_context": false,
+      "distinct_sections": 1,
+      "min_distinct": 1,
+      "top_score": null,
+      "refused_by_threshold": null
+    },
+    {
+      "question_id": "q08",
+      "question": "Quels sont les blocs de compétences du titre RNCP Expert en cybersécurité ?",
+      "passed": false,
+      "rank": 3,
+      "in_context": false,
+      "distinct_sections": 1,
+      "min_distinct": 3,
+      "top_score": null,
+      "refused_by_threshold": null
+    },
+    {
+      "question_id": "q09",
+      "question": "Quel est le numéro de téléphone du campus de Bordeaux ?",
+      "passed": true,
+      "rank": 4,
+      "in_context": false,
+      "distinct_sections": 1,
+      "min_distinct": 1,
+      "top_score": null,
+      "refused_by_threshold": null
+    },
+    {
+      "question_id": "q10",
+      "question": "Quels modules sont enseignés en Mastère 2 du Mastère Expert en intelligence artificielle ?",
+      "passed": true,
+      "rank": 8,
+      "in_context": false,
+      "distinct_sections": 1,
+      "min_distinct": 1,
+      "top_score": null,
+      "refused_by_threshold": null
+    },
+    {
+      "question_id": "q11",
+      "question": "Comment se passe l'entretien d'admission chez Ynov ?",
+      "passed": true,
+      "rank": 1,
+      "in_context": false,
+      "distinct_sections": 1,
+      "min_distinct": 1,
+      "top_score": null,
+      "refused_by_threshold": null
+    },
+    {
+      "question_id": "q12",
+      "question": "Combien coûte une VAE chez Ynov ?",
+      "passed": true,
+      "rank": 1,
+      "in_context": false,
+      "distinct_sections": 1,
+      "min_distinct": 1,
+      "top_score": null,
+      "refused_by_threshold": null
+    },
+    {
+      "question_id": "q13",
+      "question": "Quelle est l'adresse e-mail du référent handicap de Lyon ?",
+      "passed": true,
+      "rank": 1,
+      "in_context": false,
+      "distinct_sections": 1,
+      "min_distinct": 1,
+      "top_score": null,
+      "refused_by_threshold": null
+    },
+    {
+      "question_id": "q14",
+      "question": "Quels métiers peut-on exercer après le Mastère Data engineer ?",
+      "passed": false,
+      "rank": null,
+      "in_context": false,
+      "distinct_sections": 0,
+      "min_distinct": 1,
+      "top_score": null,
+      "refused_by_threshold": null
+    },
+    {
+      "question_id": "q15",
+      "question": "Quel est le taux de réussite du titre Expert en développement logiciel ?",
+      "passed": true,
+      "rank": 3,
+      "in_context": false,
+      "distinct_sections": 1,
+      "min_distinct": 1,
+      "top_score": null,
+      "refused_by_threshold": null
+    },
+    {
+      "question_id": "q16",
+      "question": "Quels BTS sont accessibles via Parcoursup ?",
+      "passed": false,
+      "rank": null,
+      "in_context": false,
+      "distinct_sections": 0,
+      "min_distinct": 1,
+      "top_score": null,
+      "refused_by_threshold": null
+    }
+  ],
+  "summary": {
+    "total": 16,
+    "passed": 9,
+    "refused_by_threshold": 0
+  }
+}

@@ -1,0 +1,322 @@
+{
+  "schema_version": 1,
+  "run_id": "2026-10-02_01_e2e-prod-premier-test",
+  "date": "2026-10-02",
+  "kind": "e2e",
+  "environment": "prod",
+  "git_commit": "1822c72",
+  "question_set": "v4",
+  "milestone": true,
+  "label": "e2e-prod-premier-test",
+  "source": "backfill",
+  "notes": "Premier test en prod après la première ingestion (3 987 chunks). 6 questions posées à la main. Sources : 5 premières, avec leur score ; sections tronquées à l'affichage à 70 caractères. Reconstitué le 2026-10-02 à partir des sorties de la session.\n",
+  "config": {
+    "url": "https://rag.romaincollery.com",
+    "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "chunk_size": 500,
+    "n_chunks": 3987,
+    "limit": 5,
+    "candidates": 5,
+    "max_per_section": null,
+    "grade_threshold": 0.5,
+    "qdrant_server": "1.13.2",
+    "qdrant_client": "1.19.1"
+  },
+  "results": [
+    {
+      "question_id": "q01",
+      "question": "Combien coûte le Mastère Expert en intelligence artificielle ?",
+      "passed": true,
+      "verdict": "correct",
+      "verdict_method": "revue manuelle",
+      "auto_check": {
+        "must": {
+          "9[  ]?000": true,
+          "9[  ]?500": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Le coût du Mastère Expert en intelligence artificielle est le suivant pour l'année 2027/2028 :\n\n- **Règlement au comptant** :\n  - Mastère 1 : 9 000 €\n  - Mastère 2 : 9 000 €\n\n- **Règlement échelonné** :\n  - Mastère 1 : 9 500 €\n  - Mastère 2 : 9 500 €\n\nCes tarifs s'appliquent pour une inscription sous **statut étudiant** (non disponible sur le campus Ynov Connect).\n\n[Source 2]",
+      "sources": [
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Programme du Mastère",
+          "score": 0.711
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Tarifs",
+          "score": 0.705
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Programme du Mastère",
+          "score": 0.664
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Métiers et dynamique du marché",
+          "score": 0.661
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Présentation",
+          "score": 0.649
+        }
+      ],
+      "latency_s": 1.7,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q02",
+      "question": "Dans quelles villes est proposé le Mastère Expert en intelligence artificielle ?",
+      "passed": false,
+      "verdict": "no_answer",
+      "verdict_method": "revue manuelle",
+      "auto_check": {
+        "must": {
+          "Aix-en-Provence": false,
+          "Strasbourg": false,
+          "en ligne": false
+        },
+        "must_not_hits": [],
+        "verdict": "no_answer"
+      },
+      "answer": "Le contexte fourni ne contient pas d'information sur les villes où est proposé le Mastère Expert en intelligence artificielle. Je ne peux donc pas répondre à cette question.",
+      "sources": [
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Programme du Mastère",
+          "score": 0.699
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Objectifs de la formation",
+          "score": 0.684
+        },
+        {
+          "source": "mastere-expert-en-jumeaux-numeriques-du-batiment-de-la-ville-et-des-territoires.html",
+          "section": "Présentation",
+          "score": 0.679
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Métiers et dynamique du marché",
+          "score": 0.678
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Métiers et dynamique du marché",
+          "score": 0.675
+        }
+      ],
+      "latency_s": 0.9,
+      "edge_cases": [
+        "EC-01"
+      ]
+    },
+    {
+      "question_id": "q03",
+      "question": "Le Mastère Game Programmer est-il proposé à Lyon ?",
+      "passed": false,
+      "verdict": "wrong",
+      "verdict_method": "revue manuelle",
+      "auto_check": {
+        "must": {
+          "en ligne": false
+        },
+        "must_not_hits": [
+          "^\\W*oui\\b"
+        ],
+        "verdict": "wrong"
+      },
+      "answer": "Oui, le Mastère Game Programmer est proposé à Lyon en **contrat de professionnalisation et en formation continue** [Source 1].",
+      "sources": [
+        {
+          "source": "mastere-game-programmer.html",
+          "section": "Voies d’accès et prérequis de la formation",
+          "score": 0.63
+        },
+        {
+          "source": "mastere-game-programmer.html",
+          "section": "* Titre d’Expert en développement logiciel – Niveau 7",
+          "score": 0.605
+        },
+        {
+          "source": "mastere-game-programmer.html",
+          "section": "Métiers et dynamique du marché",
+          "score": 0.596
+        },
+        {
+          "source": "mastere-game-programmer.html",
+          "section": "Métiers et dynamique du marché",
+          "score": 0.593
+        },
+        {
+          "source": "mastere-game-programmer.html",
+          "section": "Présentation",
+          "score": 0.579
+        }
+      ],
+      "latency_s": 1.2,
+      "edge_cases": [
+        "EC-01",
+        "EC-03"
+      ],
+      "review_note": "La formation est 100 % en ligne ; la réponse s'appuie sur la note commune sur les contrats de professionnalisation."
+    },
+    {
+      "question_id": "q07",
+      "question": "Peut-on payer les frais de scolarité en plusieurs fois ?",
+      "passed": false,
+      "verdict": "partial",
+      "verdict_method": "revue manuelle",
+      "auto_check": {
+        "must": {
+          "4 échéances|quatre échéances|4 fois": false,
+          "500": false
+        },
+        "must_not_hits": [],
+        "verdict": "wrong"
+      },
+      "answer": "Oui, il est possible de payer les frais de scolarité en plusieurs fois. Les tarifs mentionnent explicitement une option de **règlement échelonné** pour chaque formation (BTS MEC, ERA, SIO SISR, CIEL), avec des montants différents de ceux du règlement au comptant.\n\nExemples :\n- Pour le **BTS MEC** ou **ERA** :\n  - Année 1 : 7 400 € (échelonné) vs 6 900 € (comptant)\n  - Année 2 : 7 700 € (échelonné) vs 7 200 € (comptant)\n  [Source 1, Source 2]\n\n- Pour le **BTS SIO SISR** ou **CIEL** :\n  - Année 1 : 4 950 € (échelonné) vs 4 450 € (comptant)\n  - Année 2 : 5 250 € (échelonné) vs 4 750 € (comptant)\n  [Source 4, Source 5]\n\nAinsi, l'option existe pour toutes les formations citées.",
+      "sources": [
+        {
+          "source": "bts-mec.html",
+          "section": "Tarifs",
+          "score": 0.534
+        },
+        {
+          "source": "bts-era.html",
+          "section": "Tarifs",
+          "score": 0.499
+        },
+        {
+          "source": "informations-communes-formations.md",
+          "section": "Modalités de paiement et prise en charge des frais",
+          "score": 0.49
+        },
+        {
+          "source": "bts-sio-sisr.html",
+          "section": "Tarifs",
+          "score": 0.488
+        },
+        {
+          "source": "bts-ciel.html",
+          "section": "Tarifs",
+          "score": 0.487
+        }
+      ],
+      "latency_s": 2.4,
+      "edge_cases": [
+        "EC-06"
+      ],
+      "review_note": "« Oui » est juste, mais la réponse détaille des tarifs de BTS et omet les 4 échéances et la remise de 500 € au comptant."
+    },
+    {
+      "question_id": "q08",
+      "question": "Quels sont les blocs de compétences du titre RNCP Expert en cybersécurité ?",
+      "passed": false,
+      "verdict": "partial",
+      "verdict_method": "revue manuelle",
+      "auto_check": {
+        "must": {
+          "stratégie de cybersécurité": true,
+          "cycle de conception": false,
+          "condition de sécurité": false,
+          "crise": true
+        },
+        "must_not_hits": [],
+        "verdict": "partial"
+      },
+      "answer": "D'après le contexte fourni, les blocs de compétences mentionnés pour le titre **RNCP40897 Expert en cybersécurité** sont :\n\n1. **RNCP40897BC01** - Élaborer la stratégie de cybersécurité d’une organisation\n2. **RNCP40897BC04** - Gérer stratégiquement et opérationnellement une crise cyber\n\n[Source 1, Source 2, Source 3, Source 4, Source 5]\n\n*Note* : Le contexte ne mentionne que ces deux blocs. Si d'autres blocs existent, ils ne sont pas indiqués dans les sources fournies.",
+      "sources": [
+        {
+          "source": "rncp-40897.html",
+          "section": "Certifications professionnelles enregistrées au RNCP en correspondance",
+          "score": 0.901
+        },
+        {
+          "source": "rncp-40897.html",
+          "section": "Certifications professionnelles enregistrées au RNCP en correspondance",
+          "score": 0.894
+        },
+        {
+          "source": "rncp-40897.html",
+          "section": "Certifications professionnelles enregistrées au RNCP en correspondance",
+          "score": 0.893
+        },
+        {
+          "source": "rncp-40897.html",
+          "section": "Certifications professionnelles enregistrées au RNCP en correspondance",
+          "score": 0.892
+        },
+        {
+          "source": "rncp-40897.html",
+          "section": "Certifications professionnelles enregistrées au RNCP en correspondance",
+          "score": 0.891
+        }
+      ],
+      "latency_s": 1.9,
+      "edge_cases": [
+        "EC-04"
+      ],
+      "review_note": "2 blocs sur 4 ; les 5 sources viennent du tableau d'équivalences. (Dans le résumé de la session, ce cas avait été compté comme un échec et le titre décrit à tort avec 5 blocs.)"
+    },
+    {
+      "question_id": "q09",
+      "question": "Quel est le numéro de téléphone du campus de Bordeaux ?",
+      "passed": true,
+      "verdict": "correct",
+      "verdict_method": "revue manuelle",
+      "auto_check": {
+        "must": {
+          "05 56 90 00 10": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Le numéro de téléphone du campus de Bordeaux est **05 56 90 00 10**.\n\n[Source 1: condition-admission.html, p.1]",
+      "sources": [
+        {
+          "source": "condition-admission.html",
+          "section": "Coordonnées de tous nos campus",
+          "score": 0.54
+        },
+        {
+          "source": "alternance.html",
+          "section": "Contactez le Service Relations Entreprises du Campus de votre choix",
+          "score": 0.517
+        },
+        {
+          "source": "alternance.html",
+          "section": "Contactez le Service Relations Entreprises du Campus de votre choix",
+          "score": 0.489
+        },
+        {
+          "source": "admissions_faq.md",
+          "section": "Contacts admissions",
+          "score": 0.487
+        },
+        {
+          "source": "mastere-expert-developpement-mobile-lot.html",
+          "section": "Voies d’accès et prérequis de la formation",
+          "score": 0.467
+        }
+      ],
+      "latency_s": 1.4,
+      "edge_cases": []
+    }
+  ],
+  "summary": {
+    "total": 6,
+    "passed": 2,
+    "correct": 2,
+    "partial": 2,
+    "wrong": 1,
+    "refused": 0,
+    "no_answer": 1,
+    "error": 0
+  }
+}

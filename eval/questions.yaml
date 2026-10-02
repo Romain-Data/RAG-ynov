@@ -1,80 +1,124 @@
-# Retrieval evaluation set: each question lists the chunks that should be retrieved.
-# A question passes when at least `min_distinct` (default 1) distinct sections matching
-# an `expect` entry are in the retrieved chunks, or when `expect_text` (optional) appears
-# in a retrieved chunk of an expected source. `source` is the file name, `section` a
-# case-insensitive substring of the section title.
+# RAG evaluation set. Question ids are stable: results and edge cases refer to them.
+#
+# Retrieval (eval/retrieval.py): a question passes when at least `min_distinct`
+# (default 1) distinct sections matching an `expect` entry are in the retrieved chunks,
+# or when `expect_text` (optional) appears in a retrieved chunk of an expected source.
+# `source` is the file name, `section` a case-insensitive substring of the section title.
+#
+# Answers (eval/e2e.py): every `answer_must` regex must match the LLM answer and no
+# `answer_must_not` regex may match (case-insensitive).
+#
+# Question set versions (recorded in each result file):
+#   v1  initial set (2026-10-02)
+#   v2  location questions (q02-q05) also accept the new "Lieux" section
+#   v3  q03/q04 also pass when "100 % en ligne" reaches the context (expect_text)
+#   v4  ids and answer checks added; retrieval criteria unchanged from v3
 
-- question: Combien coûte le Mastère Expert en intelligence artificielle ?
+- id: q01
+  question: Combien coûte le Mastère Expert en intelligence artificielle ?
   expect:
     - {source: mastere-expert-en-intelligence-artificielle.html, section: Tarifs}
+  answer_must: ['9[  ]?000', '9[  ]?500']
 
-- question: Dans quelles villes est proposé le Mastère Expert en intelligence artificielle ?
+- id: q02
+  question: Dans quelles villes est proposé le Mastère Expert en intelligence artificielle ?
   expect:
     - {source: mastere-expert-en-intelligence-artificielle.html, section: Infos clés}
     - {source: mastere-expert-en-intelligence-artificielle.html, section: Lieux}
+  answer_must: [Aix-en-Provence, Strasbourg, en ligne]
 
-- question: Le Mastère Game Programmer est-il proposé à Lyon ?
+- id: q03
+  question: Le Mastère Game Programmer est-il proposé à Lyon ?
   expect_text: 100 % en ligne
   expect:
     - {source: mastere-game-programmer.html, section: Infos clés}
     - {source: mastere-game-programmer.html, section: Lieux}
+  answer_must: [en ligne]
+  answer_must_not: ['^\W*oui\b']
 
-- question: Le Mastère Expert en cybersécurité - Pentester se fait-il en présentiel ?
+- id: q04
+  question: Le Mastère Expert en cybersécurité - Pentester se fait-il en présentiel ?
   expect_text: 100 % en ligne
   expect:
     - {source: mastere-expert-en-cybersecurite-pentester.html, section: Infos clés}
     - {source: mastere-expert-en-cybersecurite-pentester.html, section: Lieux}
+  answer_must: [en ligne]
+  answer_must_not: ['^\W*oui\b']
 
-- question: Où peut-on suivre le BTS ERA ?
+- id: q05
+  question: Où peut-on suivre le BTS ERA ?
   expect:
     - {source: bts-era.html, section: Infos clés}
     - {source: bts-era.html, section: Lieux}
+  answer_must: [Strasbourg]
 
-- question: Combien de temps dure le Bachelor Informatique ?
+- id: q06
+  question: Combien de temps dure le Bachelor Informatique ?
   expect:
     - {source: bachelor-informatique.html, section: Infos clés}
+  answer_must: ['3 ans|trois ans']
 
-- question: Peut-on payer les frais de scolarité en plusieurs fois ?
+- id: q07
+  question: Peut-on payer les frais de scolarité en plusieurs fois ?
   expect:
     - {source: informations-communes-formations.md, section: Modalités de paiement}
     - {source: condition-admission.html, section: Financement des études}
+  answer_must: ['4 échéances|quatre échéances|4 fois', '500']
 
-- question: Quels sont les blocs de compétences du titre RNCP Expert en cybersécurité ?
+- id: q08
+  question: Quels sont les blocs de compétences du titre RNCP Expert en cybersécurité ?
   min_distinct: 3
   expect:
     - {source: rncp-40897.html, section: RNCP40897BC}
+  answer_must: ['stratégie de cybersécurité', 'cycle de conception', 'condition de sécurité', 'crise']
 
-- question: Quel est le numéro de téléphone du campus de Bordeaux ?
+- id: q09
+  question: Quel est le numéro de téléphone du campus de Bordeaux ?
   expect:
     - {source: condition-admission.html, section: Coordonnées de tous nos campus}
+  answer_must: ['05 56 90 00 10']
 
-- question: Quels modules sont enseignés en Mastère 2 du Mastère Expert en intelligence artificielle ?
+- id: q10
+  question: Quels modules sont enseignés en Mastère 2 du Mastère Expert en intelligence artificielle ?
   expect:
     - {source: mastere-expert-en-intelligence-artificielle.html, section: Programme du Mastère}
+  answer_must: ['intelligence artificielle avancée', 'gouvernance des données', 'transformation IA']
 
-- question: Comment se passe l'entretien d'admission chez Ynov ?
+- id: q11
+  question: Comment se passe l'entretien d'admission chez Ynov ?
   expect:
     - {source: condition-admission.html, section: Le rendez-vous d'admission}
     - {source: condition-admission.html, section: processus d'admission}
+  answer_must: ['1 ?h\b|une heure', '48 ?h']
 
-- question: Combien coûte une VAE chez Ynov ?
+- id: q12
+  question: Combien coûte une VAE chez Ynov ?
   expect:
     - {source: vae-ynov.html, section: Coût de la VAE}
+  answer_must: ['500', '2[  ]?000']
 
-- question: Quelle est l'adresse e-mail du référent handicap de Lyon ?
+- id: q13
+  question: Quelle est l'adresse e-mail du référent handicap de Lyon ?
   expect:
     - {source: handicap.html, section: Contact}
+  answer_must: ['handicap-lyon@ynov\.com']
 
-- question: Quels métiers peut-on exercer après le Mastère Data engineer ?
+- id: q14
+  question: Quels métiers peut-on exercer après le Mastère Data engineer ?
   expect:
     - {source: mastere-data-engineer.html, section: Métiers}
+  answer_must: [Data Engineer, Analytics Engineer]
 
-- question: Quel est le taux de réussite du titre Expert en développement logiciel ?
+- id: q15
+  question: Quel est le taux de réussite du titre Expert en développement logiciel ?
   expect:
     - {source: rncp-39583.html, section: Statistiques}
     - {source: mastere-expert-developpement-full-stack.html, section: Ce titre en quelques chiffres}
     - {source: mastere-game-programmer.html, section: Ce titre en quelques chiffres}
+  answer_must: ['76 ?%']
 
-- question: Quels BTS sont accessibles via Parcoursup ?
+- id: q16
+  question: Quels BTS sont accessibles via Parcoursup ?
   expect:
     - {source: condition-admission.html, section: Parcoursup}
+  answer_must: [CIEL, SLAM, SISR]
