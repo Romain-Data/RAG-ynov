@@ -17,6 +17,10 @@ services:
       - LOG_LEVEL=${LOG_LEVEL}
     env_file:
       - .env
+    volumes:
+      # Corpus read by /api/ingest. data/ is not in git nor in the image (.dockerignore):
+      # on the server it is synced by rsync to RAG_DATA_DIR (Coolify: /data/rag-ynov).
+      - ${RAG_DATA_DIR:-./data}:/app/data:ro
     depends_on:
       qdrant:
         condition: service_healthy
