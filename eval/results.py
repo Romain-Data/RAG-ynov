@@ -33,7 +33,7 @@ import yaml
 EVAL_DIR = Path(__file__).parent
 RESULTS_DIR = EVAL_DIR / "results"
 QUESTIONS = EVAL_DIR / "questions.yaml"
-QUESTION_SET = "v6"
+QUESTION_SET = "v7"
 SCHEMA_VERSION = 1
 
 VERDICTS = ("correct", "partial", "wrong", "refused", "no_answer", "error")
@@ -99,6 +99,14 @@ def summarize(kind: str, results: list[dict]) -> dict:
         summary["out_of_scope_refused"] = sum(
             bool(r.get("refused_by_threshold")) and bool(r.get("out_of_scope"))
             for r in results)
+        # Score gap used to calibrate the grading threshold of an embedding model
+        in_tops = [r["top_score"] for r in results
+                   if not r.get("out_of_scope") and r.get("top_score") is not None]
+        out_tops = [r["top_score"] for r in results
+                    if r.get("out_of_scope") and r.get("top_score") is not None]
+        if in_tops and out_tops:
+            summary["in_scope_min_top_score"] = min(in_tops)
+            summary["out_of_scope_max_top_score"] = max(out_tops)
     else:
         for verdict in VERDICTS:
             summary[verdict] = sum(r.get("verdict") == verdict for r in results)

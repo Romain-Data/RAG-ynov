@@ -50,16 +50,26 @@ def ask(url: str, question: str) -> Answer:
         return None, time.time() - start, str(exc)
 
 
-def local_asker(data_dir: Path) -> tuple[Callable[[str], Answer], dict]:
-    """Run the graph in process on the local evaluation index. Returns (ask, config)."""
+def local_asker(data_dir: Path, embedding_model: str | None = None,
+                threshold: float | None = None,
+                chunk_size: int | None = None) -> tuple[Callable[[str], Answer], dict]:
+    """Run the graph in process on the local evaluation index. Returns (ask, config).
+
+    embedding_model, threshold and chunk_size override the configured values, to test
+    another embedding model end to end (its index must be built: eval/retrieval.py).
+    """
     from app.core.config import settings
     from eval.retrieval import build_index
     from graph import builder
-    from graph.nodes import retrieve
-    from graph.nodes.grade import GRADE_THRESHOLD
+    from graph.nodes import grade, retrieve
     from ingestion.chunking import CHUNK_SIZE
 
-    client, n_chunks = build_index(data_dir)
+    if embedding_model:
+        settings.embedding_model = embedding_model
+    if threshold is not None:
+        grade.GRADE_THRESHOLD = threshold
+    chunk_size = chunk_size or CHUNK_SIZE
+    client, info = build_index(data_dir, chunk_size)
     atexit.register(client.close)  # avoids a noisy error when the interpreter exits
     retrieve.get_qdrant_client = lambda: client
     graph = builder.build_graph()
@@ -75,10 +85,10 @@ def local_asker(data_dir: Path) -> tuple[Callable[[str], Answer], dict]:
 
     config = {
         "mode": "local graph", "llm_model": settings.mammouth_chat_model,
-        "embedding_model": settings.embedding_model, "chunk_size": CHUNK_SIZE,
-        "n_chunks": n_chunks, "limit": retrieve.RETRIEVE_LIMIT,
+        "embedding_model": settings.embedding_model, "chunk_size": chunk_size,
+        "n_chunks": info["n_chunks"], "limit": retrieve.RETRIEVE_LIMIT,
         "candidates": retrieve.CANDIDATE_LIMIT, "max_per_section": retrieve.MAX_PER_SECTION,
-        "grade_threshold": GRADE_THRESHOLD,
+        "grade_threshold": grade.GRADE_THRESHOLD,
     }
     return ask_local, config
 
@@ -123,6 +133,9 @@ def main() -> None:
     parser.add_argument("--local", action="store_true",
                         help="run the graph in process on the local evaluation index")
     parser.add_argument("--data", type=Path, default=Path("data"))
+    parser.add_argument("--embedding-model", help="--local only: override the model")
+    parser.add_argument("--threshold", type=float, help="--local only: grading threshold")
+    parser.add_argument("--chunk-size", type=int, help="--local only: chunk size")
     parser.add_argument("--environment", default=None, help="default: prod, or local")
     parser.add_argument("--save", metavar="LABEL", help="save the run in eval/results/")
     parser.add_argument("--notes", default="")
@@ -130,7 +143,8 @@ def main() -> None:
 
     ids = set(args.ids.split(",")) if args.ids else None
     if args.local:
-        ask_fn, config = local_asker(args.data)
+        ask_fn, config = local_asker(args.data, args.embedding_model, args.threshold,
+                                     args.chunk_size)
         results = run(ask_fn, ids, pause=0.5)
     else:
         config = {"url": args.url}

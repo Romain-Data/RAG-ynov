@@ -1,0 +1,1597 @@
+{
+  "schema_version": 1,
+  "run_id": "2026-10-02_33_modele-e5-large-500",
+  "date": "2026-10-02",
+  "kind": "retrieval",
+  "environment": "local",
+  "git_commit": "872fc62+dirty",
+  "question_set": "v6",
+  "milestone": true,
+  "label": "modele-e5-large-500",
+  "notes": "Comparaison des modèles d'embedding (EC-07), chunks de 500 (fenêtre e5 de 512 tokens). Seuil de pertinence à recalibrer pour ce modèle.",
+  "config": {
+    "embedding_model": "intfloat/multilingual-e5-large",
+    "chunk_size": 500,
+    "chunk_overlap": 50,
+    "limit": 10,
+    "candidates": 40,
+    "max_per_section": 2,
+    "grade_threshold": 0.45,
+    "n_chunks": 3855,
+    "embed_seconds": 1598.3,
+    "max_tokens": 512,
+    "median_tokens": 116,
+    "truncated_share": 0.0,
+    "build_seconds": 1598.3
+  },
+  "results": [
+    {
+      "question_id": "q01",
+      "question": "Combien coûte le Mastère Expert en intelligence artificielle ?",
+      "out_of_scope": null,
+      "passed": true,
+      "rank": 1,
+      "in_context": false,
+      "distinct_sections": 1,
+      "min_distinct": 1,
+      "top_score": 0.918,
+      "refused_by_threshold": false,
+      "search_ms": 261.5,
+      "retrieved": [
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Tarifs",
+          "score": 0.918
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Programme du Mastère",
+          "score": 0.898
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Programme du Mastère",
+          "score": 0.894
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Objectifs de la formation",
+          "score": 0.89
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Objectifs de la formation",
+          "score": 0.89
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Lieux",
+          "score": 0.89
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Ce titre en quelques chiffres",
+          "score": 0.888
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Présentation",
+          "score": 0.887
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Voies d’accès et prérequis de la formation",
+          "score": 0.886
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Infos clés",
+          "score": 0.886
+        }
+      ]
+    },
+    {
+      "question_id": "q02",
+      "question": "Dans quelles villes est proposé le Mastère Expert en intelligence artificielle ?",
+      "out_of_scope": null,
+      "passed": true,
+      "rank": 1,
+      "in_context": false,
+      "distinct_sections": 1,
+      "min_distinct": 1,
+      "top_score": 0.911,
+      "refused_by_threshold": false,
+      "search_ms": 76.7,
+      "retrieved": [
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Lieux",
+          "score": 0.911
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Voies d’accès et prérequis de la formation",
+          "score": 0.882
+        },
+        {
+          "source": "mastere-expert-en-cloud-securite-infrastructure.html",
+          "section": "Lieux",
+          "score": 0.881
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite.html",
+          "section": "Lieux",
+          "score": 0.874
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Programme du Mastère",
+          "score": 0.873
+        },
+        {
+          "source": "mastere-expert-en-jumeaux-numeriques.html",
+          "section": "Lieux",
+          "score": 0.873
+        },
+        {
+          "source": "mastere-expert-en-jumeaux-numeriques-du-batiment-de-la-ville-et-des-territoires.html",
+          "section": "Lieux",
+          "score": 0.871
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Programme du Mastère",
+          "score": 0.87
+        },
+        {
+          "source": "mastere-expert-en-marketing-communication-transformation-digitale.html",
+          "section": "Lieux",
+          "score": 0.868
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Tarifs",
+          "score": 0.868
+        }
+      ]
+    },
+    {
+      "question_id": "q03",
+      "question": "Le Mastère Game Programmer est-il proposé à Lyon ?",
+      "out_of_scope": null,
+      "passed": true,
+      "rank": 2,
+      "in_context": true,
+      "distinct_sections": 1,
+      "min_distinct": 1,
+      "top_score": 0.879,
+      "refused_by_threshold": false,
+      "search_ms": 66.2,
+      "retrieved": [
+        {
+          "source": "mastere-game-programmer.html",
+          "section": "Voies d’accès et prérequis de la formation",
+          "score": 0.879
+        },
+        {
+          "source": "mastere-game-programmer.html",
+          "section": "Lieux",
+          "score": 0.874
+        },
+        {
+          "source": "mastere-game-programmer.html",
+          "section": "Programme du Mastère",
+          "score": 0.87
+        },
+        {
+          "source": "mastere-game-programmer.html",
+          "section": "Ce titre en quelques chiffres",
+          "score": 0.864
+        },
+        {
+          "source": "mastere-game-programmer.html",
+          "section": "Tarifs",
+          "score": 0.863
+        },
+        {
+          "source": "mastere-game-programmer.html",
+          "section": "Programme du Mastère",
+          "score": 0.862
+        },
+        {
+          "source": "mastere-game-programmer.html",
+          "section": "Ce que tu vas apprendre",
+          "score": 0.862
+        },
+        {
+          "source": "mastere-game-programmer.html",
+          "section": "Ce que tu vas apprendre",
+          "score": 0.862
+        },
+        {
+          "source": "mastere-game-programmer.html",
+          "section": "Voies d’accès et prérequis de la formation",
+          "score": 0.862
+        },
+        {
+          "source": "mastere-game-programmer.html",
+          "section": "Objectifs de la formation",
+          "score": 0.86
+        }
+      ]
+    },
+    {
+      "question_id": "q04",
+      "question": "Le Mastère Expert en cybersécurité - Pentester se fait-il en présentiel ?",
+      "out_of_scope": null,
+      "passed": true,
+      "rank": 1,
+      "in_context": true,
+      "distinct_sections": 1,
+      "min_distinct": 1,
+      "top_score": 0.889,
+      "refused_by_threshold": false,
+      "search_ms": 74.2,
+      "retrieved": [
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "section": "Lieux",
+          "score": 0.889
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "section": "Programme du Mastère",
+          "score": 0.889
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "section": "Programme du Mastère",
+          "score": 0.888
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "section": "Ce que tu vas apprendre",
+          "score": 0.888
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "section": "Ce que tu vas apprendre",
+          "score": 0.887
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "section": "Présentation",
+          "score": 0.887
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "section": "Les certifications accessibles",
+          "score": 0.885
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "section": "Nos méthodes pédagogiques",
+          "score": 0.885
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "section": "Présentation",
+          "score": 0.884
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "section": "Ce titre en quelques chiffres",
+          "score": 0.884
+        }
+      ]
+    },
+    {
+      "question_id": "q05",
+      "question": "Où peut-on suivre le BTS ERA ?",
+      "out_of_scope": null,
+      "passed": true,
+      "rank": 2,
+      "in_context": false,
+      "distinct_sections": 1,
+      "min_distinct": 1,
+      "top_score": 0.861,
+      "refused_by_threshold": false,
+      "search_ms": 48.7,
+      "retrieved": [
+        {
+          "source": "bts-era.html",
+          "section": "Ce que tu vas apprendre",
+          "score": 0.861
+        },
+        {
+          "source": "bts-era.html",
+          "section": "Lieux",
+          "score": 0.853
+        },
+        {
+          "source": "bts-era.html",
+          "section": "Équivalences",
+          "score": 0.852
+        },
+        {
+          "source": "bts-era.html",
+          "section": "Les modalités d’évaluations certificatives",
+          "score": 0.851
+        },
+        {
+          "source": "bts-era.html",
+          "section": "Présentation",
+          "score": 0.849
+        },
+        {
+          "source": "bts-era.html",
+          "section": "Objectifs de la formation",
+          "score": 0.848
+        },
+        {
+          "source": "bts-era.html",
+          "section": "Logiciels, outils et certifications",
+          "score": 0.847
+        },
+        {
+          "source": "bts-era.html",
+          "section": "Programme du BTS",
+          "score": 0.846
+        },
+        {
+          "source": "informations-communes-formations.md",
+          "section": "Modalités d’évaluation continue — particularité : BTS ERA - Étude et Réalisation d'Agencement",
+          "score": 0.845
+        },
+        {
+          "source": "bts-era.html",
+          "section": "Ce que tu vas apprendre",
+          "score": 0.844
+        }
+      ]
+    },
+    {
+      "question_id": "q06",
+      "question": "Combien de temps dure le Bachelor Informatique ?",
+      "out_of_scope": null,
+      "passed": true,
+      "rank": 1,
+      "in_context": false,
+      "distinct_sections": 1,
+      "min_distinct": 1,
+      "top_score": 0.908,
+      "refused_by_threshold": false,
+      "search_ms": 93.0,
+      "retrieved": [
+        {
+          "source": "bachelor-informatique.html",
+          "section": "Infos clés",
+          "score": 0.908
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "section": "Programme du Bachelor",
+          "score": 0.907
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "section": "Programme du Bachelor",
+          "score": 0.906
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "section": "Ce titre en quelques chiffres",
+          "score": 0.898
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "section": "Nos méthodes pédagogiques",
+          "score": 0.896
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "section": "Nos méthodes pédagogiques",
+          "score": 0.894
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "section": "Ce que tu vas apprendre",
+          "score": 0.891
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "section": "Compétences et objectifs de la formation",
+          "score": 0.891
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "section": "Présentation",
+          "score": 0.89
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "section": "Voie d'accès et prérequis à la formation",
+          "score": 0.889
+        }
+      ]
+    },
+    {
+      "question_id": "q07",
+      "question": "Peut-on payer les frais de scolarité en plusieurs fois ?",
+      "out_of_scope": null,
+      "passed": true,
+      "rank": 2,
+      "in_context": false,
+      "distinct_sections": 2,
+      "min_distinct": 1,
+      "top_score": 0.84,
+      "refused_by_threshold": false,
+      "search_ms": 57.3,
+      "retrieved": [
+        {
+          "source": "guide-parents-scolarite-enfant.html",
+          "section": "FAQ : les questions que se posent les parents",
+          "score": 0.84
+        },
+        {
+          "source": "informations-communes-formations.md",
+          "section": "Modalités de paiement et prise en charge des frais",
+          "score": 0.836
+        },
+        {
+          "source": "condition-admission.html",
+          "section": "Financement des études",
+          "score": 0.835
+        },
+        {
+          "source": "admissions_faq.md",
+          "section": "Quels sont les frais de scolarité ?",
+          "score": 0.835
+        },
+        {
+          "source": "condition-admission.html",
+          "section": "FAQ",
+          "score": 0.834
+        },
+        {
+          "source": "informations-communes-formations.md",
+          "section": "Modalités de paiement et prise en charge des frais",
+          "score": 0.83
+        },
+        {
+          "source": "condition-admission.html",
+          "section": "Financement des études",
+          "score": 0.825
+        },
+        {
+          "source": "guide-parents-scolarite-enfant.html",
+          "section": "FAQ : les questions que se posent les parents",
+          "score": 0.823
+        },
+        {
+          "source": "handicap.html",
+          "section": "Aides et ressources utiles",
+          "score": 0.822
+        },
+        {
+          "source": "guide-parents-scolarite-enfant.html",
+          "section": "Formations Post-Bac ? Nous vous aidons à y voir plus clair",
+          "score": 0.821
+        }
+      ]
+    },
+    {
+      "question_id": "q08",
+      "question": "Quels sont les blocs de compétences du titre RNCP Expert en cybersécurité ?",
+      "out_of_scope": null,
+      "passed": false,
+      "rank": 1,
+      "in_context": false,
+      "distinct_sections": 2,
+      "min_distinct": 3,
+      "top_score": 0.897,
+      "refused_by_threshold": false,
+      "search_ms": 113.8,
+      "retrieved": [
+        {
+          "source": "rncp-40897.html",
+          "section": "RNCP40897BC02 - Piloter le cycle de conception, d’intégration et d’évaluation de solutions de sécurité du système d’information",
+          "score": 0.897
+        },
+        {
+          "source": "rncp-40897.html",
+          "section": "Description des modalités d'acquisition de la certification par capitalisation des blocs de compétences et/ou par correspondance",
+          "score": 0.896
+        },
+        {
+          "source": "rncp-40897.html",
+          "section": "Compétences attestées",
+          "score": 0.89
+        },
+        {
+          "source": "rncp-40897.html",
+          "section": "Compétences attestées",
+          "score": 0.889
+        },
+        {
+          "source": "rncp-40897.html",
+          "section": "Objectifs et contexte de la certification",
+          "score": 0.887
+        },
+        {
+          "source": "rncp-40897.html",
+          "section": "RNCP40897BC01 - Elaborer la stratégie de cybersécurité d’une organisation",
+          "score": 0.887
+        },
+        {
+          "source": "rncp-40897.html",
+          "section": "Activités visées",
+          "score": 0.886
+        },
+        {
+          "source": "rncp-40897.html",
+          "section": "Activités visées",
+          "score": 0.885
+        },
+        {
+          "source": "rncp-40897.html",
+          "section": "Infos clés",
+          "score": 0.884
+        },
+        {
+          "source": "rncp-40897.html",
+          "section": "RNCP40897BC02 - Piloter le cycle de conception, d’intégration et d’évaluation de solutions de sécurité du système d’information",
+          "score": 0.881
+        }
+      ]
+    },
+    {
+      "question_id": "q09",
+      "question": "Quel est le numéro de téléphone du campus de Bordeaux ?",
+      "out_of_scope": null,
+      "passed": true,
+      "rank": 2,
+      "in_context": false,
+      "distinct_sections": 1,
+      "min_distinct": 1,
+      "top_score": 0.824,
+      "refused_by_threshold": false,
+      "search_ms": 84.4,
+      "retrieved": [
+        {
+          "source": "armee-de-terre.html",
+          "section": "Nos partenaires académiques",
+          "score": 0.824
+        },
+        {
+          "source": "condition-admission.html",
+          "section": "Coordonnées de tous nos campus",
+          "score": 0.822
+        },
+        {
+          "source": "bachelor-batiment-numerique.html",
+          "section": "Lieux",
+          "score": 0.818
+        },
+        {
+          "source": "mastere-expert-en-developpement-informatique-specialise-banque-assurance.html",
+          "section": "Tarifs",
+          "score": 0.817
+        },
+        {
+          "source": "mastere-expert-en-developpement-informatique-specialise-banque-assurance.html",
+          "section": "Ce titre en quelques chiffres",
+          "score": 0.814
+        },
+        {
+          "source": "armee-de-terre.html",
+          "section": "Programme du Bachelor",
+          "score": 0.812
+        },
+        {
+          "source": "armee-de-terre.html",
+          "section": "Lieux",
+          "score": 0.81
+        },
+        {
+          "source": "armee-de-terre.html",
+          "section": "Programme du Bachelor",
+          "score": 0.81
+        },
+        {
+          "source": "mastere-expert-en-developpement-informatique-specialise-banque-assurance.html",
+          "section": "Lieux",
+          "score": 0.808
+        },
+        {
+          "source": "alternance.html",
+          "section": "Contactez le Service Relations Entreprises du Campus de votre choix",
+          "score": 0.808
+        }
+      ]
+    },
+    {
+      "question_id": "q10",
+      "question": "Quels modules sont enseignés en Mastère 2 du Mastère Expert en intelligence artificielle ?",
+      "out_of_scope": null,
+      "passed": true,
+      "rank": 1,
+      "in_context": false,
+      "distinct_sections": 1,
+      "min_distinct": 1,
+      "top_score": 0.894,
+      "refused_by_threshold": false,
+      "search_ms": 113.2,
+      "retrieved": [
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Programme du Mastère",
+          "score": 0.894
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Programme du Mastère",
+          "score": 0.892
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Nos méthodes pédagogiques",
+          "score": 0.884
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Présentation",
+          "score": 0.88
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Ce que tu vas apprendre",
+          "score": 0.877
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Présentation",
+          "score": 0.877
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Objectifs de la formation",
+          "score": 0.874
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Objectifs de la formation",
+          "score": 0.873
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Ce que tu vas apprendre",
+          "score": 0.871
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Voies d’accès et prérequis de la formation",
+          "score": 0.87
+        }
+      ]
+    },
+    {
+      "question_id": "q11",
+      "question": "Comment se passe l'entretien d'admission chez Ynov ?",
+      "out_of_scope": null,
+      "passed": true,
+      "rank": 1,
+      "in_context": false,
+      "distinct_sections": 2,
+      "min_distinct": 1,
+      "top_score": 0.87,
+      "refused_by_threshold": false,
+      "search_ms": 94.4,
+      "retrieved": [
+        {
+          "source": "condition-admission.html",
+          "section": "Un processus d'admission, clair et rapide",
+          "score": 0.87
+        },
+        {
+          "source": "condition-admission.html",
+          "section": "Un processus d'admission, clair et rapide",
+          "score": 0.869
+        },
+        {
+          "source": "condition-admission.html",
+          "section": "Le rendez-vous d'admission",
+          "score": 0.867
+        },
+        {
+          "source": "guide-parents-scolarite-enfant.html",
+          "section": "FAQ : les questions que se posent les parents",
+          "score": 0.867
+        },
+        {
+          "source": "condition-admission.html",
+          "section": "Le rendez-vous d'admission",
+          "score": 0.866
+        },
+        {
+          "source": "handicap.html",
+          "section": "Ynov Hand You en action :",
+          "score": 0.864
+        },
+        {
+          "source": "condition-admission.html",
+          "section": "Calendrier et infos clés",
+          "score": 0.862
+        },
+        {
+          "source": "condition-admission.html",
+          "section": "FAQ",
+          "score": 0.861
+        },
+        {
+          "source": "condition-admission.html",
+          "section": "Tout savoir sur Parcoursup",
+          "score": 0.861
+        },
+        {
+          "source": "condition-admission.html",
+          "section": "Quel est ton profil ?",
+          "score": 0.861
+        }
+      ]
+    },
+    {
+      "question_id": "q12",
+      "question": "Combien coûte une VAE chez Ynov ?",
+      "out_of_scope": null,
+      "passed": true,
+      "rank": 1,
+      "in_context": false,
+      "distinct_sections": 1,
+      "min_distinct": 1,
+      "top_score": 0.897,
+      "refused_by_threshold": false,
+      "search_ms": 70.1,
+      "retrieved": [
+        {
+          "source": "vae-ynov.html",
+          "section": "Coût de la VAE Ynov :",
+          "score": 0.897
+        },
+        {
+          "source": "vae-ynov.html",
+          "section": "Démarche VAE",
+          "score": 0.865
+        },
+        {
+          "source": "vae-ynov.html",
+          "section": "Lancez-vous dans une démarche de VAE Ynov",
+          "score": 0.865
+        },
+        {
+          "source": "vae-ynov.html",
+          "section": "Les objectifs de la VAE",
+          "score": 0.863
+        },
+        {
+          "source": "vae-ynov.html",
+          "section": "Témoignage",
+          "score": 0.863
+        },
+        {
+          "source": "vae-ynov.html",
+          "section": "Démarche VAE",
+          "score": 0.862
+        },
+        {
+          "source": "vae-ynov.html",
+          "section": "Témoignage",
+          "score": 0.862
+        },
+        {
+          "source": "vae-ynov.html",
+          "section": "Les résultats avec la VAE chez Ynov",
+          "score": 0.861
+        },
+        {
+          "source": "vae-ynov.html",
+          "section": "Pour en savoir plus sur la VAE :",
+          "score": 0.859
+        },
+        {
+          "source": "vae-ynov.html",
+          "section": "Profils",
+          "score": 0.858
+        }
+      ]
+    },
+    {
+      "question_id": "q13",
+      "question": "Quelle est l'adresse e-mail du référent handicap de Lyon ?",
+      "out_of_scope": null,
+      "passed": true,
+      "rank": 1,
+      "in_context": false,
+      "distinct_sections": 2,
+      "min_distinct": 1,
+      "top_score": 0.848,
+      "refused_by_threshold": false,
+      "search_ms": 94.8,
+      "retrieved": [
+        {
+          "source": "handicap.html",
+          "section": "Autres ressources et contacts :",
+          "score": 0.848
+        },
+        {
+          "source": "handicap.html",
+          "section": "Contact :",
+          "score": 0.847
+        },
+        {
+          "source": "handicap.html",
+          "section": "Accès aux campus Ynov",
+          "score": 0.839
+        },
+        {
+          "source": "handicap.html",
+          "section": "Accès aux campus Ynov",
+          "score": 0.838
+        },
+        {
+          "source": "handicap.html",
+          "section": "Autres ressources et contacts :",
+          "score": 0.838
+        },
+        {
+          "source": "handicap.html",
+          "section": "Ynov Hand You en action :",
+          "score": 0.837
+        },
+        {
+          "source": "handicap.html",
+          "section": "Emploi :",
+          "score": 0.834
+        },
+        {
+          "source": "handicap.html",
+          "section": "Ynov Hand You en action :",
+          "score": 0.823
+        },
+        {
+          "source": "rncp-39092.html",
+          "section": "Certificateur(s)",
+          "score": 0.823
+        },
+        {
+          "source": "handicap.html",
+          "section": "Emploi :",
+          "score": 0.821
+        }
+      ]
+    },
+    {
+      "question_id": "q14",
+      "question": "Quels métiers peut-on exercer après le Mastère Data engineer ?",
+      "out_of_scope": null,
+      "passed": true,
+      "rank": 2,
+      "in_context": false,
+      "distinct_sections": 1,
+      "min_distinct": 1,
+      "top_score": 0.886,
+      "refused_by_threshold": false,
+      "search_ms": 88.5,
+      "retrieved": [
+        {
+          "source": "mastere-data-engineer.html",
+          "section": "Programme du Mastère",
+          "score": 0.886
+        },
+        {
+          "source": "mastere-data-engineer.html",
+          "section": "Métiers et dynamique du marché",
+          "score": 0.885
+        },
+        {
+          "source": "mastere-data-engineer.html",
+          "section": "Objectifs de la formation",
+          "score": 0.883
+        },
+        {
+          "source": "mastere-data-engineer.html",
+          "section": "Programme du Mastère",
+          "score": 0.883
+        },
+        {
+          "source": "mastere-data-engineer.html",
+          "section": "Objectifs de la formation",
+          "score": 0.883
+        },
+        {
+          "source": "bachelor-developpement-ia-data-engineering.html",
+          "section": "Métiers et dynamique du marché",
+          "score": 0.882
+        },
+        {
+          "source": "mastere-data-engineer.html",
+          "section": "Ce que tu vas apprendre",
+          "score": 0.877
+        },
+        {
+          "source": "mastere-data-engineer.html",
+          "section": "Présentation",
+          "score": 0.877
+        },
+        {
+          "source": "mastere-data-engineer.html",
+          "section": "Ce que tu vas apprendre",
+          "score": 0.876
+        },
+        {
+          "source": "mastere-data-engineer.html",
+          "section": "Nos méthodes pédagogiques",
+          "score": 0.871
+        }
+      ]
+    },
+    {
+      "question_id": "q15",
+      "question": "Quel est le taux de réussite du titre Expert en développement logiciel ?",
+      "out_of_scope": null,
+      "passed": true,
+      "rank": 1,
+      "in_context": false,
+      "distinct_sections": 2,
+      "min_distinct": 1,
+      "top_score": 0.883,
+      "refused_by_threshold": false,
+      "search_ms": 67.4,
+      "retrieved": [
+        {
+          "source": "rncp-39583.html",
+          "section": "Statistiques",
+          "score": 0.883
+        },
+        {
+          "source": "rncp-39583.html",
+          "section": "Statistiques",
+          "score": 0.882
+        },
+        {
+          "source": "centre-de-formation-des-apprentis.html",
+          "section": "Taux de réussite apprentis",
+          "score": 0.879
+        },
+        {
+          "source": "mastere-expert-developpement-mobile-lot.html",
+          "section": "Ce titre en quelques chiffres",
+          "score": 0.872
+        },
+        {
+          "source": "mastere-expert-developpement-full-stack.html",
+          "section": "Ce titre en quelques chiffres",
+          "score": 0.872
+        },
+        {
+          "source": "mastere-expert-en-developpement-informatique-specialise-banque-assurance.html",
+          "section": "Ce titre en quelques chiffres",
+          "score": 0.87
+        },
+        {
+          "source": "mastere-expert-developpement-mobile-lot.html",
+          "section": "Equivalences",
+          "score": 0.865
+        },
+        {
+          "source": "rncp-39583.html",
+          "section": "Infos clés",
+          "score": 0.863
+        },
+        {
+          "source": "mastere-expert-developpement-full-stack.html",
+          "section": "Equivalences",
+          "score": 0.863
+        },
+        {
+          "source": "mastere-expert-developpement-full-stack.html",
+          "section": "Objectifs de la formation",
+          "score": 0.863
+        }
+      ]
+    },
+    {
+      "question_id": "q16",
+      "question": "Quels BTS sont accessibles via Parcoursup ?",
+      "out_of_scope": null,
+      "passed": true,
+      "rank": 1,
+      "in_context": false,
+      "distinct_sections": 1,
+      "min_distinct": 1,
+      "top_score": 0.873,
+      "refused_by_threshold": false,
+      "search_ms": 49.9,
+      "retrieved": [
+        {
+          "source": "condition-admission.html",
+          "section": "Tout savoir sur Parcoursup",
+          "score": 0.873
+        },
+        {
+          "source": "guide-parents-scolarite-enfant.html",
+          "section": "FAQ : les questions que se posent les parents",
+          "score": 0.868
+        },
+        {
+          "source": "guide-parents-scolarite-enfant.html",
+          "section": "Formations Post-Bac ? Nous vous aidons à y voir plus clair",
+          "score": 0.866
+        },
+        {
+          "source": "condition-admission.html",
+          "section": "Tout savoir sur Parcoursup",
+          "score": 0.86
+        },
+        {
+          "source": "guide-parents-scolarite-enfant.html",
+          "section": "FAQ : les questions que se posent les parents",
+          "score": 0.852
+        },
+        {
+          "source": "guide-parents-scolarite-enfant.html",
+          "section": "Formations Post-Bac ? Nous vous aidons à y voir plus clair",
+          "score": 0.847
+        },
+        {
+          "source": "rncp-38368.html",
+          "section": "Type d'emplois accessibles",
+          "score": 0.84
+        },
+        {
+          "source": "informations-communes-formations.md",
+          "section": "Passerelles",
+          "score": 0.84
+        },
+        {
+          "source": "bts-ciel.html",
+          "section": "Lieux",
+          "score": 0.838
+        },
+        {
+          "source": "bts-ciel.html",
+          "section": "Voies d'accès et prérequis à la formation",
+          "score": 0.837
+        }
+      ]
+    },
+    {
+      "question_id": "q17",
+      "question": "Quelle est la capitale de l'Australie ?",
+      "out_of_scope": "threshold",
+      "passed": false,
+      "rank": null,
+      "in_context": false,
+      "distinct_sections": 0,
+      "min_distinct": 1,
+      "top_score": 0.746,
+      "refused_by_threshold": false,
+      "search_ms": 50.3,
+      "retrieved": [
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Lieux",
+          "score": 0.746
+        },
+        {
+          "source": "mastere-expert-en-cloud-securite-infrastructure.html",
+          "section": "Lieux",
+          "score": 0.744
+        },
+        {
+          "source": "mastere-architecte-d-interieur-expert-en-eco-renovation-et-energies-renouvelables.html",
+          "section": "Lieux",
+          "score": 0.743
+        },
+        {
+          "source": "mastere-expert-en-social-media-communication-transformation-digitale.html",
+          "section": "Lieux",
+          "score": 0.743
+        },
+        {
+          "source": "mastere-expert-en-marketing-communication-transformation-digitale.html",
+          "section": "Lieux",
+          "score": 0.742
+        },
+        {
+          "source": "rncp-39582.html",
+          "section": "Pré-requis disctincts pour les blocs de compétences",
+          "score": 0.741
+        },
+        {
+          "source": "bachelor-audiovisuel.html",
+          "section": "Lieux",
+          "score": 0.741
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite.html",
+          "section": "Lieux",
+          "score": 0.74
+        },
+        {
+          "source": "mastere-architecte-d-interieur-maitre-d-aeuvre.html",
+          "section": "Lieux",
+          "score": 0.739
+        },
+        {
+          "source": "mastere-ux-ui-design.html",
+          "section": "Lieux",
+          "score": 0.738
+        }
+      ]
+    },
+    {
+      "question_id": "q18",
+      "question": "Donne-moi une recette de pâte à crêpes.",
+      "out_of_scope": "threshold",
+      "passed": false,
+      "rank": null,
+      "in_context": false,
+      "distinct_sections": 0,
+      "min_distinct": 1,
+      "top_score": 0.817,
+      "refused_by_threshold": false,
+      "search_ms": 62.7,
+      "retrieved": [
+        {
+          "source": "rncp-39092.html",
+          "section": "Certificateur(s)",
+          "score": 0.817
+        },
+        {
+          "source": "rncp-39583.html",
+          "section": "RNCP39583BC02 - Concevoir et développer des applications logicielles",
+          "score": 0.814
+        },
+        {
+          "source": "rncp-36463.html",
+          "section": "RNCP36463BC04 - Réaliser une interface d’échange de données informatisées.",
+          "score": 0.813
+        },
+        {
+          "source": "rncp-40668.html",
+          "section": "RNCP40668BC04 - Préparer la diffusion, la distribution et la promotion du projet audiovisuel et cinématographique",
+          "score": 0.812
+        },
+        {
+          "source": "rncp-41709.html",
+          "section": "Certificateur(s)",
+          "score": 0.812
+        },
+        {
+          "source": "rncp-36463.html",
+          "section": "RNCP36463BC04 - Réaliser une interface d’échange de données informatisées.",
+          "score": 0.812
+        },
+        {
+          "source": "rncp-40668.html",
+          "section": "Modalités d'évaluation",
+          "score": 0.811
+        },
+        {
+          "source": "rncp-36463.html",
+          "section": "RNCP36463BC02 - Piloter un projet DevOps de développement d’application numérique.",
+          "score": 0.81
+        },
+        {
+          "source": "rncp-36463.html",
+          "section": "Modalités d'évaluation",
+          "score": 0.81
+        },
+        {
+          "source": "rncp-41989.html",
+          "section": "Certificateur(s)",
+          "score": 0.81
+        }
+      ]
+    },
+    {
+      "question_id": "q20",
+      "question": "Quel temps fera-t-il demain à Lyon ?",
+      "out_of_scope": "threshold",
+      "passed": false,
+      "rank": null,
+      "in_context": false,
+      "distinct_sections": 0,
+      "min_distinct": 1,
+      "top_score": 0.779,
+      "refused_by_threshold": false,
+      "search_ms": 56.4,
+      "retrieved": [
+        {
+          "source": "condition-admission.html",
+          "section": "Financement des études",
+          "score": 0.779
+        },
+        {
+          "source": "alternance.html",
+          "section": "Contactez le Service Relations Entreprises du Campus de votre choix",
+          "score": 0.778
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "section": "Lieux",
+          "score": 0.777
+        },
+        {
+          "source": "alternance.html",
+          "section": "Contactez le Service Relations Entreprises du Campus de votre choix",
+          "score": 0.776
+        },
+        {
+          "source": "mastere-expert-en-cloud-securite-infrastructure.html",
+          "section": "Lieux",
+          "score": 0.774
+        },
+        {
+          "source": "mastere-architecte-d-interieur-expert-en-eco-renovation-et-energies-renouvelables.html",
+          "section": "Lieux",
+          "score": 0.773
+        },
+        {
+          "source": "bts-ciel.html",
+          "section": "Lieux",
+          "score": 0.773
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "section": "Lieux",
+          "score": 0.771
+        },
+        {
+          "source": "mastere-expert-en-social-media-communication-transformation-digitale.html",
+          "section": "Lieux",
+          "score": 0.771
+        },
+        {
+          "source": "mastere-expert-developpement-mobile-lot.html",
+          "section": "Lieux",
+          "score": 0.77
+        }
+      ]
+    },
+    {
+      "question_id": "q21",
+      "question": "Comment réparer une fuite d'eau sous un évier ?",
+      "out_of_scope": "threshold",
+      "passed": false,
+      "rank": null,
+      "in_context": false,
+      "distinct_sections": 0,
+      "min_distinct": 1,
+      "top_score": 0.79,
+      "refused_by_threshold": false,
+      "search_ms": 63.2,
+      "retrieved": [
+        {
+          "source": "alternance.html",
+          "section": "Contactez le Service Relations Entreprises du Campus de votre choix",
+          "score": 0.79
+        },
+        {
+          "source": "vae-ynov.html",
+          "section": "Témoignage",
+          "score": 0.789
+        },
+        {
+          "source": "rncp-38931.html",
+          "section": "RNCP38931BC01 - Réaliser une étude préalable au projet de rénovation",
+          "score": 0.789
+        },
+        {
+          "source": "handicap.html",
+          "section": "Aides et ressources utiles",
+          "score": 0.788
+        },
+        {
+          "source": "rncp-41709.html",
+          "section": "Certificateur(s)",
+          "score": 0.787
+        },
+        {
+          "source": "rncp-42169.html",
+          "section": "RNCP42169BC03 - Déployer et maintenir la performance d’une solution digitale No Code",
+          "score": 0.783
+        },
+        {
+          "source": "alternance.html",
+          "section": "Contactez le Service Relations Entreprises du Campus de votre choix",
+          "score": 0.782
+        },
+        {
+          "source": "rncp-42521.html",
+          "section": "Certificateur(s)",
+          "score": 0.782
+        },
+        {
+          "source": "rncp-39583.html",
+          "section": "Certificateur(s)",
+          "score": 0.782
+        },
+        {
+          "source": "rncp-39583.html",
+          "section": "RNCP39583BC04 - Maintenir l'application logicielle en condition opérationnelle",
+          "score": 0.781
+        }
+      ]
+    },
+    {
+      "question_id": "q22",
+      "question": "Qui a gagné la Coupe du monde de football 2018 ?",
+      "out_of_scope": "threshold",
+      "passed": false,
+      "rank": null,
+      "in_context": false,
+      "distinct_sections": 0,
+      "min_distinct": 1,
+      "top_score": 0.755,
+      "refused_by_threshold": false,
+      "search_ms": 60.2,
+      "retrieved": [
+        {
+          "source": "rncp-37198.html",
+          "section": "Objectifs et contexte de la certification",
+          "score": 0.755
+        },
+        {
+          "source": "rncp-38579.html",
+          "section": "Certificateur(s)",
+          "score": 0.752
+        },
+        {
+          "source": "rncp-37198.html",
+          "section": "Certificateur(s)",
+          "score": 0.75
+        },
+        {
+          "source": "bts-sio-sisr.html",
+          "section": "Logiciels, outils et certifications",
+          "score": 0.749
+        },
+        {
+          "source": "rncp-39092.html",
+          "section": "Certificateur(s)",
+          "score": 0.746
+        },
+        {
+          "source": "mastere-expert-developpement-mobile-lot.html",
+          "section": "Présentation",
+          "score": 0.745
+        },
+        {
+          "source": "handicap.html",
+          "section": "Aides et ressources utiles",
+          "score": 0.744
+        },
+        {
+          "source": "rncp-41123.html",
+          "section": "Certificateur(s)",
+          "score": 0.742
+        },
+        {
+          "source": "rncp-36463.html",
+          "section": "Référence au(x) texte(s) règlementaire(s) instaurant la certification",
+          "score": 0.742
+        },
+        {
+          "source": "rncp-40668.html",
+          "section": "Certificateur(s)",
+          "score": 0.742
+        }
+      ]
+    },
+    {
+      "question_id": "q23",
+      "question": "Quel est le meilleur langage de programmation pour débuter ?",
+      "out_of_scope": "threshold",
+      "passed": false,
+      "rank": null,
+      "in_context": false,
+      "distinct_sections": 0,
+      "min_distinct": 1,
+      "top_score": 0.84,
+      "refused_by_threshold": false,
+      "search_ms": 60.6,
+      "retrieved": [
+        {
+          "source": "bachelor-informatique.html",
+          "section": "Programme du Bachelor",
+          "score": 0.84
+        },
+        {
+          "source": "bachelor-developpement-ia-data-engineering.html",
+          "section": "Programme du Bachelor",
+          "score": 0.828
+        },
+        {
+          "source": "bachelor-cybersecurite.html",
+          "section": "Programme du Bachelor",
+          "score": 0.818
+        },
+        {
+          "source": "admissions_faq.md",
+          "section": "Programme Bachelor Développement Web — 1re année",
+          "score": 0.815
+        },
+        {
+          "source": "admissions_faq.md",
+          "section": "Programme Bachelor Développement Web — 1re année",
+          "score": 0.813
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "section": "Programme du Bachelor",
+          "score": 0.813
+        },
+        {
+          "source": "bachelor-developpement-ia-data-engineering.html",
+          "section": "Programme du Bachelor",
+          "score": 0.81
+        },
+        {
+          "source": "bts-sio-sisr.html",
+          "section": "Logiciels, outils et certifications",
+          "score": 0.806
+        },
+        {
+          "source": "rncp-39766.html",
+          "section": "RNCP39766BC01 - Traduire le besoin fonctionnel d’un client en une solution technique de Système embarqué",
+          "score": 0.804
+        },
+        {
+          "source": "rncp-39583.html",
+          "section": "Code(s) ROME",
+          "score": 0.803
+        }
+      ]
+    },
+    {
+      "question_id": "q24",
+      "question": "Peux-tu m'écrire un poème sur l'automne ?",
+      "out_of_scope": "threshold",
+      "passed": false,
+      "rank": null,
+      "in_context": false,
+      "distinct_sections": 0,
+      "min_distinct": 1,
+      "top_score": 0.799,
+      "refused_by_threshold": false,
+      "search_ms": 64.7,
+      "retrieved": [
+        {
+          "source": "rncp-37198.html",
+          "section": "Code(s) ROME",
+          "score": 0.799
+        },
+        {
+          "source": "alternance.html",
+          "section": "Contactez le Service Relations Entreprises du Campus de votre choix",
+          "score": 0.797
+        },
+        {
+          "source": "handicap.html",
+          "section": "Aides et ressources utiles",
+          "score": 0.794
+        },
+        {
+          "source": "vae-ynov.html",
+          "section": "Témoignage",
+          "score": 0.791
+        },
+        {
+          "source": "rncp-41709.html",
+          "section": "Certificateur(s)",
+          "score": 0.786
+        },
+        {
+          "source": "vae-ynov.html",
+          "section": "Profils",
+          "score": 0.786
+        },
+        {
+          "source": "guide-parents-scolarite-enfant.html",
+          "section": "Formations Post-Bac ? Nous vous aidons à y voir plus clair",
+          "score": 0.783
+        },
+        {
+          "source": "mastere-architecte-d-interieur-expert-en-eco-renovation-et-energies-renouvelables.html",
+          "section": "La Fabryk",
+          "score": 0.782
+        },
+        {
+          "source": "guide-parents-scolarite-enfant.html",
+          "section": "Nos Journées Portes Ouvertes (JPO)",
+          "score": 0.782
+        },
+        {
+          "source": "rncp-39092.html",
+          "section": "Certificateur(s)",
+          "score": 0.782
+        }
+      ]
+    },
+    {
+      "question_id": "q25",
+      "question": "Combien coûte un abonnement Netflix ?",
+      "out_of_scope": "threshold",
+      "passed": false,
+      "rank": null,
+      "in_context": false,
+      "distinct_sections": 0,
+      "min_distinct": 1,
+      "top_score": 0.82,
+      "refused_by_threshold": false,
+      "search_ms": 79.9,
+      "retrieved": [
+        {
+          "source": "bts-ndrc.html",
+          "section": "Tarifs",
+          "score": 0.82
+        },
+        {
+          "source": "bachelor-batiment-numerique.html",
+          "section": "Tarifs",
+          "score": 0.817
+        },
+        {
+          "source": "bachelor-audiovisuel.html",
+          "section": "Tarifs",
+          "score": 0.816
+        },
+        {
+          "source": "mastere-expert-en-jumeaux-numeriques.html",
+          "section": "Tarifs",
+          "score": 0.814
+        },
+        {
+          "source": "mastere-expert-en-cloud-securite-infrastructure.html",
+          "section": "Tarifs",
+          "score": 0.813
+        },
+        {
+          "source": "bts-ciel.html",
+          "section": "Tarifs",
+          "score": 0.812
+        },
+        {
+          "source": "bachelor-product-builder-no-code.html",
+          "section": "Tarifs",
+          "score": 0.808
+        },
+        {
+          "source": "bachelor-marketing-communication-digital.html",
+          "section": "Tarifs",
+          "score": 0.808
+        },
+        {
+          "source": "mastere-expert-en-social-media-communication-transformation-digitale.html",
+          "section": "Tarifs",
+          "score": 0.807
+        },
+        {
+          "source": "mastere-expert-en-marketing-communication-transformation-digitale.html",
+          "section": "Tarifs",
+          "score": 0.806
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "total": 24,
+    "passed": 15,
+    "refused_by_threshold": 0,
+    "out_of_scope_refused": 0,
+    "in_scope_min_top_score": 0.824,
+    "out_of_scope_max_top_score": 0.84
+  }
+}

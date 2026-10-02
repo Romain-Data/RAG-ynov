@@ -8,16 +8,32 @@ when the chunks change (fingerprint of texts and metadata). No LLM call is made.
 A question also gets flagged when its best score is below the grading threshold: the
 API would refuse it without calling the LLM, even if the right chunk is retrieved.
 
+To compare embedding models, --embedding-model overrides the configured one (each
+model and chunk size gets its own index under .eval_qdrant/), and --threshold the
+grading threshold, which must be recalibrated per model: the run prints the score gap
+between the weakest in-scope question and the strongest out-of-scope one.
+
+Embeddings are computed in batches and checkpointed: with --max-minutes, a run stops
+cleanly when its time budget is spent (exit code 3) and the next run resumes. Large
+models (e5-large: ~35 min for the corpus on a laptop CPU) need several runs.
+
 Usage:
     uv run python -m eval.retrieval [-v] [--limit 10 --candidates 40 --max-per-section 2]
     uv run python -m eval.retrieval --save "label"   # writes eval/results/<run_id>.json
+    uv run python -m eval.retrieval --embedding-model intfloat/multilingual-e5-large \
+        --chunk-size 500 --threshold 0.8 --save "e5-large-500"
 """
 import argparse
 import datetime as dt
 import hashlib
 import json
 import os
+import re
+import statistics
+import sys
+import time
 from pathlib import Path
+from typing import Any
 
 os.environ.setdefault("MAMMOUTH_API_KEY", "eval")  # Settings requires it; no LLM here
 
@@ -34,36 +50,107 @@ from eval.results import (  # noqa: E402
 from graph.nodes import retrieve  # noqa: E402
 from graph.nodes.grade import GRADE_THRESHOLD  # noqa: E402
 from ingestion.chunking import CHUNK_OVERLAP, CHUNK_SIZE, chunk_documents  # noqa: E402
-from ingestion.embedder import embed_passages  # noqa: E402
+from ingestion.embedder import embed_passages, get_embedding_model  # noqa: E402
 from ingestion.indexer import index_chunks  # noqa: E402
 from ingestion.loaders import load_directory  # noqa: E402
 
-INDEX_DIR = Path(".eval_qdrant")
-FINGERPRINT = INDEX_DIR / "fingerprint"
+INDEX_ROOT = Path(".eval_qdrant")
+EMBED_BATCH = 256
+BUDGET_EXHAUSTED = 3  # exit code: index not finished, run again to resume
 
 
-def build_index(data_dir: Path, chunk_size: int = CHUNK_SIZE) -> tuple[QdrantClient, int]:
+def embed_with_checkpoint(texts: list[str], directory: Path, digest: str,
+                          max_minutes: float | None) -> tuple[list[list[float]], float] | None:
+    """Embed `texts` in batches, saving progress in `directory`.
+
+    Returns (vectors, seconds spent in this run and previous ones), or None when the time
+    budget ran out before the end (progress is kept for the next run).
+    """
+    checkpoint = directory / "embeddings.partial.json"
+    state: dict[str, Any] = {"digest": digest, "vectors": [], "seconds": 0.0}
+    if checkpoint.exists():
+        saved = json.loads(checkpoint.read_text())
+        if saved.get("digest") == digest:
+            state = saved
+            print(f"Reprise : {len(state['vectors'])}/{len(texts)} embeddings déjà calculés",
+                  flush=True)
+    start = time.time()
+    while len(state["vectors"]) < len(texts):
+        if max_minutes is not None and time.time() - start > max_minutes * 60:
+            checkpoint.write_text(json.dumps(state))
+            return None
+        done = len(state["vectors"])
+        batch_start = time.time()
+        state["vectors"] += embed_passages(texts[done:done + EMBED_BATCH])
+        state["seconds"] += time.time() - batch_start
+        checkpoint.write_text(json.dumps(state))
+        print(f"  embeddings {len(state['vectors'])}/{len(texts)} "
+              f"({state['seconds'] / 60:.1f} min)", flush=True)
+    checkpoint.unlink()
+    return state["vectors"], state["seconds"]
+
+
+def index_dir(model: str, chunk_size: int) -> Path:
+    return INDEX_ROOT / f"{re.sub(r'[^a-z0-9]+', '-', model.lower()).strip('-')}-{chunk_size}"
+
+
+def truncation_stats(chunks: list[dict]) -> dict:
+    """Share of chunks longer than the model's token window (cut before embedding)."""
+    try:
+        tokenizer = get_embedding_model().model.tokenizer  # type: ignore[attr-defined]
+        max_length = tokenizer.truncation["max_length"]
+        tokenizer.no_truncation()
+        lengths = [len(tokenizer.encode(c["text"]).ids) for c in chunks]
+        tokenizer.enable_truncation(max_length)
+    except (AttributeError, KeyError, TypeError):
+        return {}
+    return {"max_tokens": max_length, "median_tokens": int(statistics.median(lengths)),
+            "truncated_share": round(sum(n > max_length for n in lengths) / len(lengths), 3)}
+
+
+def build_index(data_dir: Path, chunk_size: int = CHUNK_SIZE,
+                max_minutes: float | None = None) -> tuple[QdrantClient, dict]:
+    """Index data/ with the configured embedding model (cached per model and chunk size).
+
+    Returns (client, info) with n_chunks, build_seconds (None when cached) and the
+    token truncation stats of the model.
+    """
     docs = load_directory(data_dir, settings.ingest_exclude_doc_type_list())
     chunks = chunk_documents(docs, chunk_size=chunk_size)
     digest = hashlib.sha256(
-        json.dumps([(c["text"], c["metadata"]) for c in chunks], sort_keys=True,
-                   default=str).encode()
+        json.dumps([settings.embedding_model] + [(c["text"], c["metadata"]) for c in chunks],
+                   sort_keys=True, default=str).encode()
     ).hexdigest()
+    directory = index_dir(settings.embedding_model, chunk_size)
+    directory.mkdir(parents=True, exist_ok=True)
+    fingerprint = directory / "fingerprint"
+    info_file = directory / "info.json"
 
-    client = QdrantClient(path=str(INDEX_DIR))
-    if FINGERPRINT.exists() and FINGERPRINT.read_text() == digest:
-        print(f"Index à jour ({len(chunks)} chunks)")
-        return client, len(chunks)
+    client = QdrantClient(path=str(directory))
+    if fingerprint.exists() and fingerprint.read_text() == digest and info_file.exists():
+        info = json.loads(info_file.read_text())
+        print(f"Index à jour ({info['n_chunks']} chunks, {settings.embedding_model})")
+        return client, {**info, "build_seconds": None}
 
-    print(f"Indexation de {len(chunks)} chunks…", flush=True)
+    print(f"Indexation de {len(chunks)} chunks avec {settings.embedding_model}…", flush=True)
+    embedded = embed_with_checkpoint([c["text"] for c in chunks], directory, digest,
+                                     max_minutes)
+    if embedded is None:
+        print(f"Budget de {max_minutes} min écoulé : relancer la même commande pour "
+              "reprendre l'indexation.", flush=True)
+        sys.exit(BUDGET_EXHAUSTED)
+    vectors, embed_seconds = embedded
     if client.collection_exists(settings.qdrant_collection_name):
         client.delete_collection(settings.qdrant_collection_name)
-    vectors = embed_passages([c["text"] for c in chunks])
     for chunk, vector in zip(chunks, vectors, strict=True):
         chunk["vector"] = vector
     index_chunks(chunks, client)
-    FINGERPRINT.write_text(digest)
-    return client, len(chunks)
+    info = {"n_chunks": len(chunks), "embed_seconds": round(embed_seconds, 1),
+            **truncation_stats(chunks)}
+    info_file.write_text(json.dumps(info))
+    fingerprint.write_text(digest)
+    print(f"Embeddings calculés en {embed_seconds:.0f} s", flush=True)
+    return client, {**info, "build_seconds": round(embed_seconds, 1)}
 
 
 def _matches(hit: dict, expect: dict) -> bool:
@@ -72,13 +159,16 @@ def _matches(hit: dict, expect: dict) -> bool:
 
 
 def evaluate(client: QdrantClient, limit: int, candidates: int,
-             max_per_section: int | None, verbose: bool) -> list[dict]:
+             max_per_section: int | None, verbose: bool,
+             threshold: float = GRADE_THRESHOLD) -> list[dict]:
     results = []
     for q in load_questions():
         if q.get("out_of_scope") == "llm":
             continue  # passes the threshold by design; only the LLM can decline it
+        start = time.time()
         hits = retrieve.search(q["question"], client, limit=limit, candidates=candidates,
                                max_per_section=max_per_section)
+        search_ms = (time.time() - start) * 1000
         matched = [i for i, h in enumerate(hits)
                    if any(_matches(h, e) for e in q.get("expect", []))]
         distinct = {(hits[i]["source"], hits[i]["section"]) for i in matched}
@@ -91,7 +181,7 @@ def evaluate(client: QdrantClient, limit: int, candidates: int,
         )
         ok = ok or in_context
         top_score = max((h["score"] for h in hits), default=0.0)
-        refused = top_score < GRADE_THRESHOLD
+        refused = top_score < threshold
         if q.get("out_of_scope"):
             ok = refused  # an out-of-scope question passes when the threshold refuses it
         results.append({
@@ -105,6 +195,7 @@ def evaluate(client: QdrantClient, limit: int, candidates: int,
             "min_distinct": q.get("min_distinct", 1),
             "top_score": round(top_score, 3),
             "refused_by_threshold": refused,
+            "search_ms": round(search_ms, 1),
             "retrieved": [{"source": h["source"], "section": h["section"],
                            "score": round(h["score"], 3)} for h in hits],
         })
@@ -115,7 +206,7 @@ def evaluate(client: QdrantClient, limit: int, candidates: int,
         print(f"{'✅' if ok else '❌'} {q['id']} {q['question'][:70]:70s} {rank}"
               + (f", {len(distinct)}/{q['min_distinct']} sections"
                  if q.get("min_distinct") else "")
-              + (f"  ⛔ refusée (score {top_score:.3f} < {GRADE_THRESHOLD})" if refused
+              + (f"  ⛔ refusée (score {top_score:.3f} < {threshold})" if refused
                  else f"  (score {top_score:.3f})" if q.get("out_of_scope") else ""))
         if verbose or not ok:
             for i, h in enumerate(hits):
@@ -129,8 +220,18 @@ def evaluate(client: QdrantClient, limit: int, candidates: int,
     if out_scope:
         print(f"Hors périmètre : {sum(r['passed'] for r in out_scope)}/{len(out_scope)} "
               f"refusées par le seuil")
+    if in_scope and out_scope:
+        weakest = min(in_scope, key=lambda r: r["top_score"])
+        strongest = max(out_scope, key=lambda r: r["top_score"])
+        gap = weakest["top_score"] - strongest["top_score"]
+        print(f"Scores : question légitime la plus faible {weakest['top_score']:.3f} "
+              f"({weakest['question_id']}), hors périmètre la plus forte "
+              f"{strongest['top_score']:.3f} ({strongest['question_id']}) → écart {gap:+.3f}"
+              + (f", seuil médian {(weakest['top_score'] + strongest['top_score']) / 2:.3f}"
+                 if gap > 0 else " : aucun seuil ne les sépare"))
     print(f"(limit={limit}, candidates={candidates}, max_per_section={max_per_section}, "
-          f"seuil={GRADE_THRESHOLD})")
+          f"seuil={threshold}, recherche {statistics.median(r['search_ms'] for r in results):.0f}"
+          f" ms en médiane)")
     return results
 
 
@@ -141,13 +242,20 @@ def main() -> None:
     parser.add_argument("--candidates", type=int, default=retrieve.CANDIDATE_LIMIT)
     parser.add_argument("--max-per-section", type=int, default=retrieve.MAX_PER_SECTION)
     parser.add_argument("--chunk-size", type=int, default=CHUNK_SIZE)
+    parser.add_argument("--embedding-model", help="override settings.embedding_model")
+    parser.add_argument("--max-minutes", type=float,
+                        help="time budget for embeddings in this run (resumable)")
+    parser.add_argument("--threshold", type=float, default=GRADE_THRESHOLD,
+                        help="grading threshold to check refusals against")
     parser.add_argument("--save", metavar="LABEL", help="save the run in eval/results/")
     parser.add_argument("--notes", default="", help="free text saved with the run")
     parser.add_argument("-v", "--verbose", action="store_true", help="show every result")
     args = parser.parse_args()
-    client, n_chunks = build_index(args.data, args.chunk_size)
+    if args.embedding_model:
+        settings.embedding_model = args.embedding_model
+    client, info = build_index(args.data, args.chunk_size, args.max_minutes)
     results = evaluate(client, args.limit, args.candidates, args.max_per_section,
-                       args.verbose)
+                       args.verbose, args.threshold)
 
     if args.save:
         date = dt.date.today().isoformat()
@@ -165,11 +273,11 @@ def main() -> None:
                 "embedding_model": settings.embedding_model,
                 "chunk_size": args.chunk_size,
                 "chunk_overlap": CHUNK_OVERLAP,
-                "n_chunks": n_chunks,
                 "limit": args.limit,
                 "candidates": args.candidates,
                 "max_per_section": args.max_per_section,
-                "grade_threshold": GRADE_THRESHOLD,
+                "grade_threshold": args.threshold,
+                **info,
             },
             "results": results,
         })
