@@ -1,0 +1,7 @@
+# Local development only: docker compose loads this file automatically next to
+# docker-compose.yml. Coolify only reads docker-compose.yml, so production keeps
+# the server path (/data/rag-ynov).
+services:
+  api:
+    volumes:
+      - ./data:/app/data:ro
