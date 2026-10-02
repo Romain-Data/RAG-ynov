@@ -1,5 +1,5 @@
-# Sidecar metadata for the sample FAQ. One manifest per source document.
-# The loader will look for <stem>.manifest.yml next to <stem>.md|.pdf.
+# Test fixture: a FICTITIOUS FAQ (made-up prices and contacts), used by the Markdown
+# loader tests only. It must never be part of the ingested corpus.
 
 source: admissions_faq.md
 doc_type: faq

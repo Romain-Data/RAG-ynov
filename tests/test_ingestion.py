@@ -9,7 +9,7 @@ from ingestion.loaders import load_directory
 
 
 async def main():
-    data_dir = Path("data/samples")
+    data_dir = Path(__file__).parent / "fixtures"
 
     # 1. Load
     print("Loading documents...")

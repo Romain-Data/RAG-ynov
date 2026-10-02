@@ -6,7 +6,8 @@ import pytest
 from ingestion.chunking import chunk_documents
 from ingestion.loaders import load_directory, load_file, load_markdown
 
-SAMPLES = Path("data/samples")
+# Fictitious FAQ used as a Markdown fixture only (never part of the corpus)
+SAMPLES = Path(__file__).parent / "fixtures"
 FAQ = SAMPLES / "admissions_faq.md"
 
 

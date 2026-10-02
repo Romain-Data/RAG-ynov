@@ -67,9 +67,8 @@ rag-ynov/
 ├── ingestion/              # Ingestion pipeline (load → chunk → embed → index)
 ├── graph/                  # LangGraph nodes + builder
 │   └── nodes/              # retrieve, grade, generate, refuse
-├── data/
-│   └── samples/            # Example corpus (ignored in production via .gitignore)
-├── tests/
+├── data/                   # Corpus, not in git: python -m ingestion.fetch, copied to the server
+├── tests/                  # fixtures/: a fictitious FAQ for loader tests only
 ├── docker/
 │   └── api.Dockerfile
 ├── docker-compose.yml
