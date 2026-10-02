@@ -1,8 +1,9 @@
 """Unit tests for the HTML loader (ynov.com formation pages + generic fallback)."""
 from pathlib import Path
 
+from ingestion.build_common import build
 from ingestion.chunking import chunk_documents
-from ingestion.html_loader import parse_formation_page
+from ingestion.html_loader import parse_formation_page, parse_info_page
 from ingestion.loaders import load_directory, load_file
 
 # Trimmed-down copy of a ynov.com formation page: same CMS block classes, tiny content.
@@ -66,7 +67,12 @@ FORMATION_HTML = f"""<!doctype html><html><body>
       <h3 class="js-accordion__header">
         <span class="Bloc-ProgrammeDetails-Item-Title">Tarifs</span>
       </h3>
-      <div class="js-accordion__panel"><p>Mastère 1 : 9 000 €</p></div>
+      <div class="js-accordion__panel">
+        <p>Mastère 1 : 9 000 €</p>
+        <p>Le paiement échelonné correspond à un paiement en 4 échéances.</p>
+        <p>Alternance</p>
+        <p>Les frais de formation sont pris en charge par l’entreprise.</p>
+      </div>
     </div>
     <div class="Bloc-ProgrammeDetails-Item">
       <h3 class="js-accordion__header">
@@ -86,6 +92,13 @@ FORMATION_HTML = f"""<!doctype html><html><body>
       <h3 class="js-accordion__header">
         <span class="Bloc-Faq-TitleText">Méthodes mobilisées</span></h3>
       <div class="js-accordion__panel"><p>LinkedIn Learning, Moodle</p></div>
+    </div>
+    <div class="Bloc-Faq-Item">
+      <h3 class="js-accordion__header">
+        <span class="Bloc-Faq-TitleText">Passerelles</span></h3>
+      <div class="js-accordion__panel">
+        <p>Passerelles La mobilité géographique est possible.</p>
+      </div>
     </div>
   </div>
   <div class="landing-page__block block_reinsurance"><p>14 campus dont Connect</p></div>
@@ -155,6 +168,17 @@ class TestFormationPage:
         assert "### Mastère 1 — Module 1\n- Fondamentaux du ML" in programme
         assert "### Mastère 2 — Module 1\n- Systèmes RAG avancés" in programme
 
+    def test_tarifs_keep_prices_but_not_shared_payment_terms(self):
+        tarifs = dict(parse_formation_page(FORMATION_HTML)["sections"])["Tarifs"]
+        assert tarifs == "Mastère 1 : 9 000 €"
+
+    def test_keep_generic_returns_boilerplate_for_build_common(self):
+        sections = dict(parse_formation_page(FORMATION_HTML, keep_generic=True)["sections"])
+        assert "Moodle" in sections["Méthodes mobilisées"]
+        assert "4 échéances" in sections["Tarifs"]
+        # the panel repeating its own title is trimmed
+        assert sections["Passerelles"] == "La mobilité géographique est possible."
+
     def test_last_modified_goes_to_metadata(self):
         assert parse_formation_page(FORMATION_HTML)["last_modified"] == "01/10/26"
 
@@ -189,3 +213,63 @@ class TestLoadHtml:
     def test_load_directory_picks_up_html(self, tmp_path: Path):
         _write_page(tmp_path)
         assert len(load_directory(tmp_path)) == 5
+
+
+INFO_HTML = """<!doctype html><html><body><main>
+  <div class="HeroBanner"><h1>Admission - Comment rejoindre Ynov</h1></div>
+  <div class="ezlandingpage-field">
+    <div class="landing-page__block" id="Menu-d-ancres"><ul><li>Profil</li></ul></div>
+    <div class="landing-page__block" id="Processus"><h2>Un processus clair</h2></div>
+    <div class="landing-page__block" id="Processus"><h3>1</h3><p>Tu candidates en ligne.</p></div>
+    <div class="landing-page__block" id="FAQ">
+      <h2>Coordonnées</h2>
+      <p>email : <a href="/cdn-cgi/l/email-protection" class="__cf_email__"
+         data-cfemail="72111d1c061311065f0213001b01320b1c1d045c111d1f">[email&#160;protected]</a></p>
+    </div>
+    <div class="landing-page__block" id="Reassurance"><p>14 campus</p></div>
+    <div class="landing-page__block"><p>Date de dernière modification : 01/10/2026</p></div>
+  </div>
+</main></body></html>
+"""
+
+
+class TestInfoPage:
+    def test_sections_merge_headingless_blocks_and_skip_chrome(self):
+        page = parse_info_page(INFO_HTML)
+        assert page["title"] == "Admission - Comment rejoindre Ynov"
+        assert page["last_modified"] == "01/10/2026"
+        assert [t for t, _ in page["sections"]] == ["Un processus clair", "Coordonnées"]
+        assert "Tu candidates en ligne." in dict(page["sections"])["Un processus clair"]
+        assert "14 campus" not in "\n".join(b for _, b in page["sections"])
+
+    def test_cloudflare_emails_are_decoded(self):
+        coords = dict(parse_info_page(INFO_HTML)["sections"])["Coordonnées"]
+        assert "contact-paris@ynov.com" in coords
+        assert "protected" not in coords
+
+    def test_info_page_loads_with_page_title_prefix(self, tmp_path: Path):
+        page = tmp_path / "condition-admission.html"
+        page.write_text(INFO_HTML, encoding="utf-8")
+        (tmp_path / "condition-admission.manifest.yml").write_text(MANIFEST, encoding="utf-8")
+        docs = load_file(page)
+        assert docs[0]["prefix"] == "Admission - Comment rejoindre Ynov — Un processus clair\n"
+        assert docs[0]["metadata"]["last_modified"] == "01/10/2026"
+
+
+class TestBuildCommon:
+    def test_gathers_boilerplate_once_and_keeps_particularities(self, tmp_path: Path):
+        (tmp_path / "a.html").write_text(FORMATION_HTML, encoding="utf-8")
+        (tmp_path / "b.html").write_text(FORMATION_HTML, encoding="utf-8")
+        (tmp_path / "c.html").write_text(
+            FORMATION_HTML.replace("LinkedIn Learning, Moodle", "Pronote uniquement, rien d'autre"),
+            encoding="utf-8",
+        )
+        md = build(tmp_path)
+        assert md.count("## Méthodes mobilisées\n") == 1
+        assert "S'applique aux formations : Mastères." in md
+        assert "## Méthodes mobilisées — particularité : Mastère Expert en intelligence" in md
+        assert "Pronote uniquement" in md
+        assert "## Modalités de paiement et prise en charge des frais" in md
+        assert "### Alternance" in md
+        assert "4 échéances" in md
+        assert "9 000 €" not in md  # prices stay on the formation pages

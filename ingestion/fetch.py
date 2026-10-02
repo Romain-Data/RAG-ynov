@@ -1,9 +1,11 @@
-"""Download ynov.com formation pages into data/ with their sidecar manifest.
+"""Download ynov.com pages into data/ with their sidecar manifest.
 
 Usage:
     uv run python -m ingestion.fetch <url> [<url> ...] [--out data/formations]
     uv run python -m ingestion.fetch --sitemap   # every Bachelor, BTS and Mastère page
+    uv run python -m ingestion.fetch --common    # admission, alternance, VAE… pages
 
+Formation pages go to data/formations, info pages (--common) to data/common.
 The HTML is always refreshed; an existing manifest is left untouched so manual
 edits survive a re-fetch.
 """
@@ -16,14 +18,32 @@ from urllib.parse import urlparse
 import httpx
 import yaml
 
-from ingestion.html_loader import is_formation_page, parse_formation_page
+from ingestion.html_loader import (
+    is_formation_page,
+    is_info_page,
+    parse_formation_page,
+    parse_info_page,
+)
 
 USER_AGENT = "Mozilla/5.0 (compatible; rag-ynov/0.1)"
 DELAY_SECONDS = 1.0
+BASE_URL = "https://www.ynov.com"
 # Formation detail pages only. The other formation sitemaps list filière/campus index pages.
 FORMATION_SITEMAPS = (
-    "https://www.ynov.com/sitemap.site_mastere_univers.xml",
-    "https://www.ynov.com/sitemap.site_bachelor_univers.xml",
+    f"{BASE_URL}/sitemap.site_mastere_univers.xml",
+    f"{BASE_URL}/sitemap.site_bachelor_univers.xml",
+)
+# Ynov-wide info linked from every formation page. Left out: /candidature (the form, its
+# text is a subset of condition-admission), /faq (an index) and the /faq/* articles (old
+# SEO content contradicting current terms, e.g. half-day classes, "frais de dossier").
+COMMON_PAGES = (
+    "/experience-ynov/condition-admission",
+    "/alternance",
+    "/experience-ynov/centre-de-formation-des-apprentis",
+    "/experience-ynov/vae-ynov",
+    "/handicap",
+    "/guide-parents-scolarite-enfant",
+    "/experience-ynov/certification-qualiopi",
 )
 
 
@@ -37,10 +57,23 @@ def sitemap_urls() -> list[str]:
 
 
 def build_manifest(url: str, filename: str, html: str) -> dict:
+    path_parts = urlparse(url).path.strip("/").split("/")
+    if is_info_page(html):
+        page = parse_info_page(html)
+        modified = re.search(r"(\d{4})$", page["last_modified"] or "")
+        return {
+            "source": filename,
+            "doc_type": "info",
+            "program": None,
+            "year": int(modified.group(1)) if modified else None,
+            "title": page["title"],
+            "language": "fr",
+            "extra": {"url": url},
+        }
+
     page = parse_formation_page(html)
     key_info = dict(page["sections"]).get("Infos clés", "")
     year = re.search(r"Prochaine rentrée : \S+ (\d{4})", key_info)
-    path_parts = urlparse(url).path.strip("/").split("/")
     return {
         "source": filename,
         "doc_type": "formation",
@@ -59,8 +92,8 @@ def fetch(url: str, out_dir: Path) -> Path:
     resp = httpx.get(url, headers={"User-Agent": USER_AGENT}, follow_redirects=True, timeout=30)
     resp.raise_for_status()
     html = resp.text
-    if not is_formation_page(html):
-        raise ValueError(f"Not a ynov.com formation page: {url}")
+    if not (is_formation_page(html) or is_info_page(html)):
+        raise ValueError(f"Not a ynov.com formation or info page: {url}")
 
     slug = urlparse(url).path.strip("/").split("/")[-1]
     html_path = out_dir / f"{slug}.html"
@@ -79,22 +112,29 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("urls", nargs="*")
     parser.add_argument("--sitemap", action="store_true", help="fetch all formation pages")
+    parser.add_argument("--common", action="store_true", help="fetch Ynov-wide info pages")
     parser.add_argument("--out", type=Path, default=Path("data/formations"))
+    parser.add_argument("--common-out", type=Path, default=Path("data/common"))
     args = parser.parse_args()
-    urls = args.urls + (sitemap_urls() if args.sitemap else [])
-    if not urls:
-        parser.error("give at least one URL or --sitemap")
+
+    jobs = [(url, args.out) for url in args.urls]
+    if args.sitemap:
+        jobs += [(url, args.out) for url in sitemap_urls()]
+    if args.common:
+        jobs += [(BASE_URL + path, args.common_out) for path in COMMON_PAGES]
+    if not jobs:
+        parser.error("give at least one URL, --sitemap or --common")
 
     failures = []
-    for i, url in enumerate(urls):
+    for i, (url, out_dir) in enumerate(jobs):
         if i:
             time.sleep(DELAY_SECONDS)
         try:
-            print(fetch(url, args.out))
+            print(fetch(url, out_dir))
         except (httpx.HTTPError, ValueError) as exc:
             failures.append(url)
             print(f"SKIPPED {url}: {exc}")
-    print(f"{len(urls) - len(failures)}/{len(urls)} pages fetched")
+    print(f"{len(jobs) - len(failures)}/{len(jobs)} pages fetched")
 
 
 if __name__ == "__main__":

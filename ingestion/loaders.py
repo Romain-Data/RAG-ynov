@@ -1,10 +1,17 @@
 """Document loaders for various formats."""
+import re
 from pathlib import Path
 
 import yaml
 from pypdf import PdfReader
 
-from ingestion.html_loader import is_formation_page, parse_formation_page, parse_generic_page
+from ingestion.html_loader import (
+    is_formation_page,
+    is_info_page,
+    parse_formation_page,
+    parse_generic_page,
+    parse_info_page,
+)
 
 HTML_SUFFIXES = (".html", ".htm")
 SUPPORTED_SUFFIXES = (".md", ".pdf", *HTML_SUFFIXES)
@@ -32,15 +39,37 @@ def _merge_metadata(base: dict, manifest: dict) -> dict:
 
 
 def load_markdown(path: Path) -> list[dict]:
-    """Load a markdown file, return list of {text, metadata}."""
+    """Load a markdown file, return list of {text, metadata, prefix}.
+
+    Split on level-2 headings ("## "): one document per section, like HTML pages, with
+    "<# title> — <## section>" as chunk prefix. A file without "## " is one document.
+    """
     text = path.read_text(encoding="utf-8")
     manifest = _load_manifest(path)
-    base_meta = {"source": path.name, "page": 1, "section": None}
-    metadata = _merge_metadata(base_meta, manifest)
-    return [{
-        "text": text,
-        "metadata": metadata,
-    }]
+    title_match = re.search(r"^# (.+)$", text, re.MULTILINE)
+    doc_title = title_match.group(1).strip() if title_match else manifest.get("title", "")
+
+    parts = re.split(r"^## (.+)$", text, flags=re.MULTILINE)
+    if len(parts) == 1:
+        base_meta = {"source": path.name, "page": 1, "section": None}
+        return [{"text": text, "metadata": _merge_metadata(base_meta, manifest)}]
+
+    # parts = [intro, heading1, body1, heading2, body2, ...]
+    intro = re.sub(r"^# .+$", "", parts[0], flags=re.MULTILINE).strip()
+    sections = [(doc_title, intro)] if intro else []
+    sections += [(h.strip(), b.strip()) for h, b in zip(parts[1::2], parts[2::2], strict=True)]
+
+    docs = []
+    for section, body in sections:
+        if not body:
+            continue
+        base_meta = {"source": path.name, "page": 1, "section": section}
+        docs.append({
+            "text": body,
+            "metadata": _merge_metadata(base_meta, manifest),
+            "prefix": f"{doc_title} — {section}\n" if doc_title else f"{section}\n",
+        })
+    return docs
 
 
 def load_pdf(path: Path) -> list[dict]:
@@ -63,13 +92,28 @@ def load_pdf(path: Path) -> list[dict]:
 def load_html(path: Path) -> list[dict]:
     """Load an HTML page, return list of {text, metadata, prefix}.
 
-    ynov.com formation pages yield one document per section, with boilerplate removed
-    (see ingestion.html_loader). `prefix` ("<formation> — <section>") is prepended to
-    every chunk so chunks from the middle of a section still say what they are about.
+    ynov.com formation and info pages yield one document per section, with boilerplate
+    removed (see ingestion.html_loader). `prefix` ("<formation> — <section>") is prepended
+    to every chunk so chunks from the middle of a section still say what they are about.
     Other HTML falls back to a single document of the main content.
     """
     html = path.read_text(encoding="utf-8")
     manifest = _load_manifest(path)
+
+    if is_info_page(html):
+        info = parse_info_page(html)
+        return [
+            {
+                "text": body,
+                "metadata": _merge_metadata(
+                    {"source": path.name, "page": 1, "section": title,
+                     "last_modified": info["last_modified"]},
+                    manifest,
+                ),
+                "prefix": f"{info['title']} — {title}\n",
+            }
+            for title, body in info["sections"]
+        ]
 
     if not is_formation_page(html):
         base_meta = {"source": path.name, "page": 1, "section": None}

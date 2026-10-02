@@ -1,10 +1,14 @@
-"""HTML parsing for scraped ynov.com formation pages.
+"""HTML parsing for scraped ynov.com pages.
 
 A formation page is a stack of CMS blocks (`div.landing-page__block.block_*`).
 We keep the blocks that describe *this* formation and drop navigation, CTAs and
 boilerplate repeated on every formation page, so the index is not flooded with
 near-identical chunks. Each kept section becomes one document, so chunks never
 straddle two sections and carry their section title in metadata.
+
+The boilerplate dropped here is not lost: ingestion.build_common gathers it into a
+single "informations communes" document. Info pages (admission, alternance, VAE…)
+use another template and are parsed by parse_info_page.
 """
 import re
 import unicodedata
@@ -22,19 +26,32 @@ EXCLUDED_BLOCKS = {
 }
 
 # Accordion sections whose content is Ynov-wide boilerplate (>= 80 % identical across
-# the 42 formation pages). Matched on the normalized title: lowercase, no accents, straight
-# quotes, leading article dropped ("Les modalités…" == "Modalités…").
-# Tarifs is deliberately NOT here: the wording is shared but the prices differ.
+# the 42 formation pages, one variant per diploma type at most). Matched on the normalized
+# title: lowercase, no accents, straight quotes, leading article dropped.
+# Not here: Tarifs (shared wording, different prices) and évaluations certificatives
+# (7 variants, the jury and rules depend on the RNCP title).
 GENERIC_SECTIONS = {
     "processus d'admission",
     "voie d'acces",
     "methodes mobilisees",
     "modalites d'evaluation continue",
-    "modalites d'evaluation certificative",
-    "modalites d'evaluation certificatives",
-    "modalites d'evaluations certificatives",
     "passerelles",
     "accessibilite aux personnes en situation de handicap",
+}
+
+# Tarifs lines shared by every formation (payment terms, alternance, formation continue).
+# Removed from each formation's Tarifs section, kept once in the common document.
+TARIF_BOILERPLATE_PREFIXES = (
+    "le paiement comptant correspond",
+    "le paiement echelonne correspond",
+    "les frais de formation sont pris en charge",
+    "pour toute demande d'inscription dans le cadre d'une action de formation",
+)
+TARIF_BOILERPLATE_HEADERS = {"alternance", "formation professionnelle continue"}
+
+# Info-page blocks (CMS block id) that carry no content.
+EXCLUDED_INFO_BLOCK_IDS = {
+    "Menu-d-ancres", "Reassurance", "Slider-Logo", "Separateur", "Media-Simple",
 }
 
 _BLOCK_TAGS = {"p", "div", "li", "ul", "ol", "h1", "h2", "h3", "h4", "h5", "h6", "section"}
@@ -49,6 +66,32 @@ def _normalize_title(title: str) -> str:
 
 def _is_generic(title: str) -> bool:
     return re.sub(r"^(les|le|la) ", "", _normalize_title(title)) in GENERIC_SECTIONS
+
+
+def _decode_cf_emails(soup: BeautifulSoup) -> None:
+    """Replace Cloudflare-obfuscated e-mails ("[email\xa0protected]") with the address.
+
+    The hex payload is XOR-encoded with its first byte as the key.
+    """
+    def decode(hex_str: str) -> str:
+        key = int(hex_str[:2], 16)
+        return "".join(chr(int(hex_str[i:i + 2], 16) ^ key) for i in range(2, len(hex_str), 2))
+
+    for el in soup.select("[data-cfemail]"):
+        el.replace_with(NavigableString(decode(str(el["data-cfemail"]))))
+    for a in soup.select('a[href*="/cdn-cgi/l/email-protection#"]'):
+        address = decode(str(a["href"]).split("#", 1)[1])
+        a.replace_with(NavigableString(address))
+
+
+def _strip_tarif_boilerplate(text: str) -> str:
+    kept = []
+    for line in text.splitlines():
+        norm = _normalize_title(line)
+        if norm in TARIF_BOILERPLATE_HEADERS or norm.startswith(TARIF_BOILERPLATE_PREFIXES):
+            continue
+        kept.append(line)
+    return "\n".join(kept)
 
 
 def _clean(text: str) -> str:
@@ -70,7 +113,9 @@ def _to_text(el: Tag) -> str:
         else:
             block.insert(0, NavigableString("\n"))
         block.append(NavigableString("\n"))
-    lines = (_clean(line) for line in el.get_text("").split("\n"))
+    # "http://name@ynov.com": a mailto mistyped as a URL on the site
+    text = re.sub(r"\bhttps?://([\w.+-]+@[\w-]+\.[\w.]+)", r"\1", el.get_text(""))
+    lines = (_clean(line) for line in text.split("\n"))
     return "\n".join(line for line in lines if line and not re.fullmatch(r"-+", line))
 
 
@@ -154,7 +199,9 @@ def _programme_years(content: Tag) -> str:
     return "\n".join(parts)
 
 
-def _accordion_sections(block: Tag, item_cls: str, title_cls: str) -> list[tuple[str, str]]:
+def _accordion_sections(
+    block: Tag, item_cls: str, title_cls: str, keep_generic: bool
+) -> list[tuple[str, str]]:
     sections = []
     for item in block.select(f".{item_cls}"):
         title_el = item.find(class_=title_cls)
@@ -162,20 +209,27 @@ def _accordion_sections(block: Tag, item_cls: str, title_cls: str) -> list[tuple
         if not title_el or not panel:
             continue
         title = _clean(title_el.get_text(" "))
-        if _is_generic(title):
+        if _is_generic(title) and not keep_generic:
             continue
         programme = _programme_years(panel) if panel.select_one(".ProgramYears-Year") else ""
         body = "\n".join(t for t in (_to_text(panel), programme) if t)
+        # Some panels repeat their own title as first words ("Passerelles Ce programme…")
+        if _normalize_title(body).startswith(_normalize_title(title)):
+            body = body[len(title):].lstrip(" \n:")
+        if title == "Tarifs" and not keep_generic:
+            body = _strip_tarif_boilerplate(body)
         sections.append((title, body))
     return sections
 
 
-def parse_formation_page(html: str) -> dict:
+def parse_formation_page(html: str, keep_generic: bool = False) -> dict:
     """Parse a ynov.com formation page.
 
     Returns {"formation", "campuses", "last_modified", "sections": [(title, text)]}.
+    keep_generic=True keeps the boilerplate sections and Tarifs lines (for build_common).
     """
     soup = BeautifulSoup(html, "html.parser")
+    _decode_cf_emails(soup)
     main = soup.find("main") or soup
     formation = _formation_name(main)
     key_info, campuses = _key_info(main)
@@ -198,10 +252,13 @@ def parse_formation_page(html: str) -> dict:
             presentation.append(_to_text(block))
         elif btype == "block_programme_details":
             sections += _accordion_sections(
-                block, "Bloc-ProgrammeDetails-Item", "Bloc-ProgrammeDetails-Item-Title"
+                block, "Bloc-ProgrammeDetails-Item", "Bloc-ProgrammeDetails-Item-Title",
+                keep_generic,
             )
         elif btype == "block_faq":
-            sections += _accordion_sections(block, "Bloc-Faq-Item", "Bloc-Faq-TitleText")
+            sections += _accordion_sections(
+                block, "Bloc-Faq-Item", "Bloc-Faq-TitleText", keep_generic
+            )
         elif btype == "block_keyword_cloud" and block.get("id") != "poursuites":
             continue  # "Les autres BTS…": a link list to other formations
         else:
@@ -226,9 +283,55 @@ def is_formation_page(html: str) -> bool:
     return "landing-page__block" in html and "block_sticky_formation" in html
 
 
+def is_info_page(html: str) -> bool:
+    """ynov.com editorial page (admission, alternance, VAE…), not a formation page."""
+    return "ezlandingpage-field" in html and not is_formation_page(html)
+
+
+def parse_info_page(html: str) -> dict:
+    """Parse a ynov.com info page into sections, one per CMS block with a heading.
+
+    Blocks without a heading continue the previous section (e.g. the admission steps).
+    Returns {"title", "last_modified", "sections": [(title, text)]}.
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    _decode_cf_emails(soup)
+    main = soup.find("main") or soup
+    h1 = main.find("h1")
+    title = _clean(h1.get_text(" ")) if h1 else ""
+
+    sections: list[list[str]] = []
+    last_modified = None
+    for block in main.select("div.landing-page__block"):
+        if block.get("id") in EXCLUDED_INFO_BLOCK_IDS:
+            continue
+        match = re.search(r"Date de dernière modification\s*:\s*(\S+)", block.get_text(" "))
+        if match:
+            last_modified = match.group(1)
+            continue
+        heading = block.find(["h2", "h3"])
+        heading_text = _clean(heading.get_text(" ")) if heading else ""
+        text = _to_text(block)
+        if not text:
+            continue
+        if heading_text and not heading_text.isdigit():
+            sections.append([heading_text, text])
+        elif sections:
+            sections[-1][1] += "\n" + text
+        else:
+            sections.append([title, text])
+
+    return {
+        "title": title,
+        "last_modified": last_modified,
+        "sections": [(t, b) for t, b in sections],
+    }
+
+
 def parse_generic_page(html: str) -> str:
     """Fallback for non-Ynov HTML: main content without page chrome."""
     soup = BeautifulSoup(html, "html.parser")
+    _decode_cf_emails(soup)
     root = soup.find("main") or soup.body or soup
     for chrome in root.find_all(["nav", "header", "footer", "aside"]):
         chrome.decompose()
