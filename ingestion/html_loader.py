@@ -136,9 +136,24 @@ def _split_campuses(raw: str) -> list[str]:
     return [p.strip() for p in parts if p.strip()]
 
 
-def _key_info(soup: Tag) -> tuple[str, list[str]]:
-    """Hero + recap card (rentrée, durée, niveau, campus). Returns (text, campuses)."""
+# Recap-card facts written as question + answer: the paraphrase embedding model matches
+# a user question far better against a question than against "Durée : 2 ans".
+_KEY_QUESTIONS = {
+    "prochaine rentrée": "Quand a lieu la prochaine rentrée de la formation {name} ? {value}.",
+    "durée": "Combien de temps dure la formation {name} ? {value}.",
+    "niveau d'entrée": "Quel niveau faut-il pour entrer dans la formation {name} ? {value}.",
+}
+
+
+def _key_info(soup: Tag, name: str) -> dict:
+    """Hero + recap card (rentrée, durée, niveau, campus).
+
+    Returns {"text", "places", "campuses", "online", "duration"}: `text` holds the key
+    facts, `places` where the formation is taught (its own section, so a "où / dans
+    quelles villes" question finds a short, focused chunk).
+    """
     lines = []
+    duration = ""
     hero = soup.select_one(".HeroFormation-Content")
     if hero:
         for cls in ("HeroFormation-Subtitle", "HeroFormation-Rncp"):
@@ -160,25 +175,45 @@ def _key_info(soup: Tag) -> tuple[str, list[str]]:
             elif key.lower() == "connect":
                 online = True
             else:
-                lines.append(f"{key} : {value}")
+                template = _KEY_QUESTIONS.get(key.lower(), "{key} : {value}")
+                lines.append(template.format(name=name, key=key, value=value))
+                if key.lower().startswith("durée"):
+                    duration = value
 
-    # Campus lines are replaced by a sentence spelling the count out: the page footer
-    # advertises Ynov's 14 campus overall, and the LLM must not confuse that with where
-    # *this* formation is taught.
+    # The count is spelled out: the page footer advertises Ynov's 14 campus overall, and
+    # the LLM must not confuse that with where *this* formation is taught.
+    question = f"Où est proposée la formation {name}, dans quelles villes ?"
     if campuses:
-        sentence = (
-            f"Cette formation est proposée sur {len(campuses)} campus Ynov : "
-            f"{', '.join(campuses)}."
-        )
+        if len(campuses) == 1:
+            places = f"{question} Uniquement à {campuses[0]} (un seul campus Ynov)."
+        else:
+            places = (f"{question} Dans {len(campuses)} villes (campus Ynov) : "
+                      f"{', '.join(campuses)}.")
         if online:
-            sentence += " Elle est aussi disponible 100 % en ligne via Ynov Connect."
-        lines.append(sentence)
+            places += " Elle est aussi disponible 100 % en ligne via Ynov Connect."
     elif online:
-        lines.append(
-            "Cette formation est proposée uniquement 100 % en ligne via Ynov Connect, "
-            "sur aucun campus physique."
-        )
-    return "\n".join(lines), campuses
+        places = (f"{question} Uniquement 100 % en ligne via Ynov Connect, "
+                  "sur aucun campus physique.")
+    else:
+        places = ""
+    return {"text": "\n".join(lines), "places": places, "campuses": campuses,
+            "online": online, "duration": duration}
+
+
+def _key_facts(info: dict) -> str:
+    """Short "durée, lieux" summary added to every chunk prefix of the formation, so a
+    chunk about tarifs or admission still says how and where it is taught. Kept short:
+    the embedding model only reads 128 tokens (the full campus list is in Infos clés)."""
+    count = len(info["campuses"])
+    if count:
+        where = f"{count} campus" if count > 1 else f"campus de {info['campuses'][0]}"
+        if info["online"]:
+            where += " et en ligne"
+    elif info["online"]:
+        where = "100 % en ligne, aucun campus"
+    else:
+        where = ""
+    return ", ".join(f for f in (info["duration"], where) if f)
 
 
 def _programme_years(content: Tag) -> str:
@@ -225,16 +260,20 @@ def _accordion_sections(
 def parse_formation_page(html: str, keep_generic: bool = False) -> dict:
     """Parse a ynov.com formation page.
 
-    Returns {"formation", "campuses", "last_modified", "sections": [(title, text)]}.
+    Returns {"formation", "campuses", "key_facts", "last_modified",
+    "sections": [(title, text)]}.
     keep_generic=True keeps the boilerplate sections and Tarifs lines (for build_common).
     """
     soup = BeautifulSoup(html, "html.parser")
     _decode_cf_emails(soup)
     main = soup.find("main") or soup
     formation = _formation_name(main)
-    key_info, campuses = _key_info(main)
+    info = _key_info(main, formation)
+    key_info, campuses = info["text"], info["campuses"]
 
     sections: list[tuple[str, str]] = [("Infos clés", key_info)] if key_info else []
+    if info["places"]:
+        sections.append(("Lieux", info["places"]))
     presentation: list[str] = []
     last_modified = None
 
@@ -269,11 +308,13 @@ def parse_formation_page(html: str, keep_generic: bool = False) -> dict:
                 sections.append((title, text))
 
     if presentation:
-        sections.insert(1 if key_info else 0, ("Présentation", "\n".join(presentation)))
+        sections.insert(len(sections) if not sections else 1 + bool(info["places"]),
+                        ("Présentation", "\n".join(presentation)))
 
     return {
         "formation": formation,
         "campuses": campuses,
+        "key_facts": _key_facts(info),
         "last_modified": last_modified,
         "sections": [(t, b) for t, b in sections if b.strip()],
     }

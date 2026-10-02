@@ -49,6 +49,15 @@ def _fiche(attested: str = f"<p>{_SKILL_1}</p><p>{_SKILL_2}</p>", status: str = 
     </div>
   </div>
   <div class="accordion--fcpt-certification">
+    <button class="accordion--fcpt-certification__button">Liens</button>
+    <div class="accordion--fcpt-certification__content">
+      <div class="text--fcpt-certification">
+        <h3>Certifications professionnelles enregistrées au RNCP en correspondance partielle :</h3>
+        <p>RNCP12345BC01 - Un bloc d'une autre certification</p>
+      </div>
+    </div>
+  </div>
+  <div class="accordion--fcpt-certification">
     <button class="accordion--fcpt-certification__button">Pour plus d'informations</button>
     <div class="accordion--fcpt-certification__content">
       <div class="text--fcpt-certification">
@@ -75,6 +84,10 @@ class TestParseRncpPage:
         assert bloc.startswith("Liste de compétences : ")
         assert "Modalités d'évaluation : Étude de cas" in bloc
         assert "Référentiel d'activité, de compétences et d'évaluation" not in sections
+
+    def test_equivalence_sections_are_skipped(self):
+        titles = [t for t, _ in parse_rncp_page(_fiche())["sections"]]
+        assert not any(t.startswith("Certifications professionnelles") for t in titles)
 
     def test_attested_skills_dropped_when_restating_blocs(self):
         assert "Compétences attestées" not in dict(parse_rncp_page(_fiche())["sections"])

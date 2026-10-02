@@ -2,11 +2,17 @@
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
+# The embedding model (paraphrase-multilingual-MiniLM-L12-v2) truncates its input at
+# 128 tokens: anything beyond is invisible to retrieval. ~300 characters of French plus
+# the context prefix fit in that budget (500 left half of the chunks truncated).
+CHUNK_SIZE = 300
+CHUNK_OVERLAP = 50
+
 
 def chunk_documents(
     documents: list[dict],
-    chunk_size: int = 500,
-    chunk_overlap: int = 50,
+    chunk_size: int = CHUNK_SIZE,
+    chunk_overlap: int = CHUNK_OVERLAP,
 ) -> list[dict]:
     """
     Split documents into chunks.

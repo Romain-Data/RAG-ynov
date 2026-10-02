@@ -95,3 +95,4 @@ dmypy.json
 # AI
 .claude/
 .mcp*
+.eval_qdrant/

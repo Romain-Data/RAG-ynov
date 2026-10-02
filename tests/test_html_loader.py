@@ -129,6 +129,7 @@ class TestFormationPage:
         titles = [t for t, _ in page["sections"]]
         assert titles == [
             "Infos clés",
+            "Lieux",
             "Présentation",
             "Programme du Mastère",
             "Tarifs",
@@ -141,11 +142,30 @@ class TestFormationPage:
 
     def test_campus_count_is_explicit_and_not_duplicated(self):
         page = parse_formation_page(FORMATION_HTML)
-        key_info = dict(page["sections"])["Infos clés"]
+        places = dict(page["sections"])["Lieux"]
         assert page["campuses"] == ["Lyon", "Paris", "Strasbourg"]
-        assert "proposée sur 3 campus Ynov : Lyon, Paris, Strasbourg." in key_info
-        assert "en ligne via Ynov Connect" in key_info
-        assert key_info.count("Lyon") == 1  # recap card is rendered twice in the page
+        assert places.startswith("Où est proposée la formation Mastère Expert en intelligence")
+        assert "Dans 3 villes (campus Ynov) : Lyon, Paris, Strasbourg." in places
+        assert "en ligne via Ynov Connect" in places
+        assert places.count("Lyon") == 1  # recap card is rendered twice in the page
+        assert "Lyon" not in dict(page["sections"])["Infos clés"]
+
+    def test_single_campus_wording(self):
+        one = FORMATION_HTML.replace("""Lyon,
+        Paris,
+        et
+        Strasbourg""", "Strasbourg")
+        places = dict(parse_formation_page(one)["sections"])["Lieux"]
+        assert places.endswith("Uniquement à Strasbourg (un seul campus Ynov). "
+                               "Elle est aussi disponible 100 % en ligne via Ynov Connect.")
+
+    def test_key_facts_are_written_as_questions(self):
+        key_info = dict(parse_formation_page(FORMATION_HTML)["sections"])["Infos clés"]
+        assert ("Quand a lieu la prochaine rentrée de la formation Mastère Expert en "
+                "intelligence artificielle ? Septembre 2027.") in key_info
+
+    def test_key_facts_summary(self):
+        assert parse_formation_page(FORMATION_HTML)["key_facts"] == "3 campus et en ligne"
 
     def test_online_only_formation_says_so(self):
         online_only = FORMATION_HTML.replace(
@@ -157,7 +177,8 @@ class TestFormationPage:
         )
         page = parse_formation_page(online_only)
         assert page["campuses"] == []
-        assert "uniquement 100 % en ligne via Ynov Connect" in dict(page["sections"])["Infos clés"]
+        assert "Uniquement 100 % en ligne via Ynov Connect" in dict(page["sections"])["Lieux"]
+        assert page["key_facts"] == "100 % en ligne, aucun campus"
 
     def test_generic_title_matching_ignores_leading_article(self):
         html = FORMATION_HTML.replace("Méthodes mobilisées", "Les méthodes mobilisées")
@@ -186,7 +207,7 @@ class TestFormationPage:
 class TestLoadHtml:
     def test_one_document_per_section_with_metadata(self, tmp_path: Path):
         docs = load_file(_write_page(tmp_path))
-        assert len(docs) == 5
+        assert len(docs) == 6
         meta = docs[0]["metadata"]
         assert meta["section"] == "Infos clés"
         assert meta["formation"] == "Mastère Expert en intelligence artificielle"
@@ -197,7 +218,8 @@ class TestLoadHtml:
         chunks = chunk_documents(load_file(_write_page(tmp_path)), chunk_size=60, chunk_overlap=0)
         programme = [c for c in chunks if c["metadata"]["section"] == "Programme du Mastère"]
         assert len(programme) > 1
-        prefix = "Mastère Expert en intelligence artificielle — Programme du Mastère\n"
+        prefix = ("Mastère Expert en intelligence artificielle (3 campus et en ligne) — "
+                  "Programme du Mastère\n")
         assert all(c["text"].startswith(prefix) for c in programme)
 
     def test_generic_html_fallback(self, tmp_path: Path):
@@ -212,7 +234,7 @@ class TestLoadHtml:
 
     def test_load_directory_picks_up_html(self, tmp_path: Path):
         _write_page(tmp_path)
-        assert len(load_directory(tmp_path)) == 5
+        assert len(load_directory(tmp_path)) == 6
 
 
 INFO_HTML = """<!doctype html><html><body><main>

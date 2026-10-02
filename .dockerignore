@@ -18,3 +18,4 @@ tests
 data
 !data/samples
 !data/samples/**
+.eval_qdrant
