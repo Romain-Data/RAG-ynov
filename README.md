@@ -56,6 +56,10 @@ curl -X POST http://localhost:8000/api/query \
   -d '{"question": "Quels sont les frais de scolarité ?"}'
 ```
 
+## Roadmap
+
+The project plan lives in [ROADMAP.md](ROADMAP.md), each item tracked in a GitHub issue labelled `roadmap`.
+
 ## Project Structure
 
 ```
