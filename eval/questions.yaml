@@ -21,6 +21,7 @@
 #   v4  ids and answer checks added; retrieval criteria unchanged from v3
 #   v5  q17-q26 out-of-scope questions, to calibrate the grading threshold (EC-02);
 #       q16 answer_must_not (other BTS named or "all BTS", EC-13)
+#   v6  q07 answer check: the 500 € discount only ("9 500 €" matched before)
 
 - id: q01
   question: Combien coûte le Mastère Expert en intelligence artificielle ?
@@ -71,7 +72,8 @@
   expect:
     - {source: informations-communes-formations.md, section: Modalités de paiement}
     - {source: condition-admission.html, section: Financement des études}
-  answer_must: ['4 échéances|quatre échéances|4 fois', '500']
+  # the 500 € discount for paying upfront; plain '500' also matched "9 500 €" (v6)
+  answer_must: ['4 échéances|quatre échéances|4 fois', '(?<![0-9  ])500 ?(€|euros)']
 
 - id: q08
   question: Quels sont les blocs de compétences du titre RNCP Expert en cybersécurité ?

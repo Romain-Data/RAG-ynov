@@ -33,7 +33,7 @@ import yaml
 EVAL_DIR = Path(__file__).parent
 RESULTS_DIR = EVAL_DIR / "results"
 QUESTIONS = EVAL_DIR / "questions.yaml"
-QUESTION_SET = "v5"
+QUESTION_SET = "v6"
 SCHEMA_VERSION = 1
 
 VERDICTS = ("correct", "partial", "wrong", "refused", "no_answer", "error")
