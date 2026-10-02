@@ -2,6 +2,7 @@
 
 Usage:
     uv run python -m ingestion.fetch <url> [<url> ...] [--out data/formations]
+    uv run python -m ingestion.fetch --sitemap   # every Bachelor, BTS and Mastère page
 
 The HTML is always refreshed; an existing manifest is left untouched so manual
 edits survive a re-fetch.
@@ -19,6 +20,20 @@ from ingestion.html_loader import is_formation_page, parse_formation_page
 
 USER_AGENT = "Mozilla/5.0 (compatible; rag-ynov/0.1)"
 DELAY_SECONDS = 1.0
+# Formation detail pages only. The other formation sitemaps list filière/campus index pages.
+FORMATION_SITEMAPS = (
+    "https://www.ynov.com/sitemap.site_mastere_univers.xml",
+    "https://www.ynov.com/sitemap.site_bachelor_univers.xml",
+)
+
+
+def sitemap_urls() -> list[str]:
+    urls: list[str] = []
+    for sitemap in FORMATION_SITEMAPS:
+        resp = httpx.get(sitemap, headers={"User-Agent": USER_AGENT}, timeout=30)
+        resp.raise_for_status()
+        urls += re.findall(r"<loc>\s*([^<\s]+)\s*</loc>", resp.text)
+    return sorted(set(urls))
 
 
 def build_manifest(url: str, filename: str, html: str) -> dict:
@@ -62,13 +77,24 @@ def fetch(url: str, out_dir: Path) -> Path:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("urls", nargs="+")
+    parser.add_argument("urls", nargs="*")
+    parser.add_argument("--sitemap", action="store_true", help="fetch all formation pages")
     parser.add_argument("--out", type=Path, default=Path("data/formations"))
     args = parser.parse_args()
-    for i, url in enumerate(args.urls):
+    urls = args.urls + (sitemap_urls() if args.sitemap else [])
+    if not urls:
+        parser.error("give at least one URL or --sitemap")
+
+    failures = []
+    for i, url in enumerate(urls):
         if i:
             time.sleep(DELAY_SECONDS)
-        print(fetch(url, args.out))
+        try:
+            print(fetch(url, args.out))
+        except (httpx.HTTPError, ValueError) as exc:
+            failures.append(url)
+            print(f"SKIPPED {url}: {exc}")
+    print(f"{len(urls) - len(failures)}/{len(urls)} pages fetched")
 
 
 if __name__ == "__main__":

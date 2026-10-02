@@ -134,6 +134,22 @@ class TestFormationPage:
         assert "en ligne via Ynov Connect" in key_info
         assert key_info.count("Lyon") == 1  # recap card is rendered twice in the page
 
+    def test_online_only_formation_says_so(self):
+        online_only = FORMATION_HTML.replace(
+            """Lyon,
+        Paris,
+        et
+        Strasbourg""",
+            "",
+        )
+        page = parse_formation_page(online_only)
+        assert page["campuses"] == []
+        assert "uniquement 100 % en ligne via Ynov Connect" in dict(page["sections"])["Infos clés"]
+
+    def test_generic_title_matching_ignores_leading_article(self):
+        html = FORMATION_HTML.replace("Méthodes mobilisées", "Les méthodes mobilisées")
+        assert "Moodle" not in "\n".join(b for _, b in parse_formation_page(html)["sections"])
+
     def test_modules_are_prefixed_with_their_year(self):
         programme = dict(parse_formation_page(FORMATION_HTML)["sections"])["Programme du Mastère"]
         assert "### Mastère 1 — Module 1\n- Fondamentaux du ML" in programme

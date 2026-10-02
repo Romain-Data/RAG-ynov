@@ -21,17 +21,18 @@ EXCLUDED_BLOCKS = {
     "block_jpo_banner",
 }
 
-# Accordion sections whose content is Ynov-wide boilerplate (>= 94 % identical across
-# formation pages). Matched on the normalized title (lowercase, no accents, straight quotes).
+# Accordion sections whose content is Ynov-wide boilerplate (>= 80 % identical across
+# the 42 formation pages). Matched on the normalized title: lowercase, no accents, straight
+# quotes, leading article dropped ("Les modalités…" == "Modalités…").
 # Tarifs is deliberately NOT here: the wording is shared but the prices differ.
 GENERIC_SECTIONS = {
-    "le processus d'admission",
+    "processus d'admission",
     "voie d'acces",
     "methodes mobilisees",
     "modalites d'evaluation continue",
-    "les modalites d'evaluations certificatives",
-    "les modalites d'evaluation certificative",
-    "les modalites d'evaluation certificatives",
+    "modalites d'evaluation certificative",
+    "modalites d'evaluation certificatives",
+    "modalites d'evaluations certificatives",
     "passerelles",
     "accessibilite aux personnes en situation de handicap",
 }
@@ -46,8 +47,12 @@ def _normalize_title(title: str) -> str:
     return re.sub(r"\s+", " ", title).strip().lower()
 
 
+def _is_generic(title: str) -> bool:
+    return re.sub(r"^(les|le|la) ", "", _normalize_title(title)) in GENERIC_SECTIONS
+
+
 def _clean(text: str) -> str:
-    return re.sub(r"\s+", " ", text.replace("​", "").replace("\xa0", " ")).strip()
+    return re.sub(r"\s+", " ", text.replace("\u200b", "").replace("\xa0", " ")).strip()
 
 
 def _to_text(el: Tag) -> str:
@@ -123,6 +128,11 @@ def _key_info(soup: Tag) -> tuple[str, list[str]]:
         if online:
             sentence += " Elle est aussi disponible 100 % en ligne via Ynov Connect."
         lines.append(sentence)
+    elif online:
+        lines.append(
+            "Cette formation est proposée uniquement 100 % en ligne via Ynov Connect, "
+            "sur aucun campus physique."
+        )
     return "\n".join(lines), campuses
 
 
@@ -152,7 +162,7 @@ def _accordion_sections(block: Tag, item_cls: str, title_cls: str) -> list[tuple
         if not title_el or not panel:
             continue
         title = _clean(title_el.get_text(" "))
-        if _normalize_title(title) in GENERIC_SECTIONS:
+        if _is_generic(title):
             continue
         programme = _programme_years(panel) if panel.select_one(".ProgramYears-Year") else ""
         body = "\n".join(t for t in (_to_text(panel), programme) if t)
