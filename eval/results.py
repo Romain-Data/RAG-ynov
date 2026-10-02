@@ -33,13 +33,15 @@ import yaml
 EVAL_DIR = Path(__file__).parent
 RESULTS_DIR = EVAL_DIR / "results"
 QUESTIONS = EVAL_DIR / "questions.yaml"
-QUESTION_SET = "v4"
+QUESTION_SET = "v5"
 SCHEMA_VERSION = 1
 
 VERDICTS = ("correct", "partial", "wrong", "refused", "no_answer", "error")
 # The LLM says it cannot answer from the context (prompt: "dis-le honnêtement").
 _NO_ANSWER = re.compile(
-    r"ne (contient|mentionne|précise) pas|pas d'information|ne peux (donc )?pas répondre",
+    r"ne (contient|mentionne|précise) pas|pas mentionnée?s?|pas d'information"
+    r"|ne peux (donc )?pas répondre|ne peux répondre qu'aux questions"
+    r"|uniquement (aux|sur les) questions",
     re.IGNORECASE,
 )
 
@@ -69,7 +71,10 @@ def check_answer(question: dict, answer: str, refused: bool = False) -> dict:
     must = {p: bool(re.search(p, text, re.IGNORECASE)) for p in question.get("answer_must", [])}
     must_not_hits = [p for p in question.get("answer_must_not", [])
                      if re.search(p, text, re.IGNORECASE)]
-    if refused:
+    if question.get("out_of_scope"):
+        # Nothing to answer: refusing (threshold) or declining (LLM) is the right outcome
+        verdict = "correct" if refused or _NO_ANSWER.search(text) else "wrong"
+    elif refused:
         verdict = "refused"
     elif must_not_hits:
         verdict = "wrong"
@@ -87,11 +92,24 @@ def check_answer(question: dict, answer: str, refused: bool = False) -> dict:
 def summarize(kind: str, results: list[dict]) -> dict:
     summary: dict = {"total": len(results), "passed": sum(bool(r["passed"]) for r in results)}
     if kind == "retrieval":
-        summary["refused_by_threshold"] = sum(bool(r.get("refused_by_threshold"))
-                                              for r in results)
+        # In-scope questions refused by the threshold are errors; out-of-scope ones
+        # refused are the expected outcome, counted apart.
+        summary["refused_by_threshold"] = sum(
+            bool(r.get("refused_by_threshold")) and not r.get("out_of_scope") for r in results)
+        summary["out_of_scope_refused"] = sum(
+            bool(r.get("refused_by_threshold")) and bool(r.get("out_of_scope"))
+            for r in results)
     else:
         for verdict in VERDICTS:
             summary[verdict] = sum(r.get("verdict") == verdict for r in results)
+        # Out-of-scope questions only check that nothing is answered: count them apart
+        in_scope = [r for r in results if not r.get("out_of_scope")]
+        if len(in_scope) < len(results):
+            summary["in_scope_total"] = len(in_scope)
+            summary["in_scope_correct"] = sum(r.get("verdict") == "correct" for r in in_scope)
+            summary["out_of_scope_total"] = len(results) - len(in_scope)
+            summary["out_of_scope_correct"] = sum(
+                r.get("verdict") == "correct" for r in results if r.get("out_of_scope"))
     return summary
 
 

@@ -8,11 +8,19 @@
 # Answers (eval/e2e.py): every `answer_must` regex must match the LLM answer and no
 # `answer_must_not` regex may match (case-insensitive).
 #
+# Out-of-scope questions (`out_of_scope`) must not get an answer:
+#   threshold  the grading threshold must refuse them (also checked by eval/retrieval.py)
+#   llm        they pass the threshold (e.g. other schools): the LLM must decline
+#              (only checked by eval/e2e.py)
+# An out-of-scope answer is correct when refused or declined.
+#
 # Question set versions (recorded in each result file):
 #   v1  initial set (2026-10-02)
 #   v2  location questions (q02-q05) also accept the new "Lieux" section
 #   v3  q03/q04 also pass when "100 % en ligne" reaches the context (expect_text)
 #   v4  ids and answer checks added; retrieval criteria unchanged from v3
+#   v5  q17-q26 out-of-scope questions, to calibrate the grading threshold (EC-02);
+#       q16 answer_must_not (other BTS named or "all BTS", EC-13)
 
 - id: q01
   question: Combien coûte le Mastère Expert en intelligence artificielle ?
@@ -122,3 +130,47 @@
   expect:
     - {source: condition-admission.html, section: Parcoursup}
   answer_must: [CIEL, SLAM, SISR]
+  # Only these 3 BTS are on Parcoursup: naming another one, or "all BTS", is wrong (EC-13)
+  answer_must_not: ['BTS (Communication|NDRC|MCO|GPME|ERA|MEC)\b', 'tous les BTS']
+
+# ---- Out of scope (v5) -------------------------------------------------------------
+
+- id: q17
+  question: Quelle est la capitale de l'Australie ?
+  out_of_scope: threshold
+
+- id: q18
+  question: Donne-moi une recette de pâte à crêpes.
+  out_of_scope: threshold
+
+- id: q19
+  question: Quels sont les frais de scolarité de HEC Paris ?
+  out_of_scope: llm
+
+- id: q20
+  question: Quel temps fera-t-il demain à Lyon ?
+  out_of_scope: threshold
+
+- id: q21
+  question: Comment réparer une fuite d'eau sous un évier ?
+  out_of_scope: threshold
+
+- id: q22
+  question: Qui a gagné la Coupe du monde de football 2018 ?
+  out_of_scope: threshold
+
+- id: q23
+  question: Quel est le meilleur langage de programmation pour débuter ?
+  out_of_scope: threshold
+
+- id: q24
+  question: Peux-tu m'écrire un poème sur l'automne ?
+  out_of_scope: threshold
+
+- id: q25
+  question: Combien coûte un abonnement Netflix ?
+  out_of_scope: threshold
+
+- id: q26
+  question: Quelles sont les conditions d'admission à Polytechnique ?
+  out_of_scope: llm

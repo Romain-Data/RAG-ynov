@@ -75,23 +75,29 @@ def evaluate(client: QdrantClient, limit: int, candidates: int,
              max_per_section: int | None, verbose: bool) -> list[dict]:
     results = []
     for q in load_questions():
+        if q.get("out_of_scope") == "llm":
+            continue  # passes the threshold by design; only the LLM can decline it
         hits = retrieve.search(q["question"], client, limit=limit, candidates=candidates,
                                max_per_section=max_per_section)
-        matched = [i for i, h in enumerate(hits) if any(_matches(h, e) for e in q["expect"])]
+        matched = [i for i, h in enumerate(hits)
+                   if any(_matches(h, e) for e in q.get("expect", []))]
         distinct = {(hits[i]["source"], hits[i]["section"]) for i in matched}
         ok = len(distinct) >= q.get("min_distinct", 1)
         # The fact may also reach the LLM through another chunk (e.g. every chunk of a
         # formation carries "100 % en ligne" in its prefix): expect_text checks that.
         in_context = bool(q.get("expect_text")) and any(
             q["expect_text"].lower() in h["text"].lower() for h in hits
-            if h["source"] in {e["source"] for e in q["expect"]}
+            if h["source"] in {e["source"] for e in q.get("expect", [])}
         )
         ok = ok or in_context
         top_score = max((h["score"] for h in hits), default=0.0)
         refused = top_score < GRADE_THRESHOLD
+        if q.get("out_of_scope"):
+            ok = refused  # an out-of-scope question passes when the threshold refuses it
         results.append({
             "question_id": q["id"],
             "question": q["question"],
+            "out_of_scope": q.get("out_of_scope"),
             "passed": ok,
             "rank": matched[0] + 1 if matched else None,
             "in_context": in_context,
@@ -103,22 +109,28 @@ def evaluate(client: QdrantClient, limit: int, candidates: int,
                            "score": round(h["score"], 3)} for h in hits],
         })
 
-        rank = (f"rang {matched[0] + 1}" if matched
+        rank = ("hors périmètre" if q.get("out_of_scope")
+                else f"rang {matched[0] + 1}" if matched
                 else "fait présent dans le contexte" if in_context else "absent")
         print(f"{'✅' if ok else '❌'} {q['id']} {q['question'][:70]:70s} {rank}"
               + (f", {len(distinct)}/{q['min_distinct']} sections"
                  if q.get("min_distinct") else "")
-              + (f"  ⚠️ refusée (score {top_score:.3f} < {GRADE_THRESHOLD})"
-                 if refused else ""))
+              + (f"  ⛔ refusée (score {top_score:.3f} < {GRADE_THRESHOLD})" if refused
+                 else f"  (score {top_score:.3f})" if q.get("out_of_scope") else ""))
         if verbose or not ok:
             for i, h in enumerate(hits):
                 mark = "→" if i in matched else " "
                 print(f"     {mark} {h['score']:.3f} {h['source'][:45]:45s} | "
                       f"{(h['section'] or '')[:55]}")
-    passed = sum(r["passed"] for r in results)
-    refused_count = sum(r["refused_by_threshold"] for r in results)
-    print(f"\n{passed}/{len(results)} questions réussies, {refused_count} refusée(s) par le "
-          f"seuil (limit={limit}, candidates={candidates}, max_per_section={max_per_section})")
+    in_scope = [r for r in results if not r["out_of_scope"]]
+    out_scope = [r for r in results if r["out_of_scope"]]
+    print(f"\nDans le périmètre : {sum(r['passed'] for r in in_scope)}/{len(in_scope)} réussies, "
+          f"{sum(r['refused_by_threshold'] for r in in_scope)} refusée(s) à tort par le seuil")
+    if out_scope:
+        print(f"Hors périmètre : {sum(r['passed'] for r in out_scope)}/{len(out_scope)} "
+              f"refusées par le seuil")
+    print(f"(limit={limit}, candidates={candidates}, max_per_section={max_per_section}, "
+          f"seuil={GRADE_THRESHOLD})")
     return results
 
 

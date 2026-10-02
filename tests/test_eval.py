@@ -65,3 +65,30 @@ def test_report_builds_from_runs(results_dir: Path):
     assert "`2026-10-03_01_ret`" in md
     assert "✅ 2 ⛔" in md  # q13 retrieved at rank 2 but refused by the threshold
     assert "### EC-02" in md  # edge cases catalog is included
+
+
+class TestOutOfScope:
+    OOS = {"id": "q26", "question": "Conditions d'admission à Polytechnique ?",
+           "out_of_scope": "llm"}
+
+    def test_declining_is_correct(self):
+        answer = "Je ne peux répondre qu'aux questions sur Ynov Campus."
+        assert results.check_answer(self.OOS, answer)["verdict"] == "correct"
+        answer = "Les conditions d'admission à Polytechnique ne sont pas mentionnées."
+        assert results.check_answer(self.OOS, answer)["verdict"] == "correct"
+
+    def test_refused_by_threshold_is_correct(self):
+        assert results.check_answer(self.OOS, "…", refused=True)["verdict"] == "correct"
+
+    def test_answering_is_wrong(self):
+        answer = "Il faut réussir le concours après deux ans de classe préparatoire."
+        assert results.check_answer(self.OOS, answer)["verdict"] == "wrong"
+
+    def test_summary_separates_in_scope(self):
+        summary = results.summarize("e2e", [
+            {"passed": True, "verdict": "correct"},
+            {"passed": False, "verdict": "partial"},
+            {"passed": True, "verdict": "correct", "out_of_scope": "threshold"},
+        ])
+        assert summary["in_scope_correct"] == 1 and summary["in_scope_total"] == 2
+        assert summary["out_of_scope_correct"] == 1

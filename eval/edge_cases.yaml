@@ -29,7 +29,7 @@
 - id: EC-02
   title: Question refusée à 0,003 du seuil de pertinence
   category: grading
-  status: open
+  status: fixed
   questions: [q13]
   discovered_in: 2026-10-02_23_e2e-prod-apres-pr5-pr6
   symptom: >
@@ -39,20 +39,26 @@
   evidence: >
     Meilleur score 0,497 pour un seuil GRADE_THRESHOLD = 0,5 : le nœud grade refuse avant
     d'appeler le LLM. La réponse (handicap-lyon@ynov.com) est pourtant dans le contexte.
+    Calibration (passage 28, jeu v5) : les 16 questions légitimes ont un meilleur score
+    entre 0,497 et 0,887 ; 8 questions sans rapport (capitale, recette, météo, football…)
+    entre 0,261 et 0,437.
   cause: >
     Seuil fixé à 0,5 sans calibration ; le passage à des chunks plus courts (EC-01) a
     déplacé la distribution des scores. L'évaluation de la recherche ne modélisait pas le
     seuil, d'où l'angle mort (voir EC-10).
   fix: >
-    À faire : calibrer le seuil sur la distribution des meilleurs scores, en ajoutant au
-    jeu de questions des questions hors périmètre (qui doivent être refusées), pour mesurer
-    à la fois les refus à tort et les réponses à tort.
-  links: []
+    Seuil abaissé à 0,45 : 0 question légitime refusée et 8/8 questions sans rapport
+    refusées (passage 28). Placé plus près des questions sans rapport (marge 0,013) que de
+    la plus faible question légitime (marge 0,047), car refuser une vraie question coûte
+    plus cher que laisser le LLM décliner une question hors sujet. q13 correcte en local
+    (passages 26-27). À recalibrer avec eval/retrieval.py si le découpage ou le modèle
+    d'embedding changent.
+  links: ["fix/prompt-and-threshold"]
 
 - id: EC-03
   title: Le LLM préfère une note de bas de page à l'information de lieu
   category: generation
-  status: open
+  status: fixed
   questions: [q03]
   discovered_in: 2026-10-02_01_e2e-prod-premier-test
   symptom: >
@@ -69,9 +75,11 @@
     générique est lue comme une information propre à la formation. « Lyon » n'apparaît pas
     dans le chunk « Lieux » d'une formation en ligne (score plafonné à 0,54).
   fix: >
-    À faire : préciser le prompt (l'en-tête de la source donne les lieux et prime) ; vérifier
-    avec eval/e2e.py (q03 answer_must_not « ^oui »).
-  links: []
+    Règles 2 et 3 du prompt : l'en-tête « Formation (durée, lieux) » fait foi, et un passage
+    commun à toutes les formations ne signifie pas qu'une formation donnée y est proposée.
+    q03 correcte en local (passages 26-27) : « Non, 100 % en ligne, sans aucun campus » ; le
+    LLM précise que la note sur les contrats de professionnalisation ne s'applique pas.
+  links: ["fix/prompt-and-threshold"]
 
 - id: EC-04
   title: Les tableaux d'équivalences RNCP saturent les résultats
@@ -114,8 +122,8 @@
 
 - id: EC-06
   title: Une question générale se noie dans les cas particuliers
-  category: generation
-  status: open
+  category: retrieval
+  status: mitigated
   questions: [q07]
   discovered_in: 2026-10-02_01_e2e-prod-premier-test
   symptom: >
@@ -124,13 +132,18 @@
     comptant), et conclut en prod (run 23) que c'est « probablement » possible partout.
   evidence: >
     Le document commun (Modalités de paiement) est récupéré (rang 3 ou 4), noyé parmi les
-    sections Tarifs de chaque formation.
+    sections Tarifs de chaque formation. Après la règle 4 du prompt (passages 26-27), la
+    réponse annonce bien la règle commune mais toujours sans détails : le seul chunk
+    récupéré de la section « Modalités de paiement » est le n°3 (formation continue, score
+    0,510), pas celui qui contient les 4 échéances et la remise de 500 €.
   cause: >
-    Le prompt ne demande pas de privilégier l'information générale pour une question
-    générale ; les sections Tarifs, nombreuses et proches, dominent le contexte.
+    D'abord le prompt (pas de priorité à l'information générale), corrigé par la règle 4 ;
+    reste un problème de recherche : le bon chunk de la section commune n'est pas récupéré.
   fix: >
-    À faire : ajustement du prompt ; vérifier avec eval/e2e.py (q07).
-  links: []
+    Fait : règle 4 du prompt (règle commune d'abord, avec ses détails). À faire : faire
+    remonter le bon chunk (garder les règles de paiement dans un seul chunk, ou meilleur
+    modèle d'embedding, voir EC-07).
+  links: ["fix/prompt-and-threshold"]
 
 - id: EC-07
   title: Limites du modèle d'embedding
@@ -201,12 +214,18 @@
     « 100 % en ligne » arrivait au LLM par l'en-tête de chaque chunk. (b) L'évaluation ne
     modélisait pas le seuil de pertinence : q13 passait en local mais était refusée en prod
     (EC-02). (c) Une bonne recherche ne garantit pas une bonne réponse (EC-03).
-  evidence: Écarts entre le run 22 (recherche, 14/16) et le run 23 (prod, 10/16 correctes).
+  evidence: >
+    Écarts entre le run 22 (recherche, 14/16) et le run 23 (prod, 10/16 correctes). Ensuite,
+    la vérification automatique des réponses s'est trompée dans les deux sens : (d) faux
+    positif sur q16 au passage 26 (réponse inventée jugée correcte car elle citait les 3 BTS
+    attendus) ; (e) faux négatif sur q26 au passage 25 (« ne sont pas mentionnées » non
+    reconnu comme un refus).
   cause: Évaluation limitée à la recherche, sans seuil ni contrôle des réponses.
   fix: >
     (a) critère expect_text (jeu de questions v3) ; (b) top_score et refused_by_threshold
     enregistrés par eval/retrieval.py ; (c) eval/e2e.py vérifie les réponses du LLM
-    (answer_must / answer_must_not) et enregistre un verdict.
+    (answer_must / answer_must_not) et enregistre un verdict ; (d) answer_must_not sur q16 ;
+    (e) formulations de refus élargies. Les verdicts automatiques restent à relire.
   links: ["PR #5", "feat/eval-reporting"]
 
 - id: EC-11
@@ -225,3 +244,46 @@
   cause: Contenu source.
   fix: À signaler à Ynov ; le RAG restitue ces contenus tels quels.
   links: ["PR #1"]
+
+- id: EC-12
+  title: Les questions sur d'autres écoles passent le seuil
+  category: grading
+  status: fixed
+  questions: [q19, q26]
+  discovered_in: 2026-10-02_28_calibration-seuil-0-45
+  symptom: >
+    « Quels sont les frais de scolarité de HEC Paris ? » et « Quelles sont les conditions
+    d'admission à Polytechnique ? » ne peuvent pas être filtrées par le seuil.
+  evidence: >
+    Meilleurs scores 0,609 (HEC → une section Tarifs Ynov) et 0,593 (Polytechnique), au
+    milieu des questions légitimes (0,497 à 0,887) : aucun seuil ne les sépare. Avant la
+    correction (passage 25), le LLM déclinait déjà ces deux questions de lui-même.
+  cause: Le vocabulaire (frais, admission) est le même que celui des questions Ynov.
+  fix: >
+    Préventif : règle 5 du prompt (ne répondre que sur Ynov). Passages 26-27 : « Je ne peux
+    répondre qu'aux questions sur Ynov Campus. » Suivi par q19 et q26 (out_of_scope: llm).
+  links: ["fix/prompt-and-threshold"]
+
+- id: EC-13
+  title: Le LLM invente une règle générale à partir de quelques exemples
+  category: generation
+  status: fixed
+  questions: [q16]
+  discovered_in: 2026-10-02_26_local-apres-prompt-seuil
+  symptom: >
+    Avec le premier nouveau prompt, « Quels BTS sont accessibles via Parcoursup ? » → liste
+    5 BTS dont Communication et NDRC, et affirme « Tous les BTS Ynov sont post-bac et donc
+    éligibles à Parcoursup ». Faux : seuls CIEL, SIO SLAM et SIO SISR le sont (page
+    Admission). Avant, le LLM répondait honnêtement qu'il ne savait pas.
+  evidence: >
+    Passage 25 (prompt d'origine) : « sans réponse » ; passage 26 (prompt v1) : réponse
+    fausse et assurée ; passage 27 (prompt v2) : de nouveau « sans réponse ». Le contexte ne
+    contient que des pages BTS (la section Parcoursup n'est pas récupérée, EC-07).
+  cause: >
+    Les nouvelles règles poussent le LLM à répondre de façon générale ; sans contexte
+    suffisant, il a généralisé au lieu de s'abstenir.
+  fix: >
+    Fin de la règle 1 du prompt : aucune déduction ni généralisation qui n'est pas écrite
+    dans le contexte. Contrôle automatique renforcé (q16 answer_must_not). La vraie
+    correction de q16 reste la recherche (EC-07).
+  links: ["fix/prompt-and-threshold"]
