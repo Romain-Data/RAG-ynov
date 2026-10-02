@@ -47,7 +47,7 @@ async def ingest_documents(
         )
 
     # 1. Load
-    docs = load_directory(data_dir)
+    docs = load_directory(data_dir, settings.ingest_exclude_doc_type_list())
     if not docs:
         return IngestResponse(
             status="no_documents",
