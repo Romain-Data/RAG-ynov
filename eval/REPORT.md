@@ -4,8 +4,7 @@
 
 ## Synthèse
 
-- **Dernier test de bout en bout** (local, `2026-10-02_27_local-apres-prompt-v2`) : 12/16 ✅ · 3 🟡 · 0 ❌ · hors périmètre 10/10 ; 0 refusée(s), 1 sans réponse.
-- **Dernier test en prod** (`2026-10-02_23_e2e-prod-apres-pr5-pr6`) : 10/16 ✅ · 3 🟡 · 1 ❌.
+- **Dernier test de bout en bout** (prod, `2026-10-02_29_prod-apres-prompt-seuil`) : 12/16 ✅ · 3 🟡 · 0 ❌ · hors périmètre 10/10 ; 0 refusée(s), 1 sans réponse.
 - **Dernière évaluation de la recherche** (`2026-10-02_28_calibration-seuil-0-45`) : 14/16 · hors périmètre 8/8 ⛔.
 - **Cas limites** : 13 documentés, dont 5 ouverts ou atténués (EC-04, EC-05, EC-06, EC-07, EC-11).
 
@@ -43,62 +42,63 @@
 |  | `2026-10-02_26_local-apres-prompt-seuil` | e2e | local | v5 | chunks 300, k=10 | 12/16 ✅ · 3 🟡 · 1 ❌ · hors périmètre 10/10 |
 | ★ | `2026-10-02_27_local-apres-prompt-v2` | e2e | local | v5 | chunks 300, k=10 | 12/16 ✅ · 3 🟡 · 0 ❌ · hors périmètre 10/10 |
 | ★ | `2026-10-02_28_calibration-seuil-0-45` | retrieval | local | v5 | chunks 300, k=10, cand=40, plafond=2 | 14/16 · hors périmètre 8/8 ⛔ |
+| ★ | `2026-10-02_29_prod-apres-prompt-seuil` | e2e | prod | v6 | chunks ?, k=? | 12/16 ✅ · 3 🟡 · 0 ❌ · hors périmètre 10/10 |
 
 ## Matrice par question (étapes clés)
 
 Recherche : ✅ rang de la bonne section · ✅ ctx = fait présent dans le contexte · ❌ absente · (d/m) sections distinctes / requises · ⛔ refusée par le seuil. Bout en bout : ✅ correct · 🟡 partial · ❌ wrong · ⛔ refused · ∅ no_answer · ⚠️ error.
 
-| Question | 01 e2e | 02 ret | 04 ret | 06 ret | 10 ret | 22 ret | 23 e2e | 25 e2e | 27 e2e | 28 ret |
-|---|---|---|---|---|---|---|---|---|---|---|
-| **q01** Combien coûte le Mastère Expert en intelligence artificielle | ✅ | ✅ 2 | ✅ 2 | ✅ 2 | ✅ 2 | ✅ 2 | ✅ | ✅ | ✅ | ✅ 2 |
-| **q02** Dans quelles villes est proposé le Mastère Expert en intelli | ∅ | ❌ | ❌ | ❌ | ❌ | ✅ 1 | ✅ | ✅ | ✅ | ✅ 1 |
-| **q03** Le Mastère Game Programmer est-il proposé à Lyon ? | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ ctx | ❌ | ❌ | ✅ | ✅ ctx |
-| **q04** Le Mastère Expert en cybersécurité - Pentester se fait-il en | · | ❌ | ❌ | ❌ | ❌ | ✅ ctx | ✅ | ✅ | ✅ | ✅ ctx |
-| **q05** Où peut-on suivre le BTS ERA ? | · | ❌ | ✅ 7 | ❌ | ❌ | ✅ 6 | ✅ | ✅ | ✅ | ✅ 6 |
-| **q06** Combien de temps dure le Bachelor Informatique ? | · | ❌ | ❌ | ❌ | ❌ | ✅ 1 | ✅ | ✅ | ✅ | ✅ 1 |
-| **q07** Peut-on payer les frais de scolarité en plusieurs fois ? | 🟡 | ✅ 3 | ✅ 3 | ✅ 3 | ✅ 4 | ✅ 4 | 🟡 | 🟡 | 🟡 | ✅ 4 |
-| **q08** Quels sont les blocs de compétences du titre RNCP Expert en  | 🟡 | ❌ (0/3) | ❌ 8 (1/3) | ❌ 3 (1/3) | ❌ (0/3) | ❌ 8 (1/3) | 🟡 | 🟡 | 🟡 | ❌ 8 (1/3) |
-| **q09** Quel est le numéro de téléphone du campus de Bordeaux ? | ✅ | ✅ 1 | ✅ 1 | ✅ 4 | ✅ 5 | ✅ 5 | ✅ | ✅ | ✅ | ✅ 5 |
-| **q10** Quels modules sont enseignés en Mastère 2 du Mastère Expert  | · | ✅ 1 | ✅ 1 | ❌ | ✅ 1 | ✅ 1 | 🟡 | 🟡 | 🟡 | ✅ 1 |
-| **q11** Comment se passe l'entretien d'admission chez Ynov ? | · | ✅ 1 | ✅ 1 | ✅ 1 | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ | ✅ 1 |
-| **q12** Combien coûte une VAE chez Ynov ? | · | ✅ 1 | ✅ 1 | ✅ 1 | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ | ✅ 1 |
-| **q13** Quelle est l'adresse e-mail du référent handicap de Lyon ? | · | ✅ 1 | ✅ 1 | ✅ 1 | ✅ 2 | ✅ 2 ⛔ | ⛔ | ⛔ | ✅ | ✅ 2 |
-| **q14** Quels métiers peut-on exercer après le Mastère Data engineer | · | ✅ 1 | ✅ 1 | ❌ | ✅ 2 | ✅ 2 | ✅ | ✅ | ✅ | ✅ 2 |
-| **q15** Quel est le taux de réussite du titre Expert en développemen | · | ✅ 1 | ✅ 1 | ✅ 3 | ❌ | ✅ 6 | ✅ | ✅ | ✅ | ✅ 6 |
-| **q16** Quels BTS sont accessibles via Parcoursup ? | · | ❌ | ❌ | ❌ | ❌ | ❌ | ∅ | ∅ | ∅ | ❌ |
-| **q17** Quelle est la capitale de l'Australie ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ |
-| **q18** Donne-moi une recette de pâte à crêpes. | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ |
-| **q19** Quels sont les frais de scolarité de HEC Paris ? | · | · | · | · | · | · | · | ✅ | ✅ | · |
-| **q20** Quel temps fera-t-il demain à Lyon ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ |
-| **q21** Comment réparer une fuite d'eau sous un évier ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ |
-| **q22** Qui a gagné la Coupe du monde de football 2018 ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ |
-| **q23** Quel est le meilleur langage de programmation pour débuter ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ |
-| **q24** Peux-tu m'écrire un poème sur l'automne ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ |
-| **q25** Combien coûte un abonnement Netflix ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ |
-| **q26** Quelles sont les conditions d'admission à Polytechnique ? | · | · | · | · | · | · | · | ✅ | ✅ | · |
+| Question | 01 e2e | 02 ret | 04 ret | 06 ret | 10 ret | 22 ret | 23 e2e | 25 e2e | 27 e2e | 28 ret | 29 e2e |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| **q01** Combien coûte le Mastère Expert en intelligence artificielle | ✅ | ✅ 2 | ✅ 2 | ✅ 2 | ✅ 2 | ✅ 2 | ✅ | ✅ | ✅ | ✅ 2 | ✅ |
+| **q02** Dans quelles villes est proposé le Mastère Expert en intelli | ∅ | ❌ | ❌ | ❌ | ❌ | ✅ 1 | ✅ | ✅ | ✅ | ✅ 1 | ✅ |
+| **q03** Le Mastère Game Programmer est-il proposé à Lyon ? | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ ctx | ❌ | ❌ | ✅ | ✅ ctx | ✅ |
+| **q04** Le Mastère Expert en cybersécurité - Pentester se fait-il en | · | ❌ | ❌ | ❌ | ❌ | ✅ ctx | ✅ | ✅ | ✅ | ✅ ctx | ✅ |
+| **q05** Où peut-on suivre le BTS ERA ? | · | ❌ | ✅ 7 | ❌ | ❌ | ✅ 6 | ✅ | ✅ | ✅ | ✅ 6 | ✅ |
+| **q06** Combien de temps dure le Bachelor Informatique ? | · | ❌ | ❌ | ❌ | ❌ | ✅ 1 | ✅ | ✅ | ✅ | ✅ 1 | ✅ |
+| **q07** Peut-on payer les frais de scolarité en plusieurs fois ? | 🟡 | ✅ 3 | ✅ 3 | ✅ 3 | ✅ 4 | ✅ 4 | 🟡 | 🟡 | 🟡 | ✅ 4 | 🟡 |
+| **q08** Quels sont les blocs de compétences du titre RNCP Expert en  | 🟡 | ❌ (0/3) | ❌ 8 (1/3) | ❌ 3 (1/3) | ❌ (0/3) | ❌ 8 (1/3) | 🟡 | 🟡 | 🟡 | ❌ 8 (1/3) | 🟡 |
+| **q09** Quel est le numéro de téléphone du campus de Bordeaux ? | ✅ | ✅ 1 | ✅ 1 | ✅ 4 | ✅ 5 | ✅ 5 | ✅ | ✅ | ✅ | ✅ 5 | ✅ |
+| **q10** Quels modules sont enseignés en Mastère 2 du Mastère Expert  | · | ✅ 1 | ✅ 1 | ❌ | ✅ 1 | ✅ 1 | 🟡 | 🟡 | 🟡 | ✅ 1 | 🟡 |
+| **q11** Comment se passe l'entretien d'admission chez Ynov ? | · | ✅ 1 | ✅ 1 | ✅ 1 | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ | ✅ 1 | ✅ |
+| **q12** Combien coûte une VAE chez Ynov ? | · | ✅ 1 | ✅ 1 | ✅ 1 | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ | ✅ 1 | ✅ |
+| **q13** Quelle est l'adresse e-mail du référent handicap de Lyon ? | · | ✅ 1 | ✅ 1 | ✅ 1 | ✅ 2 | ✅ 2 ⛔ | ⛔ | ⛔ | ✅ | ✅ 2 | ✅ |
+| **q14** Quels métiers peut-on exercer après le Mastère Data engineer | · | ✅ 1 | ✅ 1 | ❌ | ✅ 2 | ✅ 2 | ✅ | ✅ | ✅ | ✅ 2 | ✅ |
+| **q15** Quel est le taux de réussite du titre Expert en développemen | · | ✅ 1 | ✅ 1 | ✅ 3 | ❌ | ✅ 6 | ✅ | ✅ | ✅ | ✅ 6 | ✅ |
+| **q16** Quels BTS sont accessibles via Parcoursup ? | · | ❌ | ❌ | ❌ | ❌ | ❌ | ∅ | ∅ | ∅ | ❌ | ∅ |
+| **q17** Quelle est la capitale de l'Australie ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ |
+| **q18** Donne-moi une recette de pâte à crêpes. | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ |
+| **q19** Quels sont les frais de scolarité de HEC Paris ? | · | · | · | · | · | · | · | ✅ | ✅ | · | ✅ |
+| **q20** Quel temps fera-t-il demain à Lyon ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ |
+| **q21** Comment réparer une fuite d'eau sous un évier ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ |
+| **q22** Qui a gagné la Coupe du monde de football 2018 ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ |
+| **q23** Quel est le meilleur langage de programmation pour débuter ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ |
+| **q24** Peux-tu m'écrire un poème sur l'automne ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ |
+| **q25** Combien coûte un abonnement Netflix ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ |
+| **q26** Quelles sont les conditions d'admission à Polytechnique ? | · | · | · | · | · | · | · | ✅ | ✅ | · | ✅ |
 
-Colonnes : `01` e2e-prod-premier-test · `02` retrieval-baseline-500-k5 · `04` retrieval-500-k10-cap2 · `06` retrieval-prefixe-long-k5 · `10` retrieval-300-prefixe-court-k5 · `22` retrieval-final-pr5 · `23` e2e-prod-apres-pr5-pr6 · `25` local-avant-prompt-seuil · `27` local-apres-prompt-v2 · `28` calibration-seuil-0-45
+Colonnes : `01` e2e-prod-premier-test · `02` retrieval-baseline-500-k5 · `04` retrieval-500-k10-cap2 · `06` retrieval-prefixe-long-k5 · `10` retrieval-300-prefixe-court-k5 · `22` retrieval-final-pr5 · `23` e2e-prod-apres-pr5-pr6 · `25` local-avant-prompt-seuil · `27` local-apres-prompt-v2 · `28` calibration-seuil-0-45 · `29` prod-apres-prompt-seuil
 
-## Détail du dernier test de bout en bout (`2026-10-02_27_local-apres-prompt-v2`)
+## Détail du dernier test de bout en bout (`2026-10-02_29_prod-apres-prompt-seuil`)
 
 | Question | Verdict | Cas limites | Commentaire |
 |---|---|---|---|
 | **q01** Combien coûte le Mastère Expert en intelligence artific | ✅ correct |  |  |
 | **q02** Dans quelles villes est proposé le Mastère Expert en in | ✅ correct |  |  |
-| **q03** Le Mastère Game Programmer est-il proposé à Lyon ? | ✅ correct |  |  |
+| **q03** Le Mastère Game Programmer est-il proposé à Lyon ? | ✅ correct |  | Confirmé en prod : « Non… 100 % en ligne » (EC-03 corrigé). |
 | **q04** Le Mastère Expert en cybersécurité - Pentester se fait- | ✅ correct |  |  |
 | **q05** Où peut-on suivre le BTS ERA ? | ✅ correct |  |  |
 | **q06** Combien de temps dure le Bachelor Informatique ? | ✅ correct |  |  |
-| **q07** Peut-on payer les frais de scolarité en plusieurs fois  | 🟡 partial | EC-06 | Annonce la règle commune mais sans détails : le chunk récupéré de la section Modalités de paiement est celui de la formation continue, pas celui des 4 échéances et de la remise de 500 €. |
+| **q07** Peut-on payer les frais de scolarité en plusieurs fois  | 🟡 partial | EC-06 | « Oui, pour toutes les formations » puis des tarifs échelonnés de 5 formations ; ni les 4 échéances, ni la remise de 500 € (le chunk qui les contient n'est pas récupéré). |
 | **q08** Quels sont les blocs de compétences du titre RNCP Exper | 🟡 partial | EC-07 | 1 bloc sur 4. |
 | **q09** Quel est le numéro de téléphone du campus de Bordeaux ? | ✅ correct |  |  |
 | **q10** Quels modules sont enseignés en Mastère 2 du Mastère Ex | 🟡 partial | EC-05 | 1 module sur 3. |
 | **q11** Comment se passe l'entretien d'admission chez Ynov ? | ✅ correct |  | Description juste, avec le délai de 48 h ; ne cite pas la durée (1 h). |
 | **q12** Combien coûte une VAE chez Ynov ? | ✅ correct |  |  |
-| **q13** Quelle est l'adresse e-mail du référent handicap de Lyo | ✅ correct |  |  |
+| **q13** Quelle est l'adresse e-mail du référent handicap de Lyo | ✅ correct |  | Confirmé en prod : handicap-lyon@ynov.com, plus refusée par le seuil (EC-02 corrigé). |
 | **q14** Quels métiers peut-on exercer après le Mastère Data eng | ✅ correct |  |  |
 | **q15** Quel est le taux de réussite du titre Expert en dévelop | ✅ correct |  |  |
-| **q16** Quels BTS sont accessibles via Parcoursup ? | ∅ no_answer | EC-07 | Répond honnêtement qu'il ne sait pas (la section Parcoursup n'est pas récupérée) : plus d'invention. |
+| **q16** Quels BTS sont accessibles via Parcoursup ? | ∅ no_answer | EC-07 | Répond honnêtement qu'il ne sait pas : la section Parcoursup n'est pas récupérée. |
 | **q17** Quelle est la capitale de l'Australie ? | ✅ correct |  |  |
 | **q18** Donne-moi une recette de pâte à crêpes. | ✅ correct |  |  |
 | **q19** Quels sont les frais de scolarité de HEC Paris ? | ✅ correct |  |  |
@@ -112,7 +112,7 @@ Colonnes : `01` e2e-prod-premier-test · `02` retrieval-baseline-500-k5 · `04` 
 
 ### Fiabilité de la vérification automatique
 
-Sur les réponses revues à la main, le verdict automatique (`answer_must`) concorde dans 93/100 cas. Désaccords :
+Sur les réponses revues à la main, le verdict automatique (`answer_must`) concorde dans 117/126 cas. Désaccords :
 
 - `2026-10-02_01_e2e-prod-premier-test` q07 : revue **partial**, automatique **wrong**
 - `2026-10-02_23_e2e-prod-apres-pr5-pr6` q11 : revue **correct**, automatique **wrong**
@@ -121,6 +121,8 @@ Sur les réponses revues à la main, le verdict automatique (`answer_must`) conc
 - `2026-10-02_26_local-apres-prompt-seuil` q11 : revue **correct**, automatique **wrong**
 - `2026-10-02_27_local-apres-prompt-v2` q07 : revue **partial**, automatique **wrong**
 - `2026-10-02_27_local-apres-prompt-v2` q11 : revue **correct**, automatique **partial**
+- `2026-10-02_29_prod-apres-prompt-seuil` q07 : revue **partial**, automatique **wrong**
+- `2026-10-02_29_prod-apres-prompt-seuil` q11 : revue **correct**, automatique **partial**
 
 ## Cas limites
 
@@ -156,7 +158,7 @@ Sur les réponses revues à la main, le verdict automatique (`answer_must`) conc
 - **Symptôme** : « Quelle est l'adresse e-mail du référent handicap de Lyon ? » est refusée en prod (« Je n'ai pas trouvé d'information pertinente », 0,2 s, aucune source), alors que la bonne section (handicap.html / Contact) est récupérée au rang 2.
 - **Preuve** : Meilleur score 0,497 pour un seuil GRADE_THRESHOLD = 0,5 : le nœud grade refuse avant d'appeler le LLM. La réponse (handicap-lyon@ynov.com) est pourtant dans le contexte. Calibration (passage 28, jeu v5) : les 16 questions légitimes ont un meilleur score entre 0,497 et 0,887 ; 8 questions sans rapport (capitale, recette, météo, football…) entre 0,261 et 0,437.
 - **Cause** : Seuil fixé à 0,5 sans calibration ; le passage à des chunks plus courts (EC-01) a déplacé la distribution des scores. L'évaluation de la recherche ne modélisait pas le seuil, d'où l'angle mort (voir EC-10).
-- **Correction** : Seuil abaissé à 0,45 : 0 question légitime refusée et 8/8 questions sans rapport refusées (passage 28). Placé plus près des questions sans rapport (marge 0,013) que de la plus faible question légitime (marge 0,047), car refuser une vraie question coûte plus cher que laisser le LLM décliner une question hors sujet. q13 correcte en local (passages 26-27). À recalibrer avec eval/retrieval.py si le découpage ou le modèle d'embedding changent.
+- **Correction** : Seuil abaissé à 0,45 : 0 question légitime refusée et 8/8 questions sans rapport refusées (passage 28). Placé plus près des questions sans rapport (marge 0,013) que de la plus faible question légitime (marge 0,047), car refuser une vraie question coûte plus cher que laisser le LLM décliner une question hors sujet. q13 correcte en local (passages 26-27) puis en prod (passage 29). À recalibrer avec eval/retrieval.py si le découpage ou le modèle d'embedding changent.
 
 ### EC-03 — Le LLM préfère une note de bas de page à l'information de lieu
 
@@ -165,7 +167,7 @@ Sur les réponses revues à la main, le verdict automatique (`answer_must`) conc
 - **Symptôme** : « Le Mastère Game Programmer est-il proposé à Lyon ? » → « Oui, à Lyon en contrat de professionnalisation ». Faux : la formation est 100 % en ligne.
 - **Preuve** : Run 01 : la section de lieu n'était pas récupérée (EC-01). Run 23 : les 10 chunks transmis portent tous « (2 ans, 100 % en ligne, aucun campus) » dans leur en-tête, et le LLM donne toujours la même réponse fausse. Il s'appuie sur la note commune « contrat de professionnalisation … uniquement accessibles à Nice-Sophia, Aix, Lyon, … et Connect » de la section « Voies d'accès ».
 - **Cause** : Le prompt ne dit pas que l'en-tête de chaque source (durée, lieux) fait foi ; la note générique est lue comme une information propre à la formation. « Lyon » n'apparaît pas dans le chunk « Lieux » d'une formation en ligne (score plafonné à 0,54).
-- **Correction** : Règles 2 et 3 du prompt : l'en-tête « Formation (durée, lieux) » fait foi, et un passage commun à toutes les formations ne signifie pas qu'une formation donnée y est proposée. q03 correcte en local (passages 26-27) : « Non, 100 % en ligne, sans aucun campus » ; le LLM précise que la note sur les contrats de professionnalisation ne s'applique pas.
+- **Correction** : Règles 2 et 3 du prompt : l'en-tête « Formation (durée, lieux) » fait foi, et un passage commun à toutes les formations ne signifie pas qu'une formation donnée y est proposée. q03 correcte en local (passages 26-27) et en prod (passage 29) : « Non, 100 % en ligne, sans aucun campus » ; le LLM précise que la note sur les contrats de professionnalisation ne s'applique pas.
 
 ### EC-04 — Les tableaux d'équivalences RNCP saturent les résultats
 

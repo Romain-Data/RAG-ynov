@@ -51,7 +51,7 @@
     refusées (passage 28). Placé plus près des questions sans rapport (marge 0,013) que de
     la plus faible question légitime (marge 0,047), car refuser une vraie question coûte
     plus cher que laisser le LLM décliner une question hors sujet. q13 correcte en local
-    (passages 26-27). À recalibrer avec eval/retrieval.py si le découpage ou le modèle
+    (passages 26-27) puis en prod (passage 29). À recalibrer avec eval/retrieval.py si le découpage ou le modèle
     d'embedding changent.
   links: ["fix/prompt-and-threshold"]
 
@@ -77,7 +77,8 @@
   fix: >
     Règles 2 et 3 du prompt : l'en-tête « Formation (durée, lieux) » fait foi, et un passage
     commun à toutes les formations ne signifie pas qu'une formation donnée y est proposée.
-    q03 correcte en local (passages 26-27) : « Non, 100 % en ligne, sans aucun campus » ; le
+    q03 correcte en local (passages 26-27) et en prod (passage 29) : « Non, 100 % en ligne,
+    sans aucun campus » ; le
     LLM précise que la note sur les contrats de professionnalisation ne s'applique pas.
   links: ["fix/prompt-and-threshold"]
 
