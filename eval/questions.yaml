@@ -1,0 +1,80 @@
+# Retrieval evaluation set: each question lists the chunks that should be retrieved.
+# A question passes when at least `min_distinct` (default 1) distinct sections matching
+# an `expect` entry are in the retrieved chunks, or when `expect_text` (optional) appears
+# in a retrieved chunk of an expected source. `source` is the file name, `section` a
+# case-insensitive substring of the section title.
+
+- question: Combien coûte le Mastère Expert en intelligence artificielle ?
+  expect:
+    - {source: mastere-expert-en-intelligence-artificielle.html, section: Tarifs}
+
+- question: Dans quelles villes est proposé le Mastère Expert en intelligence artificielle ?
+  expect:
+    - {source: mastere-expert-en-intelligence-artificielle.html, section: Infos clés}
+    - {source: mastere-expert-en-intelligence-artificielle.html, section: Lieux}
+
+- question: Le Mastère Game Programmer est-il proposé à Lyon ?
+  expect_text: 100 % en ligne
+  expect:
+    - {source: mastere-game-programmer.html, section: Infos clés}
+    - {source: mastere-game-programmer.html, section: Lieux}
+
+- question: Le Mastère Expert en cybersécurité - Pentester se fait-il en présentiel ?
+  expect_text: 100 % en ligne
+  expect:
+    - {source: mastere-expert-en-cybersecurite-pentester.html, section: Infos clés}
+    - {source: mastere-expert-en-cybersecurite-pentester.html, section: Lieux}
+
+- question: Où peut-on suivre le BTS ERA ?
+  expect:
+    - {source: bts-era.html, section: Infos clés}
+    - {source: bts-era.html, section: Lieux}
+
+- question: Combien de temps dure le Bachelor Informatique ?
+  expect:
+    - {source: bachelor-informatique.html, section: Infos clés}
+
+- question: Peut-on payer les frais de scolarité en plusieurs fois ?
+  expect:
+    - {source: informations-communes-formations.md, section: Modalités de paiement}
+    - {source: condition-admission.html, section: Financement des études}
+
+- question: Quels sont les blocs de compétences du titre RNCP Expert en cybersécurité ?
+  min_distinct: 3
+  expect:
+    - {source: rncp-40897.html, section: RNCP40897BC}
+
+- question: Quel est le numéro de téléphone du campus de Bordeaux ?
+  expect:
+    - {source: condition-admission.html, section: Coordonnées de tous nos campus}
+
+- question: Quels modules sont enseignés en Mastère 2 du Mastère Expert en intelligence artificielle ?
+  expect:
+    - {source: mastere-expert-en-intelligence-artificielle.html, section: Programme du Mastère}
+
+- question: Comment se passe l'entretien d'admission chez Ynov ?
+  expect:
+    - {source: condition-admission.html, section: Le rendez-vous d'admission}
+    - {source: condition-admission.html, section: processus d'admission}
+
+- question: Combien coûte une VAE chez Ynov ?
+  expect:
+    - {source: vae-ynov.html, section: Coût de la VAE}
+
+- question: Quelle est l'adresse e-mail du référent handicap de Lyon ?
+  expect:
+    - {source: handicap.html, section: Contact}
+
+- question: Quels métiers peut-on exercer après le Mastère Data engineer ?
+  expect:
+    - {source: mastere-data-engineer.html, section: Métiers}
+
+- question: Quel est le taux de réussite du titre Expert en développement logiciel ?
+  expect:
+    - {source: rncp-39583.html, section: Statistiques}
+    - {source: mastere-expert-developpement-full-stack.html, section: Ce titre en quelques chiffres}
+    - {source: mastere-game-programmer.html, section: Ce titre en quelques chiffres}
+
+- question: Quels BTS sont accessibles via Parcoursup ?
+  expect:
+    - {source: condition-admission.html, section: Parcoursup}

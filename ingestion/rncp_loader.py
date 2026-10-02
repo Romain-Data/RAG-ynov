@@ -15,6 +15,15 @@ SKIPPED_SECTIONS = {
     "Lien internet vers le descriptif de la certification",
     "Référentiel d'activité, de compétences et d'évaluation",
 }
+# Equivalence tables and legal references: little value for a student, and the
+# equivalence tables repeat other certifications' bloc titles, so they crowded out the
+# actual skill blocs in retrieval. Matched as title prefixes.
+SKIPPED_SECTION_PREFIXES = (
+    "Certifications professionnelles enregistrées au RNCP en correspondance",
+    "Anciennes versions de la certification professionnelle",
+    "Référence des arrêtés et décisions",
+    "Date du dernier Journal Officiel",
+)
 
 
 # "Compétences attestées" usually restates the blocs' skill lists word for word: dropped
@@ -114,7 +123,8 @@ def parse_rncp_page(html: str) -> dict:
             continue
         for h in headings:
             section_title = _clean(h.get_text(" ")).rstrip(" :")
-            if section_title in SKIPPED_SECTIONS:
+            if (section_title in SKIPPED_SECTIONS
+                    or section_title.startswith(SKIPPED_SECTION_PREFIXES)):
                 continue
             text = _section_text(h)
             if text and text != "-":

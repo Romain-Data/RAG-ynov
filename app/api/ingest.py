@@ -56,7 +56,7 @@ async def ingest_documents(
         )
 
     # 2. Chunk
-    chunks = chunk_documents(docs, chunk_size=500, chunk_overlap=50)
+    chunks = chunk_documents(docs)
 
     # 3. Embed
     texts = [c["text"] for c in chunks]

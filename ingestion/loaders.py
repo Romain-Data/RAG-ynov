@@ -153,7 +153,8 @@ def load_html(path: Path) -> list[dict]:
         docs.append({
             "text": body,
             "metadata": _merge_metadata(base_meta, manifest),
-            "prefix": f"{page['formation']} — {title}\n",
+            "prefix": (f"{page['formation']} ({page['key_facts']}) — {title}\n"
+                       if page["key_facts"] else f"{page['formation']} — {title}\n"),
         })
     return docs
 
