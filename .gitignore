@@ -93,4 +93,5 @@ dmypy.json
 # AI
 .claude/
 .mcp*
+CLAUDE.md
 .eval_qdrant/
