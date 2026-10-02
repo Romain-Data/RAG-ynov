@@ -1,0 +1,1631 @@
+{
+  "schema_version": 1,
+  "run_id": "2026-10-02_35_prod-apres-ec14-ec15",
+  "date": "2026-10-02",
+  "kind": "e2e",
+  "environment": "prod",
+  "git_commit": "c5cc6e8+dirty",
+  "question_set": "v7",
+  "milestone": true,
+  "label": "prod-apres-ec14-ec15",
+  "notes": "Test en prod après PR #10-#12 : fichier d'exemple fictif retiré (EC-15), pages d'information découpées par sous-titre (EC-14). Réingestion : 1 257 sections, 6 470 chunks. Verdicts relus à la main. Aucune source ne cite plus admissions_faq.md.",
+  "config": {
+    "url": "https://rag.romaincollery.com"
+  },
+  "results": [
+    {
+      "question_id": "q01",
+      "question": "Combien coûte le Mastère Expert en intelligence artificielle ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "9[  ]?000": true,
+          "9[  ]?500": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Le Mastère Expert en intelligence artificielle coûte :\n- **Règlement au comptant** : 9 000 € par année (Mastère 1 et Mastère 2).\n- **Règlement échelonné** : 9 500 € par année (Mastère 1 et Mastère 2).\n\nCes tarifs sont valables pour l’année 2027/2028 sous statut étudiant (disponible sur l'ensemble des campus sauf Ynov Connect) [Source 2].",
+      "sources": [
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Programme du Mastère",
+          "score": 0.769439
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.7143314
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Programme du Mastère",
+          "score": 0.7007204
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Métiers et dynamique du marché",
+          "score": 0.6678078
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Présentation",
+          "score": 0.6631743
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Nos méthodes pédagogiques",
+          "score": 0.65521127
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Métiers et dynamique du marché",
+          "score": 0.6548639
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Objectifs de la formation",
+          "score": 0.65181816
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Objectifs de la formation",
+          "score": 0.650627
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Nos méthodes pédagogiques",
+          "score": 0.64591813
+        }
+      ],
+      "latency_s": 1.47,
+      "edge_cases": [],
+      "verdict_method": "automatique, confirmé par relecture"
+    },
+    {
+      "question_id": "q02",
+      "question": "Dans quelles villes est proposé le Mastère Expert en intelligence artificielle ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "Aix-en-Provence": true,
+          "Strasbourg": true,
+          "en ligne": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Le Mastère Expert en intelligence artificielle est proposé dans **11 villes** (campus Ynov) :\n- Aix-en-Provence\n- Bordeaux\n- Lyon\n- Paris\n- Toulouse\n- Sophia\n- Montpellier\n- Lille\n- Rennes\n- Val d'Europe\n- Strasbourg\n\nIl est également disponible **100 % en ligne** via Ynov Connect.\n[Source 1]",
+      "sources": [
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Lieux",
+          "score": 0.74726665
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Métiers et dynamique du marché",
+          "score": 0.72120816
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Programme du Mastère",
+          "score": 0.70583415
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Métiers et dynamique du marché",
+          "score": 0.70406705
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Programme du Mastère",
+          "score": 0.69492364
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Objectifs de la formation",
+          "score": 0.69326663
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Nos méthodes pédagogiques",
+          "score": 0.683169
+        },
+        {
+          "source": "mastere-expert-en-jumeaux-numeriques-du-batiment-de-la-ville-et-des-territoires.html",
+          "page": 1,
+          "section": "Présentation",
+          "score": 0.680498
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Objectifs de la formation",
+          "score": 0.6793637
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Présentation",
+          "score": 0.67651296
+        }
+      ],
+      "latency_s": 1.31,
+      "edge_cases": [],
+      "verdict_method": "automatique, confirmé par relecture"
+    },
+    {
+      "question_id": "q03",
+      "question": "Le Mastère Game Programmer est-il proposé à Lyon ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "en ligne": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Non, le Mastère Game Programmer est **100 % en ligne et n'est proposé sur aucun campus**, y compris Lyon [Source 1].",
+      "sources": [
+        {
+          "source": "mastere-game-programmer.html",
+          "page": 1,
+          "section": "Voies d’accès et prérequis de la formation",
+          "score": 0.66982853
+        },
+        {
+          "source": "mastere-game-programmer.html",
+          "page": 1,
+          "section": "Programme du Mastère",
+          "score": 0.6255311
+        },
+        {
+          "source": "mastere-game-programmer.html",
+          "page": 1,
+          "section": "* Titre d’Expert en développement logiciel – Niveau 7",
+          "score": 0.6193019
+        },
+        {
+          "source": "mastere-game-programmer.html",
+          "page": 1,
+          "section": "Programme du Mastère",
+          "score": 0.6170318
+        },
+        {
+          "source": "mastere-game-programmer.html",
+          "page": 1,
+          "section": "Equivalences",
+          "score": 0.60980606
+        },
+        {
+          "source": "mastere-game-programmer.html",
+          "page": 1,
+          "section": "Nos méthodes pédagogiques",
+          "score": 0.60975075
+        },
+        {
+          "source": "mastere-game-programmer.html",
+          "page": 1,
+          "section": "Objectifs de la formation",
+          "score": 0.6097219
+        },
+        {
+          "source": "mastere-game-programmer.html",
+          "page": 1,
+          "section": "Métiers et dynamique du marché",
+          "score": 0.6079833
+        },
+        {
+          "source": "mastere-game-programmer.html",
+          "page": 1,
+          "section": "Equivalences",
+          "score": 0.60137963
+        },
+        {
+          "source": "mastere-game-programmer.html",
+          "page": 1,
+          "section": "Métiers et dynamique du marché",
+          "score": 0.5913745
+        }
+      ],
+      "latency_s": 1.38,
+      "edge_cases": [],
+      "verdict_method": "automatique, confirmé par relecture"
+    },
+    {
+      "question_id": "q04",
+      "question": "Le Mastère Expert en cybersécurité - Pentester se fait-il en présentiel ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "en ligne": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Non, le Mastère Expert en cybersécurité - Pentester se fait **100 % en ligne, sans aucun campus** [Source 1, Source 5].",
+      "sources": [
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "page": 1,
+          "section": "Programme du Mastère",
+          "score": 0.8865119
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "page": 1,
+          "section": "Programme du Mastère",
+          "score": 0.8836787
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "page": 1,
+          "section": "Métiers et dynamique du marché",
+          "score": 0.86476535
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "page": 1,
+          "section": "Objectifs de la formation",
+          "score": 0.860597
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "page": 1,
+          "section": "Présentation",
+          "score": 0.8566234
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "page": 1,
+          "section": "* Titre d'Expert en cybersécurité - Niveau 7",
+          "score": 0.8542034
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "page": 1,
+          "section": "Métiers et dynamique du marché",
+          "score": 0.8538397
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "page": 1,
+          "section": "Objectifs de la formation",
+          "score": 0.8518139
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "page": 1,
+          "section": "Ce que tu vas apprendre",
+          "score": 0.8466531
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "page": 1,
+          "section": "Les certifications accessibles",
+          "score": 0.82961786
+        }
+      ],
+      "latency_s": 1.07,
+      "edge_cases": [],
+      "verdict_method": "automatique, confirmé par relecture"
+    },
+    {
+      "question_id": "q05",
+      "question": "Où peut-on suivre le BTS ERA ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "Strasbourg": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Le BTS ERA - Étude et Réalisation d'Agencement est proposé **uniquement à Strasbourg** (un seul campus Ynov) [Source 8].",
+      "sources": [
+        {
+          "source": "bts-sio-slam.html",
+          "page": 1,
+          "section": "Programme du BTS",
+          "score": 0.688092
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Programme du BTS",
+          "score": 0.68399763
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Présentation",
+          "score": 0.67023283
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Programme du BTS",
+          "score": 0.66415215
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Métiers et dynamique du marché",
+          "score": 0.63840586
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.6360069
+        },
+        {
+          "source": "bts-sio-slam.html",
+          "page": 1,
+          "section": "Programme du BTS",
+          "score": 0.62998724
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Lieux",
+          "score": 0.62329507
+        },
+        {
+          "source": "bts-sio-slam.html",
+          "page": 1,
+          "section": "Présentation",
+          "score": 0.6192621
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Les + de notre BTS",
+          "score": 0.61209804
+        }
+      ],
+      "latency_s": 1.41,
+      "edge_cases": [],
+      "verdict_method": "automatique, confirmé par relecture"
+    },
+    {
+      "question_id": "q06",
+      "question": "Combien de temps dure le Bachelor Informatique ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "3 ans|trois ans": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Le Bachelor Informatique dure **3 ans** [Source 1].",
+      "sources": [
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.78489155
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Programme du Bachelor",
+          "score": 0.76985645
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Programme du Bachelor",
+          "score": 0.7693035
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Voie d'accès et prérequis à la formation",
+          "score": 0.7566056
+        },
+        {
+          "source": "bachelor-developpement-ia-data-engineering.html",
+          "page": 1,
+          "section": "Programme du Bachelor",
+          "score": 0.75259113
+        },
+        {
+          "source": "bachelor-developpement-ia-data-engineering.html",
+          "page": 1,
+          "section": "Programme du Bachelor",
+          "score": 0.73887885
+        },
+        {
+          "source": "bachelor-cybersecurite.html",
+          "page": 1,
+          "section": "Programme du Bachelor",
+          "score": 0.7303898
+        },
+        {
+          "source": "bachelor-cybersecurite.html",
+          "page": 1,
+          "section": "Programme du Bachelor",
+          "score": 0.725554
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Voie d'accès et prérequis à la formation",
+          "score": 0.71021444
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Ce titre en quelques chiffres",
+          "score": 0.6999407
+        }
+      ],
+      "latency_s": 0.81,
+      "edge_cases": [],
+      "verdict_method": "automatique, confirmé par relecture"
+    },
+    {
+      "question_id": "q07",
+      "question": "Peut-on payer les frais de scolarité en plusieurs fois ?",
+      "out_of_scope": null,
+      "passed": false,
+      "verdict": "partial",
+      "auto_check": {
+        "must": {
+          "4 échéances|quatre échéances|4 fois": false,
+          "(?<![0-9][  ])(?<![0-9])500 ?(€|euros)": false
+        },
+        "must_not_hits": [],
+        "verdict": "wrong"
+      },
+      "answer": "Oui, il est possible de payer les frais de scolarité en plusieurs fois pour certaines formations. Les modalités de règlement échelonné sont mentionnées pour les formations suivantes :\n\n- **BTS MEC** : Année 1 : 7 400 €, Année 2 : 7 700 € [Source 3]\n- **BTS ERA** : Année 1 : 7 400 €, Année 2 : 7 700 € [Source 8]\n- **BTS CIEL option A** : Année 1 : 4 950 €, Année 2 : 5 250 € [Source 9]\n- **Mastère Expert en Jumeaux numériques** : Mastère 1 : 9 400 €, Mastère 2 : 9 400 € [Source 7]\n- **Mastère Expert développement mobile & IoT** : Mastère 1 : 9 500 €, Mastère 2 : 9 500 € [Source 10]\n\nPour les autres formations (Bachelors), les pages consultées ne précisent pas explicitement cette option, mais les **modalités de paiement communes** indiquent que des solutions de financement (CPF, Pôle Emploi, Région, etc.) peuvent être envisagées, avec application de la TVA (20%) pour les plus de 26 ans ou les financements spécifiques [Source 4].\n\nSi vous souhaitez une confirmation pour une formation non listée ici, il est recommandé de consulter la page dédiée ou de contacter l'école.",
+      "sources": [
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.56656075
+        },
+        {
+          "source": "bachelor-developpement-ia-data-engineering.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.52447987
+        },
+        {
+          "source": "bts-mec.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.5200838
+        },
+        {
+          "source": "informations-communes-formations.md",
+          "page": 1,
+          "section": "Modalités de paiement et prise en charge des frais",
+          "score": 0.509958
+        },
+        {
+          "source": "bachelor-audiovisuel.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.5019799
+        },
+        {
+          "source": "bachelor-architecture-d-interieur.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.49944612
+        },
+        {
+          "source": "mastere-expert-en-jumeaux-numeriques-du-batiment-de-la-ville-et-des-territoires.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.49301183
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.4836827
+        },
+        {
+          "source": "bts-ciel.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.4828661
+        },
+        {
+          "source": "mastere-expert-developpement-mobile-lot.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.48238748
+        }
+      ],
+      "latency_s": 2.76,
+      "edge_cases": [
+        "EC-06"
+      ],
+      "review_note": "Exacte mais incomplète : liste les tarifs échelonnés de 5 formations et laisse entendre que seules « certaines formations » le permettent ; ni les 4 échéances, ni la remise de 500 €.",
+      "verdict_method": "revue manuelle"
+    },
+    {
+      "question_id": "q08",
+      "question": "Quels sont les blocs de compétences du titre RNCP Expert en cybersécurité ?",
+      "out_of_scope": null,
+      "passed": false,
+      "verdict": "partial",
+      "auto_check": {
+        "must": {
+          "stratégie de cybersécurité": true,
+          "cycle de conception": false,
+          "condition de sécurité": false,
+          "crise": false
+        },
+        "must_not_hits": [],
+        "verdict": "partial"
+      },
+      "answer": "D'après le contexte fourni, seul **un bloc de compétences** est explicitement mentionné pour le titre RNCP **Expert en cybersécurité (RNCP40897)** :\n\n- **RNCP40897BC01 - Élaborer la stratégie de cybersécurité d’une organisation** [Source 8, Source 10].\n\n*Aucun autre bloc n'est cité dans les extraits fournis.* Si d'autres blocs existent, ils ne sont pas indiqués dans ce contexte.",
+      "sources": [
+        {
+          "source": "rncp-40897.html",
+          "page": 1,
+          "section": "Compétences attestées",
+          "score": 0.8694059
+        },
+        {
+          "source": "rncp-40897.html",
+          "page": 1,
+          "section": "Compétences attestées",
+          "score": 0.8663306
+        },
+        {
+          "source": "rncp-40897.html",
+          "page": 1,
+          "section": "Objectifs et contexte de la certification",
+          "score": 0.8560021
+        },
+        {
+          "source": "rncp-40897.html",
+          "page": 1,
+          "section": "Type d'emplois accessibles",
+          "score": 0.8483844
+        },
+        {
+          "source": "rncp-40897.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.8457159
+        },
+        {
+          "source": "rncp-40897.html",
+          "page": 1,
+          "section": "Objectifs et contexte de la certification",
+          "score": 0.84570897
+        },
+        {
+          "source": "rncp-40897.html",
+          "page": 1,
+          "section": "Pré-requis disctincts pour les blocs de compétences",
+          "score": 0.83960044
+        },
+        {
+          "source": "rncp-40897.html",
+          "page": 1,
+          "section": "RNCP40897BC01 - Elaborer la stratégie de cybersécurité d’une organisation",
+          "score": 0.83764666
+        },
+        {
+          "source": "rncp-40897.html",
+          "page": 1,
+          "section": "Type d'emplois accessibles",
+          "score": 0.83446205
+        },
+        {
+          "source": "rncp-40897.html",
+          "page": 1,
+          "section": "RNCP40897BC01 - Elaborer la stratégie de cybersécurité d’une organisation",
+          "score": 0.82978487
+        }
+      ],
+      "latency_s": 1.33,
+      "edge_cases": [
+        "EC-07"
+      ],
+      "review_note": "1 bloc sur 4.",
+      "verdict_method": "revue manuelle"
+    },
+    {
+      "question_id": "q09",
+      "question": "Quel est le numéro de téléphone du campus de Bordeaux ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "05 56 90 00 10": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Le numéro de téléphone du campus de Bordeaux est le **05 56 90 00 10** [Source 2].",
+      "sources": [
+        {
+          "source": "armee-de-terre.html",
+          "page": 1,
+          "section": "Lieux sur l'année d'études",
+          "score": 0.5454056
+        },
+        {
+          "source": "condition-admission.html",
+          "page": 1,
+          "section": "Coordonnées de tous nos campus — Contact Ynov Bordeaux",
+          "score": 0.5431365
+        },
+        {
+          "source": "armee-de-terre.html",
+          "page": 1,
+          "section": "Nos partenaires académiques",
+          "score": 0.5412704
+        },
+        {
+          "source": "armee-de-terre.html",
+          "page": 1,
+          "section": "Programme du Bachelor",
+          "score": 0.53708124
+        },
+        {
+          "source": "armee-de-terre.html",
+          "page": 1,
+          "section": "Lieux sur l'année d'études",
+          "score": 0.5282919
+        },
+        {
+          "source": "mastere-manager-de-projet-bim-smart-building.html",
+          "page": 1,
+          "section": "Voies d’accès",
+          "score": 0.50841707
+        },
+        {
+          "source": "alternance.html",
+          "page": 1,
+          "section": "Contactez le Service Relations Entreprises du Campus de votre choix",
+          "score": 0.4990874
+        },
+        {
+          "source": "alternance.html",
+          "page": 1,
+          "section": "Contactez le Service Relations Entreprises du Campus de votre choix",
+          "score": 0.49905065
+        },
+        {
+          "source": "mastere-expert-en-developpement-informatique-specialise-banque-assurance.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.4887786
+        },
+        {
+          "source": "mastere-expert-en-developpement-informatique-specialise-banque-assurance.html",
+          "page": 1,
+          "section": "Voies d’accès et prérequis de la formation",
+          "score": 0.48216996
+        }
+      ],
+      "latency_s": 1.32,
+      "edge_cases": [],
+      "verdict_method": "automatique, confirmé par relecture"
+    },
+    {
+      "question_id": "q10",
+      "question": "Quels modules sont enseignés en Mastère 2 du Mastère Expert en intelligence artificielle ?",
+      "out_of_scope": null,
+      "passed": false,
+      "verdict": "partial",
+      "auto_check": {
+        "must": {
+          "intelligence artificielle avancée": true,
+          "gouvernance des données": false,
+          "transformation IA": false
+        },
+        "must_not_hits": [],
+        "verdict": "partial"
+      },
+      "answer": "En Mastère 2 du Mastère Expert en intelligence artificielle, le module enseigné est :\n- **Intelligence artificielle avancée** [Source 1].\n\nDe plus, un **fil rouge** est mentionné pour le Mastère 2 : un système d'IA complet, du fine-tuning au déploiement, incluant le fine-tuning d'un LLM et RAG sur un corpus métier, déployés avec leur tableau de bord d'évaluation et d'explicabilité [Source 4, Source 5].",
+      "sources": [
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Programme du Mastère",
+          "score": 0.7829895
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Programme du Mastère",
+          "score": 0.770331
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Présentation",
+          "score": 0.75840616
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Nos méthodes pédagogiques",
+          "score": 0.7310245
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Nos méthodes pédagogiques",
+          "score": 0.72968614
+        },
+        {
+          "source": "mastere-expert-en-systemes-embarques.html",
+          "page": 1,
+          "section": "Programme du Mastère",
+          "score": 0.7185577
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Objectifs de la formation",
+          "score": 0.7161875
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Présentation",
+          "score": 0.70402837
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Objectifs de la formation",
+          "score": 0.6979482
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Ce que tu vas apprendre",
+          "score": 0.6979198
+        }
+      ],
+      "latency_s": 1.35,
+      "edge_cases": [
+        "EC-05"
+      ],
+      "review_note": "1 module sur 3.",
+      "verdict_method": "revue manuelle"
+    },
+    {
+      "question_id": "q11",
+      "question": "Comment se passe l'entretien d'admission chez Ynov ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "1 ?h\\b|une heure": false,
+          "48 ?h": true
+        },
+        "must_not_hits": [],
+        "verdict": "partial"
+      },
+      "answer": "L'entretien d'admission chez Ynov est un moment d'échange mutuel, chaleureux et professionnel. Il peut inclure une visite du campus et des salles, avec la possibilité de croiser des étudiants actuels pour échanger rapidement [Source 7].\n\nLe processus d'admission commence par le dépôt de ta candidature en ligne, suivi de l'étude de ton dossier. Sous 48 heures, tu seras recontacté par un conseiller en formation pour t'orienter, t'accompagner et éventuellement coordonner le passage des tests (le cas échéant) et de l’entretien d’admission [Source 1, Source 2].",
+      "sources": [
+        {
+          "source": "condition-admission.html",
+          "page": 1,
+          "section": "Un processus d'admission, clair et rapide",
+          "score": 0.81659776
+        },
+        {
+          "source": "condition-admission.html",
+          "page": 1,
+          "section": "Un processus d'admission, clair et rapide",
+          "score": 0.79219794
+        },
+        {
+          "source": "condition-admission.html",
+          "page": 1,
+          "section": "Accompagnement vers l’alternance",
+          "score": 0.7828352
+        },
+        {
+          "source": "alternance.html",
+          "page": 1,
+          "section": "Pour en savoir plus — L'alternance chez Ynov",
+          "score": 0.7711691
+        },
+        {
+          "source": "condition-admission.html",
+          "page": 1,
+          "section": "Accompagnement vers l’alternance",
+          "score": 0.7691617
+        },
+        {
+          "source": "condition-admission.html",
+          "page": 1,
+          "section": "Calendrier et infos clés",
+          "score": 0.7644272
+        },
+        {
+          "source": "condition-admission.html",
+          "page": 1,
+          "section": "Le rendez-vous d'admission",
+          "score": 0.76130825
+        },
+        {
+          "source": "condition-admission.html",
+          "page": 1,
+          "section": "Financement des études",
+          "score": 0.7520787
+        },
+        {
+          "source": "condition-admission.html",
+          "page": 1,
+          "section": "Calendrier et infos clés",
+          "score": 0.74824893
+        },
+        {
+          "source": "informations-communes-formations.md",
+          "page": 1,
+          "section": "Le processus d’admission",
+          "score": 0.74612963
+        }
+      ],
+      "latency_s": 1.47,
+      "edge_cases": [],
+      "review_note": "Description juste, avec le rappel sous 48 h ; ne cite pas la durée (1 h).",
+      "verdict_method": "revue manuelle"
+    },
+    {
+      "question_id": "q12",
+      "question": "Combien coûte une VAE chez Ynov ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "500": true,
+          "2[  ]?000": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Le coût d'une VAE chez Ynov est le suivant :\n- **Frais de Jury du dossier de recevabilité** : 500 € TTC\n- **Frais de Jury VAE** : 2 000 € TTC\n*(Tarifs TTC 2025, calculés selon un taux de TVA de 20 %)* [Source 1].",
+      "sources": [
+        {
+          "source": "vae-ynov.html",
+          "page": 1,
+          "section": "Coût de la VAE Ynov :",
+          "score": 0.692271
+        },
+        {
+          "source": "vae-ynov.html",
+          "page": 1,
+          "section": "Profils",
+          "score": 0.65638745
+        },
+        {
+          "source": "vae-ynov.html",
+          "page": 1,
+          "section": "Lancez-vous dans une démarche de VAE Ynov",
+          "score": 0.62941
+        },
+        {
+          "source": "vae-ynov.html",
+          "page": 1,
+          "section": "Démarche VAE",
+          "score": 0.62736857
+        },
+        {
+          "source": "vae-ynov.html",
+          "page": 1,
+          "section": "Démarche VAE",
+          "score": 0.60152364
+        },
+        {
+          "source": "vae-ynov.html",
+          "page": 1,
+          "section": "Témoignage",
+          "score": 0.5982648
+        },
+        {
+          "source": "vae-ynov.html",
+          "page": 1,
+          "section": "Titres RNCP proposés à la VAE",
+          "score": 0.5942906
+        },
+        {
+          "source": "vae-ynov.html",
+          "page": 1,
+          "section": "Capitalisez sur votre expérience, valorisez vos compétences professionnelles et validez un titre enregistré au RNCP.",
+          "score": 0.58657014
+        },
+        {
+          "source": "vae-ynov.html",
+          "page": 1,
+          "section": "Pour en savoir plus sur la VAE :",
+          "score": 0.5854001
+        },
+        {
+          "source": "vae-ynov.html",
+          "page": 1,
+          "section": "Titres RNCP proposés à la VAE",
+          "score": 0.58333504
+        }
+      ],
+      "latency_s": 1.68,
+      "edge_cases": [],
+      "verdict_method": "automatique, confirmé par relecture"
+    },
+    {
+      "question_id": "q13",
+      "question": "Quelle est l'adresse e-mail du référent handicap de Lyon ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "handicap-lyon@ynov\\.com": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "L'adresse e-mail du référent handicap de Lyon est **handicap-lyon@ynov.com** [Source 2].",
+      "sources": [
+        {
+          "source": "handicap.html",
+          "page": 1,
+          "section": "Contact :",
+          "score": 0.491999
+        },
+        {
+          "source": "handicap.html",
+          "page": 1,
+          "section": "Contact :",
+          "score": 0.48865867
+        },
+        {
+          "source": "condition-admission.html",
+          "page": 1,
+          "section": "Coordonnées de tous nos campus — Contact Ynov Lyon",
+          "score": 0.4866587
+        },
+        {
+          "source": "handicap.html",
+          "page": 1,
+          "section": "Autres ressources et contacts :",
+          "score": 0.46995294
+        },
+        {
+          "source": "mastere-expert-en-mecatronique.html",
+          "page": 1,
+          "section": "Voies d’accès et prérequis de la formation",
+          "score": 0.4628983
+        },
+        {
+          "source": "handicap.html",
+          "page": 1,
+          "section": "Autres ressources et contacts :",
+          "score": 0.4611844
+        },
+        {
+          "source": "mastere-expert-en-systemes-embarques.html",
+          "page": 1,
+          "section": "Voies d’accès et prérequis de la formation",
+          "score": 0.44765115
+        },
+        {
+          "source": "handicap.html",
+          "page": 1,
+          "section": "Emploi :",
+          "score": 0.44435215
+        },
+        {
+          "source": "mastere-expert-en-marketing-communication-transformation-digitale.html",
+          "page": 1,
+          "section": "Voies d’accès et prérequis de la formation",
+          "score": 0.43845785
+        },
+        {
+          "source": "mastere-expert-en-social-media-communication-transformation-digitale.html",
+          "page": 1,
+          "section": "Voies d’accès et prérequis de la formation",
+          "score": 0.43270665
+        }
+      ],
+      "latency_s": 0.88,
+      "edge_cases": [],
+      "verdict_method": "automatique, confirmé par relecture"
+    },
+    {
+      "question_id": "q14",
+      "question": "Quels métiers peut-on exercer après le Mastère Data engineer ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "Data Engineer": true,
+          "Analytics Engineer": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Les métiers accessibles après le Mastère Data Engineer sont :\n- Data Engineer\n- Analytics Engineer\n- Ingénieur plateforme data\n- Ingénieur DataOps\n- Ingénieur cloud data\n- Lead Data Engineer (avec l'expérience)\n- Architecte data (avec l'expérience)\n- Head of Data (avec l'expérience)\n\n[Source 2]",
+      "sources": [
+        {
+          "source": "mastere-data-engineer.html",
+          "page": 1,
+          "section": "Présentation",
+          "score": 0.7985511
+        },
+        {
+          "source": "mastere-data-engineer.html",
+          "page": 1,
+          "section": "Métiers et dynamique du marché",
+          "score": 0.7903159
+        },
+        {
+          "source": "mastere-data-engineer.html",
+          "page": 1,
+          "section": "Objectifs de la formation",
+          "score": 0.77011806
+        },
+        {
+          "source": "mastere-data-engineer.html",
+          "page": 1,
+          "section": "Objectifs de la formation",
+          "score": 0.7676165
+        },
+        {
+          "source": "mastere-data-engineer.html",
+          "page": 1,
+          "section": "Programme du Mastère",
+          "score": 0.7625976
+        },
+        {
+          "source": "mastere-data-engineer.html",
+          "page": 1,
+          "section": "Ce que tu vas apprendre",
+          "score": 0.7517604
+        },
+        {
+          "source": "bachelor-developpement-ia-data-engineering.html",
+          "page": 1,
+          "section": "Métiers et dynamique du marché",
+          "score": 0.7509126
+        },
+        {
+          "source": "mastere-data-engineer.html",
+          "page": 1,
+          "section": "Voies d’accès et prérequis de la formation",
+          "score": 0.74774915
+        },
+        {
+          "source": "mastere-data-engineer.html",
+          "page": 1,
+          "section": "Voies d’accès et prérequis de la formation",
+          "score": 0.7410931
+        },
+        {
+          "source": "mastere-data-engineer.html",
+          "page": 1,
+          "section": "Nos méthodes pédagogiques",
+          "score": 0.7369497
+        }
+      ],
+      "latency_s": 1.16,
+      "edge_cases": [],
+      "verdict_method": "automatique, confirmé par relecture"
+    },
+    {
+      "question_id": "q15",
+      "question": "Quel est le taux de réussite du titre Expert en développement logiciel ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "76 ?%": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Le taux de réussite au titre **Expert en développement logiciel** pour l’année académique 24/25 est de **76%** (310 certifiés sur 408 candidats présentés) [Source 6].",
+      "sources": [
+        {
+          "source": "mastere-expert-developpement-full-stack.html",
+          "page": 1,
+          "section": "Objectifs de la formation",
+          "score": 0.7318152
+        },
+        {
+          "source": "rncp-39583.html",
+          "page": 1,
+          "section": "Objectifs et contexte de la certification",
+          "score": 0.7259151
+        },
+        {
+          "source": "rncp-39583.html",
+          "page": 1,
+          "section": "Le cas échant, prérequis à l’entrée en formation",
+          "score": 0.7176124
+        },
+        {
+          "source": "mastere-expert-developpement-full-stack.html",
+          "page": 1,
+          "section": "Equivalences",
+          "score": 0.716771
+        },
+        {
+          "source": "mastere-expert-developpement-full-stack.html",
+          "page": 1,
+          "section": "Objectifs de la formation",
+          "score": 0.7092385
+        },
+        {
+          "source": "mastere-expert-developpement-full-stack.html",
+          "page": 1,
+          "section": "Ce titre en quelques chiffres",
+          "score": 0.70776665
+        },
+        {
+          "source": "rncp-39583.html",
+          "page": 1,
+          "section": "Statistiques",
+          "score": 0.7027707
+        },
+        {
+          "source": "rncp-39583.html",
+          "page": 1,
+          "section": "Description des modalités d'acquisition de la certification par capitalisation des blocs de compétences et/ou par correspondance",
+          "score": 0.70068544
+        },
+        {
+          "source": "mastere-expert-developpement-full-stack.html",
+          "page": 1,
+          "section": "* Titre d’Expert en développement logiciel – Niveau 7",
+          "score": 0.6987648
+        },
+        {
+          "source": "rncp-39583.html",
+          "page": 1,
+          "section": "Objectifs et contexte de la certification",
+          "score": 0.698598
+        }
+      ],
+      "latency_s": 0.98,
+      "edge_cases": [],
+      "review_note": "76 % (310 sur 408) : plus de confusion avec les chiffres d'un autre titre.",
+      "verdict_method": "revue manuelle"
+    },
+    {
+      "question_id": "q16",
+      "question": "Quels BTS sont accessibles via Parcoursup ?",
+      "out_of_scope": null,
+      "passed": false,
+      "verdict": "no_answer",
+      "auto_check": {
+        "must": {
+          "CIEL": false,
+          "SLAM": false,
+          "SISR": false
+        },
+        "must_not_hits": [],
+        "verdict": "no_answer"
+      },
+      "answer": "Je ne peux pas répondre à cette question car le contexte fourni ne mentionne pas si les BTS Ynov sont accessibles via Parcoursup.",
+      "sources": [
+        {
+          "source": "bts-sio-sisr.html",
+          "page": 1,
+          "section": "Programme du BTS",
+          "score": 0.6278918
+        },
+        {
+          "source": "bts-ciel.html",
+          "page": 1,
+          "section": "Programme du BTS",
+          "score": 0.62483466
+        },
+        {
+          "source": "bts-sio-sisr.html",
+          "page": 1,
+          "section": "Programme du BTS",
+          "score": 0.62363243
+        },
+        {
+          "source": "bts-communication.html",
+          "page": 1,
+          "section": "Programme du BTS",
+          "score": 0.61204267
+        },
+        {
+          "source": "bts-sio-sisr.html",
+          "page": 1,
+          "section": "Les + de notre BTS",
+          "score": 0.6110386
+        },
+        {
+          "source": "bts-ndrc.html",
+          "page": 1,
+          "section": "Présentation",
+          "score": 0.60416305
+        },
+        {
+          "source": "bts-communication.html",
+          "page": 1,
+          "section": "*BTS de Communication BTS",
+          "score": 0.6008893
+        },
+        {
+          "source": "bts-ndrc.html",
+          "page": 1,
+          "section": "Programme du BTS",
+          "score": 0.59282345
+        },
+        {
+          "source": "bts-sio-slam.html",
+          "page": 1,
+          "section": "Programme du BTS",
+          "score": 0.59009945
+        },
+        {
+          "source": "bts-ndrc.html",
+          "page": 1,
+          "section": "Objectifs de la formation",
+          "score": 0.5860121
+        }
+      ],
+      "latency_s": 1.16,
+      "edge_cases": [
+        "EC-07"
+      ],
+      "review_note": "Répond honnêtement qu'il ne sait pas : la section Parcoursup n'est pas récupérée par MiniLM.",
+      "verdict_method": "revue manuelle"
+    },
+    {
+      "question_id": "q17",
+      "question": "Quelle est la capitale de l'Australie ?",
+      "out_of_scope": "threshold",
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {},
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Je n'ai pas trouvé d'information pertinente dans les documents Ynov pour répondre à votre question.",
+      "sources": [],
+      "latency_s": 0.21,
+      "edge_cases": [],
+      "verdict_method": "automatique, confirmé par relecture"
+    },
+    {
+      "question_id": "q18",
+      "question": "Donne-moi une recette de pâte à crêpes.",
+      "out_of_scope": "threshold",
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {},
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Je n'ai pas trouvé d'information pertinente dans les documents Ynov pour répondre à votre question.",
+      "sources": [],
+      "latency_s": 0.22,
+      "edge_cases": [],
+      "verdict_method": "automatique, confirmé par relecture"
+    },
+    {
+      "question_id": "q19",
+      "question": "Quels sont les frais de scolarité de HEC Paris ?",
+      "out_of_scope": "llm",
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {},
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Je ne peux répondre qu'aux questions sur Ynov Campus.",
+      "sources": [
+        {
+          "source": "mastere-expert-en-developpement-informatique-specialise-banque-assurance.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.6091832
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.5966567
+        },
+        {
+          "source": "bts-mec.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.57577866
+        },
+        {
+          "source": "armee-de-terre.html",
+          "page": 1,
+          "section": "Rémunération",
+          "score": 0.53346765
+        },
+        {
+          "source": "mastere-expert-en-jumeaux-numeriques-du-batiment-de-la-ville-et-des-territoires.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.50751007
+        },
+        {
+          "source": "armee-de-terre.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.5042746
+        },
+        {
+          "source": "bts-ciel.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.50346965
+        },
+        {
+          "source": "armee-de-terre.html",
+          "page": 1,
+          "section": "Logement et alimentation pendant la formation",
+          "score": 0.50217634
+        },
+        {
+          "source": "bts-mec.html",
+          "page": 1,
+          "section": "Les modalités d’évaluations certificatives",
+          "score": 0.49906194
+        },
+        {
+          "source": "mastere-manager-de-projet-bim-smart-building.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.49490005
+        }
+      ],
+      "latency_s": 1.03,
+      "edge_cases": [],
+      "verdict_method": "automatique, confirmé par relecture"
+    },
+    {
+      "question_id": "q20",
+      "question": "Quel temps fera-t-il demain à Lyon ?",
+      "out_of_scope": "threshold",
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {},
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Je n'ai pas trouvé d'information pertinente dans les documents Ynov pour répondre à votre question.",
+      "sources": [],
+      "latency_s": 0.26,
+      "edge_cases": [],
+      "verdict_method": "automatique, confirmé par relecture"
+    },
+    {
+      "question_id": "q21",
+      "question": "Comment réparer une fuite d'eau sous un évier ?",
+      "out_of_scope": "threshold",
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {},
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Je n'ai pas trouvé d'information pertinente dans les documents Ynov pour répondre à votre question.",
+      "sources": [],
+      "latency_s": 0.28,
+      "edge_cases": [],
+      "verdict_method": "automatique, confirmé par relecture"
+    },
+    {
+      "question_id": "q22",
+      "question": "Qui a gagné la Coupe du monde de football 2018 ?",
+      "out_of_scope": "threshold",
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {},
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Je n'ai pas trouvé d'information pertinente dans les documents Ynov pour répondre à votre question.",
+      "sources": [],
+      "latency_s": 0.19,
+      "edge_cases": [],
+      "verdict_method": "automatique, confirmé par relecture"
+    },
+    {
+      "question_id": "q23",
+      "question": "Quel est le meilleur langage de programmation pour débuter ?",
+      "out_of_scope": "threshold",
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {},
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Je n'ai pas trouvé d'information pertinente dans les documents Ynov pour répondre à votre question.",
+      "sources": [],
+      "latency_s": 0.23,
+      "edge_cases": [],
+      "verdict_method": "automatique, confirmé par relecture"
+    },
+    {
+      "question_id": "q24",
+      "question": "Peux-tu m'écrire un poème sur l'automne ?",
+      "out_of_scope": "threshold",
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {},
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Je n'ai pas trouvé d'information pertinente dans les documents Ynov pour répondre à votre question.",
+      "sources": [],
+      "latency_s": 0.29,
+      "edge_cases": [],
+      "verdict_method": "automatique, confirmé par relecture"
+    },
+    {
+      "question_id": "q25",
+      "question": "Combien coûte un abonnement Netflix ?",
+      "out_of_scope": "threshold",
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {},
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Je n'ai pas trouvé d'information pertinente dans les documents Ynov pour répondre à votre question.",
+      "sources": [],
+      "latency_s": 0.25,
+      "edge_cases": [],
+      "verdict_method": "automatique, confirmé par relecture"
+    },
+    {
+      "question_id": "q26",
+      "question": "Quelles sont les conditions d'admission à Polytechnique ?",
+      "out_of_scope": "llm",
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {},
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Je ne peux répondre qu'aux questions sur Ynov Campus.",
+      "sources": [
+        {
+          "source": "bachelor-developpement-ia-data-engineering.html",
+          "page": 1,
+          "section": "Les modalités d'évaluation certificatives",
+          "score": 0.5934674
+        },
+        {
+          "source": "rncp-42169.html",
+          "page": 1,
+          "section": "Le cas échant, prérequis à l’entrée en formation",
+          "score": 0.5917218
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Les modalités d'évaluation certificatives",
+          "score": 0.5909543
+        },
+        {
+          "source": "rncp-39766.html",
+          "page": 1,
+          "section": "Le cas échant, prérequis à l’entrée en formation",
+          "score": 0.5890453
+        },
+        {
+          "source": "mastere-expert-en-mecatronique.html",
+          "page": 1,
+          "section": "Voies d’accès et prérequis de la formation",
+          "score": 0.5843408
+        },
+        {
+          "source": "rncp-41123.html",
+          "page": 1,
+          "section": "Le cas échant, prérequis à l’entrée en formation",
+          "score": 0.5836353
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Voies d'accès et prérequis à la formation",
+          "score": 0.5801323
+        },
+        {
+          "source": "bachelor-developpement-ia-data-engineering.html",
+          "page": 1,
+          "section": "Les modalités d'évaluation certificatives",
+          "score": 0.5777935
+        },
+        {
+          "source": "rncp-36463.html",
+          "page": 1,
+          "section": "Le cas échant, prérequis à l’entrée en formation",
+          "score": 0.57762015
+        },
+        {
+          "source": "mastere-expert-en-systemes-embarques.html",
+          "page": 1,
+          "section": "Voies d’accès et prérequis de la formation",
+          "score": 0.57754296
+        }
+      ],
+      "latency_s": 2.26,
+      "edge_cases": [],
+      "verdict_method": "automatique, confirmé par relecture"
+    }
+  ],
+  "summary": {
+    "total": 26,
+    "passed": 22,
+    "correct": 22,
+    "partial": 3,
+    "wrong": 0,
+    "refused": 0,
+    "no_answer": 1,
+    "error": 0,
+    "in_scope_total": 16,
+    "in_scope_correct": 12,
+    "out_of_scope_total": 10,
+    "out_of_scope_correct": 10
+  }
+}

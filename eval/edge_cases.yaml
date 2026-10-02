@@ -167,12 +167,17 @@
     lent), recherche 69 ms ; e5-large (chunks de 500) 15/16 mais aucun seuil possible
     (-0,016). De bout en bout avec e5-large 300 (passage 34) : 12/16 correctes comme MiniLM
     en prod (passage 29), q16 corrigée mais q15 devenue fausse (EC-14).
+    Après les corrections EC-14 et EC-15 (passages 35 à 38, corpus de 6 470 chunks) :
+    recherche MiniLM 14/16 (6 questions au rang 1, écart +0,055, 172 s) contre e5-large
+    15/16 (11 au rang 1, écart +0,020, 1 905 s) ; de bout en bout, MiniLM 12/16 en prod
+    contre e5-large 13/16 en local (q16 corrigée), aucune réponse fausse pour les deux.
   cause: Capacité du modèle.
   fix: >
-    Pas de changement de modèle pour l'instant : e5-large améliore la recherche mais pas le
-    résultat final tant que EC-14 et EC-15 ne sont pas corrigés, pour un coût élevé
-    (ingestion d'environ 40 min en prod, modèle de 2,2 Go en mémoire, seuil fragile).
-    Refaire la comparaison après ces corrections ; e5-large en chunks de 300 est le candidat.
+    e5-large est désormais meilleur de bout en bout (+1 question, q16) mais coûte cher :
+    ingestion d'environ 38 min sur le serveur (4 cœurs), environ 2,5 Go de RAM par
+    processus sur 7,8 Go, recherche 71 ms au lieu de 9 ms, et un seuil fragile (écart
+    +0,020). Décision à prendre ; q08 (blocs Cybersécurité) reste partielle avec les deux
+    modèles.
   links: ["feat/embedding-model-comparison"]
 
 - id: EC-08
@@ -301,7 +306,7 @@
 - id: EC-14
   title: Un chunk sépare des chiffres du titre auquel ils se rapportent
   category: chunking
-  status: open
+  status: fixed
   questions: [q15]
   discovered_in: 2026-10-02_34_local-e5-large-300
   symptom: >
@@ -317,14 +322,17 @@
     Découpage à 300 caractères au milieu d'une liste dont chaque groupe dépend d'un titre ;
     MiniLM ne récupérait pas ce chunk, e5-large si.
   fix: >
-    À faire : découper la page CFA par titre RNCP (une section par titre, comme les modules
-    de programme), pour que chaque chunk porte le nom de son titre.
-  links: []
+    Les blocs des pages d'information qui ont au moins deux sous-titres h3 sont découpés en
+    une section par sous-titre (« Taux de réussite apprentis — Expert en Développement
+    Logiciel – [RNCP39583] »), ce qui profite aussi aux FAQ et aux coordonnées par campus.
+    Avec e5-large (passage 38), q15 est correcte : 76 % pour le titre, 77 % pour les
+    apprentis ; avec MiniLM en prod (passage 35), toujours 76 %.
+  links: ["PR #12"]
 
 - id: EC-15
   title: Le fichier d'exemple fictif est indexé en prod
   category: source-data
-  status: open
+  status: fixed
   questions: [q07, q09]
   discovered_in: 2026-10-02_34_local-e5-large-300
   symptom: >
@@ -337,7 +345,8 @@
     remontait déjà parmi les sources de q09 au premier test (passage 01).
   cause: data/samples/ est ingéré comme le reste du corpus.
   fix: >
-    À faire : exclure data/samples/ de l'ingestion de prod (par exemple doc_type « sample »
-    dans INGEST_EXCLUDE_DOC_TYPES), puis réingérer. Les tests unitaires peuvent continuer
-    à l'utiliser.
-  links: []
+    Le fichier est déplacé dans tests/fixtures/ (fixture des tests du loader Markdown,
+    marquée fictive), data/ est entièrement exclu de git et de l'image, le dossier est
+    supprimé du serveur et la réingestion a retiré ses points de l'index (synchronisation de
+    l'indexeur). Aucune source ne le cite plus aux passages 35 et 38.
+  links: ["PR #11"]
