@@ -16,6 +16,4 @@ tests
 *.md
 !README.md
 data
-!data/samples
-!data/samples/**
 .eval_qdrant

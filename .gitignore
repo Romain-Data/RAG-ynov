@@ -72,8 +72,6 @@ Thumbs.db
 
 # Corpus: ignore real documents, keep the sample used by tests
 data/**
-!data/samples/
-!data/samples/**
 
 # Qdrant local storage (if we ever use local, but we use docker volume)
 # qdrant_storage/
