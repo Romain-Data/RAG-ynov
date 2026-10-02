@@ -159,12 +159,21 @@
     devant).
   evidence: >
     paraphrase-multilingual-MiniLM-L12-v2 est un petit modèle de paraphrase (384 dimensions,
-    128 tokens), faible pour rapprocher une question d'un passage.
+    128 tokens). Comparaison du 2026-10-02 (passages 30 à 34, mêmes 24 questions) :
+    MiniLM 14/16 en recherche, écart de seuil +0,060, index en 167 s, recherche 9 ms ;
+    mpnet 12/16, aucun seuil possible (écart -0,018), 593 s ; e5-large (chunks de 300)
+    15/16, q16 au rang 1, 9 questions sur 16 au rang 1 (5 pour MiniLM), mais écart de seuil
+    de +0,023 seulement (tous les scores entre 0,75 et 0,92), index en 36 min (13 fois plus
+    lent), recherche 69 ms ; e5-large (chunks de 500) 15/16 mais aucun seuil possible
+    (-0,016). De bout en bout avec e5-large 300 (passage 34) : 12/16 correctes comme MiniLM
+    en prod (passage 29), q16 corrigée mais q15 devenue fausse (EC-14).
   cause: Capacité du modèle.
   fix: >
-    Prévu : comparer avec intfloat/multilingual-e5-large (512 tokens) via eval/retrieval.py,
-    en tenant compte du coût (modèle de 2,2 Go, ingestion et requêtes plus lentes).
-  links: []
+    Pas de changement de modèle pour l'instant : e5-large améliore la recherche mais pas le
+    résultat final tant que EC-14 et EC-15 ne sont pas corrigés, pour un coût élevé
+    (ingestion d'environ 40 min en prod, modèle de 2,2 Go en mémoire, seuil fragile).
+    Refaire la comparaison après ces corrections ; e5-large en chunks de 300 est le candidat.
+  links: ["feat/embedding-model-comparison"]
 
 - id: EC-08
   title: Un préfixe long dégrade la recherche
@@ -288,3 +297,47 @@
     dans le contexte. Contrôle automatique renforcé (q16 answer_must_not). La vraie
     correction de q16 reste la recherche (EC-07).
   links: ["fix/prompt-and-threshold"]
+
+- id: EC-14
+  title: Un chunk sépare des chiffres du titre auquel ils se rapportent
+  category: chunking
+  status: open
+  questions: [q15]
+  discovered_in: 2026-10-02_34_local-e5-large-300
+  symptom: >
+    Avec e5-large, « Quel est le taux de réussite du titre Expert en développement
+    logiciel ? » → « 79 %, 121 certifiés sur 154 » : ce sont les chiffres des apprentis du
+    titre Expert en cybersécurité. La bonne réponse est 76 % (77 % pour les apprentis).
+  evidence: >
+    La page CFA liste les taux par titre (nom du titre, puis 4 lignes de chiffres). Le chunk
+    récupéré commence par les dernières lignes du titre Cybersécurité (« 79 % … 121 sur 154 »)
+    et finit sur le nom du titre suivant, « Expert en Développement Logiciel ». Le préfixe ne
+    donne que la section (« Taux de réussite apprentis »), pas le titre RNCP.
+  cause: >
+    Découpage à 300 caractères au milieu d'une liste dont chaque groupe dépend d'un titre ;
+    MiniLM ne récupérait pas ce chunk, e5-large si.
+  fix: >
+    À faire : découper la page CFA par titre RNCP (une section par titre, comme les modules
+    de programme), pour que chaque chunk porte le nom de son titre.
+  links: []
+
+- id: EC-15
+  title: Le fichier d'exemple fictif est indexé en prod
+  category: source-data
+  status: open
+  questions: [q07, q09]
+  discovered_in: 2026-10-02_34_local-e5-large-300
+  symptom: >
+    Avec e5-large, la réponse à « Peut-on payer en plusieurs fois ? » ajoute « 1, 3 ou 10
+    mensualités sans frais » : cette information n'existe pas sur le site Ynov.
+  evidence: >
+    Elle vient de data/samples/admissions_faq.md, un exemple créé avec le squelette du projet
+    (commit 9628924) : Mastère à 10 200 €, paiement en 10 mensualités, admissions@ynov.com,
+    01 40 79 00 00… Il est ingéré en prod depuis la première ingestion (doc_type faq) et
+    remontait déjà parmi les sources de q09 au premier test (passage 01).
+  cause: data/samples/ est ingéré comme le reste du corpus.
+  fix: >
+    À faire : exclure data/samples/ de l'ingestion de prod (par exemple doc_type « sample »
+    dans INGEST_EXCLUDE_DOC_TYPES), puis réingérer. Les tests unitaires peuvent continuer
+    à l'utiliser.
+  links: []

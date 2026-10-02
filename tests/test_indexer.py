@@ -61,3 +61,12 @@ class TestIndexChunks:
         chunks = [_chunk("a.html", "Programme", i) for i in range(600)]
         assert index_chunks(chunks, client) == 600
         assert _count(client) == 600
+
+
+def test_vectors_of_another_size_are_refused(client: QdrantClient):
+    """Changing the embedding model must not silently mix vector sizes."""
+    index_chunks([_chunk("a.html", "Tarifs", 0)], client)  # 384 dims
+    bigger = _chunk("a.html", "Tarifs", 0)
+    bigger["vector"] = [0.1] * 1024
+    with pytest.raises(ValueError, match="embedding model changed"):
+        index_chunks([bigger], client)

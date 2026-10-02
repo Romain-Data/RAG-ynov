@@ -25,11 +25,20 @@ def get_qdrant_client() -> QdrantClient:
 
 
 def ensure_collection(client: QdrantClient, vector_size: int = 384) -> None:
-    """Create collection if it doesn't exist."""
+    """Create collection if it doesn't exist; refuse vectors of another size."""
     collections_ = client.get_collections().collections
     names = [c.name for c in collections_]
 
-    if settings.qdrant_collection_name not in names:
+    if settings.qdrant_collection_name in names:
+        params = client.get_collection(settings.qdrant_collection_name).config.params
+        existing = params.vectors.size if hasattr(params.vectors, "size") else None
+        if existing is not None and existing != vector_size:
+            raise ValueError(
+                f"Collection {settings.qdrant_collection_name!r} holds {existing}-dim vectors "
+                f"but the embedding model produces {vector_size}: the embedding model changed. "
+                "Delete the collection, then re-ingest."
+            )
+    else:
         client.create_collection(
             collection_name=settings.qdrant_collection_name,
             vectors_config=VectorParams(size=vector_size, distance=Distance.COSINE),
@@ -70,9 +79,9 @@ def index_chunks(chunks: list[dict], client: QdrantClient | None = None) -> int:
     """
     client = client or get_qdrant_client()
 
-    # Ensure collection exists (vector size from embedding model)
-    # multilingual-e5-small = 384 dims
-    ensure_collection(client, vector_size=384)
+    # Ensure collection exists, sized for the embedding model in use
+    if chunks:
+        ensure_collection(client, vector_size=len(chunks[0]["vector"]))
 
     ids = point_ids(chunks)
     points = [
