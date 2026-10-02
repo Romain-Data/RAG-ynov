@@ -329,10 +329,38 @@ def is_info_page(html: str) -> bool:
     return "ezlandingpage-field" in html and not is_formation_page(html)
 
 
+_SUBSECTION_MARK = "§§h3§§"
+
+
+def _split_by_subheadings(block: Tag, block_title: str) -> list[list[str]]:
+    """One section per h3 of a block: "<block title> — <h3>", plus the intro if any.
+
+    Lists of items under h3 subheadings (success rates per RNCP title, FAQ questions,
+    contacts per campus) were cut into 300-character chunks across items, so a chunk
+    could hold one item's figures and the next item's name (EC-14).
+    """
+    for subheading in block.find_all("h3"):
+        subheading.insert(0, NavigableString(_SUBSECTION_MARK))
+    sections: list[list[str]] = [[block_title, ""]]
+    awaiting_title = False  # h3 text may sit on the line after the mark (nested tags)
+    for line in _to_text(block).split("\n"):
+        if line.startswith(_SUBSECTION_MARK):
+            subtitle = line[len(_SUBSECTION_MARK):].strip()
+            sections.append([f"{block_title} — {subtitle}", ""])
+            awaiting_title = not subtitle
+        elif awaiting_title:
+            sections[-1][0] += line
+            awaiting_title = False
+        elif line != block_title and not re.fullmatch(r"\d+\.", line):  # "03." numbering
+            sections[-1][1] += line + "\n"
+    return [[t, b.strip()] for t, b in sections if b.strip()]
+
+
 def parse_info_page(html: str) -> dict:
     """Parse a ynov.com info page into sections, one per CMS block with a heading.
 
-    Blocks without a heading continue the previous section (e.g. the admission steps).
+    Blocks without a heading continue the previous section (e.g. the admission steps);
+    blocks with several h3 subheadings get one section per subheading.
     Returns {"title", "last_modified", "sections": [(title, text)]}.
     """
     soup = BeautifulSoup(html, "html.parser")
@@ -349,6 +377,10 @@ def parse_info_page(html: str) -> dict:
         match = re.search(r"Date de dernière modification\s*:\s*(\S+)", block.get_text(" "))
         if match:
             last_modified = match.group(1)
+            continue
+        if len(block.find_all("h3")) >= 2:
+            h2 = block.find("h2")
+            sections += _split_by_subheadings(block, _clean(h2.get_text(" ")) if h2 else title)
             continue
         heading = block.find(["h2", "h3"])
         heading_text = _clean(heading.get_text(" ")) if heading else ""
