@@ -30,8 +30,17 @@ def _score(run: dict) -> str:
     s = run["summary"]
     if run["kind"] == "retrieval":
         refused = s.get("refused_by_threshold")
-        return f"{s['passed']}/{s['total']}" + (f" ({refused} ⛔)" if refused else "")
-    return f"{s['correct']}/{s['total']} ✅ · {s['partial']} 🟡"
+        in_scope = [r for r in run["results"] if not r.get("out_of_scope")]
+        out_scope = [r for r in run["results"] if r.get("out_of_scope")]
+        return (f"{sum(r['passed'] for r in in_scope)}/{len(in_scope)}"
+                + (f" ({refused} ⛔)" if refused else "")
+                + (f" · hors périmètre {sum(r['passed'] for r in out_scope)}/"
+                   f"{len(out_scope)} ⛔" if out_scope else ""))
+    if "in_scope_total" in s:
+        return (f"{s['in_scope_correct']}/{s['in_scope_total']} ✅ · {s['partial']} 🟡 · "
+                f"{s['wrong']} ❌ · hors périmètre {s['out_of_scope_correct']}/"
+                f"{s['out_of_scope_total']}")
+    return f"{s['correct']}/{s['total']} ✅ · {s['partial']} 🟡 · {s['wrong']} ❌"
 
 
 def _cell(run: dict, result: dict | None) -> str:
@@ -67,9 +76,12 @@ def build() -> str:
         last = e2e[-1]
         s = last["summary"]
         out.append(f"- **Dernier test de bout en bout** ({last['environment']}, "
-                   f"`{last['run_id']}`) : {s['correct']}/{s['total']} correcte(s), "
-                   f"{s['partial']} partielle(s), {s['wrong']} fausse(s), "
-                   f"{s['refused']} refusée(s), {s['no_answer']} sans réponse.")
+                   f"`{last['run_id']}`) : {_score(last)} ; {s['refused']} refusée(s), "
+                   f"{s['no_answer']} sans réponse.")
+        prod = [r for r in e2e if r["environment"] == "prod"]
+        if prod and prod[-1] is not last:
+            out.append(f"- **Dernier test en prod** (`{prod[-1]['run_id']}`) : "
+                       f"{_score(prod[-1])}.")
     if retrieval:
         last = retrieval[-1]
         out.append(f"- **Dernière évaluation de la recherche** (`{last['run_id']}`) : "
