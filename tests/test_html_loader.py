@@ -295,3 +295,31 @@ class TestBuildCommon:
         assert "### Alternance" in md
         assert "4 échéances" in md
         assert "9 000 €" not in md  # prices stay on the formation pages
+
+
+CFA_HTML = """<!doctype html><html><body><main>
+  <div class="HeroBanner"><h1>Ynov, Centre de formation des apprentis (CFA)</h1></div>
+  <div class="ezlandingpage-field">
+    <div class="landing-page__block" id="Media-Texte">
+      <h2>Taux de réussite apprentis</h2>
+      <h3><strong>Expert en Cybersécurité – [RNCP40897]</strong></h3>
+      <ul><li>Taux de réussite des apprentis : 79%</li></ul>
+      <p>Résultat obtenu de 121 certifiés sur 154 candidats</p>
+      <p>02.</p>
+      <h3><span><p>Expert en Développement Logiciel – [RNCP39583]</p></span></h3>
+      <ul><li>Taux de réussite des apprentis : 77%</li></ul>
+    </div>
+  </div>
+</main></body></html>
+"""
+
+
+class TestInfoPageSubheadings:
+    def test_one_section_per_h3_keeps_figures_with_their_title(self):
+        sections = dict(parse_info_page(CFA_HTML)["sections"])
+        cyber = sections["Taux de réussite apprentis — Expert en Cybersécurité – [RNCP40897]"]
+        dev = sections[
+            "Taux de réussite apprentis — Expert en Développement Logiciel – [RNCP39583]"]
+        assert "79%" in cyber and "121 certifiés" in cyber
+        assert dev == "- Taux de réussite des apprentis : 77%"  # h3 text in nested tags
+        assert "02." not in cyber  # numbering of the next item is dropped
