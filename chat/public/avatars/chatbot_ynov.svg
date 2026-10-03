@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-46.5 0 273 273">
+  <style>
+    .left { fill: #0A0006; }
+    @media (prefers-color-scheme: dark) { .left { fill: #fff; } }
+  </style>
+  <defs>
+    <linearGradient id="gradient" x1="45.6883" y1="262.525" x2="45.6883" y2="21.0895" gradientUnits="userSpaceOnUse">
+      <stop offset="0.00609776" stop-color="#FF1A1A"/>
+      <stop offset="0.129808" stop-color="#FF84EF"/>
+      <stop offset="0.278846" stop-color="#EEFF57"/>
+      <stop offset="0.466346" stop-color="#5AFFB6"/>
+      <stop offset="0.615385" stop-color="#00EAFF"/>
+      <stop offset="0.796597" stop-color="#859CFF"/>
+      <stop offset="0.892168" stop-color="#4A8CFF"/>
+      <stop offset="1" stop-color="#018E4D"/>
+    </linearGradient>
+  </defs>
+  <path class="left" d="M58.9029 2.5264C58.4133 1.02024 57.0104 0.00025618 55.4267 0H3.65778C2.38855 0 1.50572 1.26242 1.94019 2.45498L5.47714 12.1678L9.9711 24.0588L46.9404 137.838L46.9815 137.711L55.0321 162.488C55.5789 164.17 57.9579 164.172 58.5083 162.491L78.8945 100.178C82.7485 88.397 82.762 75.6964 78.932 63.9081L66.8035 26.5816L66.7267 26.6049L58.9029 2.5264Z"/>
+  <path fill="url(#gradient)" d="M92.165 269.664C91.6755 271.17 90.2715 272.19 88.6874 272.19H37.9312C36.6891 272.19 35.8086 270.978 36.1924 269.797L123.034 2.52664C123.523 1.02004 124.927 0 126.511 0H177.267C178.509 0 179.389 1.21197 179.005 2.39326L92.165 269.664Z"/>
+</svg>
