@@ -2,6 +2,7 @@
 # and justifies a change (done or to do). Ids are stable: result files refer to them.
 #
 # status:   open | mitigated (partly fixed) | fixed | lesson (approach rejected)
+#           | wontfix (known limit, deliberately left as it is)
 # category: chunking | retrieval | grading | generation | embedding-model | eval-tooling
 #           | source-data
 
@@ -357,7 +358,7 @@
 - id: EC-16
   title: Les salutations et les remerciements sont refusés
   category: grading
-  status: open
+  status: wontfix
   questions: [c07.2, c08.1]
   discovered_in: 2026-10-03_04_local-conversations-jeu-c2
   symptom: >
@@ -372,6 +373,7 @@
     Le seuil compare la question aux chunks du corpus ; une formule de politesse ne ressemble
     à aucun chunk. Sans effet dans l'API à une question, gênant dans un chat.
   fix: >
-    À faire : repérer les messages de politesse avant la recherche (règles simples ou appel
+    Abandonné le 2026-10-04 (décision de ne pas le traiter, limite acceptée). Piste si cela change :
+    repérer les messages de politesse avant la recherche (règles simples ou appel
     LLM) et répondre en une phrase, en rappelant ce que l'assistant sait faire. À mesurer avec
     les scénarios c07 et c08.

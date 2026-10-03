@@ -38,6 +38,9 @@ class Settings(BaseSettings):
     # the conversations, and the secret signing the session cookies. Without the secret
     # the chat is not mounted (Chainlit refuses to start without it).
     chat_db_path: str = "chat_data/chat.db"
+    # Where `python -m chat.backup` writes its copies of the chat database, and how many it keeps
+    chat_backup_dir: str = "chat_backups"
+    chat_backup_keep: int = 14
     chainlit_auth_secret: str = ""
 
     # Rate limiting (requests per minute per IP)

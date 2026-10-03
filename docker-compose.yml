@@ -17,6 +17,7 @@ services:
       - LOG_LEVEL=${LOG_LEVEL}
       - CHAINLIT_AUTH_SECRET=${CHAINLIT_AUTH_SECRET}
       - CHAT_DB_PATH=/app/chat_data/chat.db
+      - CHAT_BACKUP_DIR=/app/backups
     env_file:
       - .env
     volumes:
@@ -27,6 +28,10 @@ services:
       - /data/rag-ynov:/app/data:ro
       # Accounts and conversations of the chat (SQLite): the only state worth a backup
       - chat_data:/app/chat_data
+      # Daily copies of that database (python -m chat.backup, a scheduled task in Coolify): on the
+      # host, outside the Docker volume, so that losing the volume does not lose them. The
+      # folder is created on the server, owned by uid 999 (the appuser of the image).
+      - /data/rag-ynov-backups:/app/backups
     depends_on:
       qdrant:
         condition: service_healthy
