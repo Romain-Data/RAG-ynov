@@ -1,5 +1,7 @@
 """Tests for the pure helpers of the chat: sources block and history of a thread."""
-from chat.messages import cited_numbers, history_from_steps, strip_sources, with_sources
+import re
+
+from chat.messages import AUTHOR, cited_numbers, history_from_steps, strip_sources, with_sources
 
 SOURCES = [
     {"source": "bachelor-informatique.html", "section": "Infos clés", "page": 1},
@@ -51,3 +53,8 @@ class TestHistoryFromSteps:
             {"role": "assistant", "content": "3 ans [Source 1]"},
             {"role": "user", "content": "Et à Lyon ?"},
         ]
+
+
+def test_author_is_accepted_by_the_avatar_route_of_chainlit():
+    # chainlit/server.py get_avatar: ^[a-zA-Z0-9_ .-]+$ (a 400 gives a blank avatar)
+    assert re.match(r"^[a-zA-Z0-9_ .-]+$", AUTHOR)

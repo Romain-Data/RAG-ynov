@@ -1,12 +1,11 @@
 """HTML of the account pages: sign-up, recovery and deletion (Chainlit has none)."""
 from html import escape
 
+APP_NAME = "Chatbot Ynov (non officiel)"  # same as name in chat/.chainlit/config.toml
+
 _STYLE = """
-:root { color-scheme: light dark; --accent: #2a4bb0; --bg: #f4f6fb; --card: #fff;
-        --text: #141a2e; --muted: #5b6480; --border: #d5dae8; --error: #b3261e; }
-@media (prefers-color-scheme: dark) {
-  :root { --accent: #7d9bff; --bg: #10142a; --card: #181d38; --text: #f1f3fb;
-          --muted: #a6aecb; --border: #2d3458; --error: #ff8a80; } }
+:root { color-scheme: light; --accent: #325A38; --bg: #EAF0EB; --card: #fff;
+        --text: #141a14; --muted: #55605a; --border: #cfd9d1; --error: #b3261e; }
 * { box-sizing: border-box; }
 body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 16px;
        font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--text); }
@@ -18,6 +17,7 @@ label { display: block; margin: 1rem 0 .25rem; font-size: .85rem; font-weight: 6
 input[type=text], input[type=password] { width: 100%; padding: .6rem .7rem; font-size: 1rem;
        border: 1px solid var(--border); border-radius: 8px; background: transparent;
        color: inherit; }
+input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 button { margin-top: 1.25rem; width: 100%; padding: .7rem; border: 0; border-radius: 8px;
          background: var(--accent); color: #fff; font-size: 1rem; cursor: pointer; }
 button.danger { background: var(--error); }
@@ -35,7 +35,7 @@ def page(title: str, body: str) -> str:
     return (
         '<!doctype html><html lang="fr"><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width, initial-scale=1">'
-        f"<title>{escape(title)} — Assistant Ynov</title><style>{_STYLE}</style></head>"
+        f"<title>{escape(title)} — {escape(APP_NAME)}</title><style>{_STYLE}</style></head>"
         f"<body><main><h1>{escape(title)}</h1>{body}</main></body></html>"
     )
 

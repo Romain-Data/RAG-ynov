@@ -114,7 +114,7 @@ reaction_on_message_received = false
 
 [UI]
 # Name of the assistant.
-name = "Assistant Ynov"
+name = "Chatbot Ynov (non officiel)"
 
 default_theme = "light"
 
@@ -136,7 +136,7 @@ language = "fr-FR"
 confirm_new_chat = true
 
 # Description of the assistant. This is used for HTML tags.
-description = "Posez vos questions sur les formations Ynov."
+description = "Découvre toutes les formations et les modalités d'inscriptions"
 
 # Chain of Thought (CoT) display mode. Can be "hidden", "tool_call" or "full".
 cot = "hidden"
@@ -159,11 +159,12 @@ alert_style = "classic"
 # custom_js_attributes = "async type = \"module\""
 
 # Custom login page image, relative to public directory or external URL
-# login_page_image = "/public/custom-background.jpg"
+login_page_image = "/chat/public/login-bg.jpg"
 
 # Custom login page image filter (Tailwind internal filters, no dark/light variants)
 # login_page_image_filter = "brightness-50 grayscale"
-# login_page_image_dark_filter = "contrast-200 blur-sm"
+# Chainlit dims the image in dark mode by default ("brightness-[0.2] grayscale")
+login_page_image_dark_filter = "brightness-100"
 
 # Specify a custom meta URL (used for meta tags like og:url)
 # custom_meta_url = "https://github.com/Chainlit/chainlit"
