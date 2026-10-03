@@ -15,6 +15,8 @@ services:
       - QDRANT_COLLECTION_NAME=${QDRANT_COLLECTION_NAME}
       - EMBEDDING_MODEL=${EMBEDDING_MODEL}
       - LOG_LEVEL=${LOG_LEVEL}
+      - CHAINLIT_AUTH_SECRET=${CHAINLIT_AUTH_SECRET}
+      - CHAT_DB_PATH=/app/chat_data/chat.db
     env_file:
       - .env
     volumes:
@@ -23,6 +25,8 @@ services:
       # "${VAR:-./data}" to its own app folder instead of reading the variable.
       # Local dev mounts ./data instead, via docker-compose.override.yml.
       - /data/rag-ynov:/app/data:ro
+      # Accounts and conversations of the chat (SQLite): the only state worth a backup
+      - chat_data:/app/chat_data
     depends_on:
       qdrant:
         condition: service_healthy
@@ -54,3 +58,4 @@ services:
 
 volumes:
   qdrant_storage_v1_19:
+  chat_data:

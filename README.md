@@ -56,6 +56,27 @@ curl -X POST http://localhost:8000/api/query \
   -d '{"question": "Quels sont les frais de scolarité ?"}'
 ```
 
+## Chat interface
+
+A chat for the public, served by the same API on `/chat` ([Chainlit](https://chainlit.io)).
+Users create an account with a **pseudo and a password, nothing else** (no e-mail, no
+name): the sign-up page shows a one-time recovery code, the only way to reset a forgotten
+password. Conversations keep their history, can be reopened later and answer follow-up
+questions ("Et à Lyon ?") through the conversation graph (`graph/chat.py`).
+
+```bash
+# Generate the secret signing the session cookies, put it in .env, then start the stack
+uv run chainlit create-secret          # -> CHAINLIT_AUTH_SECRET=...
+docker compose up -d --build
+# Chat:           http://localhost:8000/chat/
+# Create account: http://localhost:8000/compte/inscription
+```
+
+Without `CHAINLIT_AUTH_SECRET` the chat is not mounted and the API works as before.
+Accounts and conversations live in one SQLite file (`CHAT_DB_PATH`, the `chat_data`
+volume): back it up. Pages: `/compte/inscription`, `/compte/recuperation`,
+`/compte/suppression` (deletes the account and its conversations).
+
 ## Roadmap
 
 The project plan lives in [ROADMAP.md](ROADMAP.md), each item tracked in a GitHub issue labelled `roadmap`.

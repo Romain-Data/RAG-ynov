@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parent.parent
 os.environ.setdefault("MAMMOUTH_API_KEY", "test-key")
 os.environ.setdefault("INGEST_API_KEY", "test-ingest-key")
 os.environ.setdefault("QDRANT_HOST", "localhost")
+os.environ.setdefault("CHAINLIT_AUTH_SECRET", "test-secret-for-the-chat-tests")
 os.environ.setdefault(
     "FAST_EMBED_CACHE_DIR",
     str(ROOT / ".fastembed_cache"),
