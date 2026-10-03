@@ -12,7 +12,7 @@ from chainlit.data.sql_alchemy import SQLAlchemyDataLayer
 
 from chat import accounts
 from chat.db import sqlalchemy_url
-from chat.messages import history_from_steps, with_sources
+from chat.messages import AUTHOR, history_from_steps, with_sources
 from graph.chat import get_chat_graph
 
 logger = logging.getLogger(__name__)
@@ -43,7 +43,7 @@ async def authenticate(username: str, password: str) -> cl.User | None:
 @cl.on_chat_start
 async def start() -> None:
     cl.user_session.set("history", [])
-    await cl.Message(content=GREETING).send()
+    await cl.Message(content=GREETING, author=AUTHOR).send()
 
 
 @cl.on_chat_resume
@@ -59,10 +59,12 @@ async def on_message(message: cl.Message) -> None:
         result = await get_chat_graph().ainvoke({"messages": history})
     except Exception:
         logger.exception("The chat graph failed")
-        await cl.Message(content=ERROR_MESSAGE).send()
+        await cl.Message(content=ERROR_MESSAGE, author=AUTHOR).send()
         return  # the question is not kept in the history: the user can ask again
     answer = result.get("answer", "").strip()
     cl.user_session.set("history", [*history, {"role": "assistant", "content": answer}])
-    await cl.Message(content=with_sources(answer, result.get("sources", []))).send()
+    await cl.Message(
+        content=with_sources(answer, result.get("sources", [])), author=AUTHOR
+    ).send()
 
 

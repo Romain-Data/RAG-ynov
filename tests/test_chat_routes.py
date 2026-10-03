@@ -1,13 +1,16 @@
 """Tests for the account pages and the conditional mount of the chat (no LLM)."""
+import json
 import re
+from pathlib import Path
 
 import pytest
 from fastapi import FastAPI
 
 from app.core.config import settings
 from app.core.security import limiter
-from chat import accounts
+from chat import accounts, pages
 from chat.db import init_db
+from chat.messages import AUTHOR
 from chat.mount import mount_chat
 
 CODE = re.compile(r"[A-Z2-9]{4}(?:-[A-Z2-9]{4}){3}")
@@ -97,3 +100,32 @@ class TestMount:
         assert app.state.chat_enabled is True
         assert any(getattr(r, "path", "") == "/chat" for r in app.routes)
         assert client.get("/api/health").status_code in (200, 429)  # the API is untouched
+
+
+class TestTheme:
+    """The look is plain files in chat/public: a typo would only show in the browser."""
+
+    PUBLIC = Path(__file__).resolve().parent.parent / "chat" / "public"
+
+    def test_theme_colors_are_hsl_triplets(self):
+        theme = json.loads((self.PUBLIC / "theme.json").read_text(encoding="utf-8"))
+        for mode in theme["variables"].values():
+            for name, value in mode.items():
+                assert re.fullmatch(r"\d{1,3} \d{1,3}% \d{1,3}%", value), (name, value)
+
+    @pytest.mark.parametrize("name", ["logo_light.png", "logo_dark.png", "favicon.png",
+                                      "login-bg.jpg", "login-links.js"])
+    def test_public_files_exist(self, name):
+        assert (self.PUBLIC / name).stat().st_size > 0
+
+    def test_the_assistant_avatar_file_matches_the_message_author(self):
+        # chainlit/server.py get_avatar: lowercase, spaces and dots turned into "_"
+        name = AUTHOR.lower().replace(" ", "_").replace(".", "_")
+        assert any((self.PUBLIC / "avatars").glob(f"{name}.*"))
+
+    def test_app_name_is_the_same_in_the_pages_and_in_the_config(self):
+        config = (self.PUBLIC.parent / ".chainlit" / "config.toml").read_text(encoding="utf-8")
+        assert f'name = "{pages.APP_NAME}"' in config
+
+    def test_pages_carry_the_app_name(self, client):
+        assert pages.APP_NAME in client.get("/compte/inscription").text

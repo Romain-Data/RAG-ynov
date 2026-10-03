@@ -1,6 +1,10 @@
 """Pure helpers of the chat: the sources block of an answer and the history of a thread."""
 import re
 
+# Author of the assistant messages: its avatar is requested as /avatars/<author>, and Chainlit
+# only accepts letters, digits, spaces, "_", "." and "-" there (the app name has parentheses).
+# Without a file in chat/public/avatars it falls back to the favicon.
+AUTHOR = "Chatbot Ynov"
 SOURCES_HEADING = "**Sources**"
 _SOURCES_SEPARATOR = f"\n\n{SOURCES_HEADING}\n"
 
