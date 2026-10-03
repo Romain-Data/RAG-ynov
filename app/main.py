@@ -5,7 +5,10 @@ from fastapi import Depends, FastAPI, Request
 from app.api import health, ingest, query
 from app.core.logging import setup_logging
 from app.core.security import add_security_middleware, rate_limit_health
+from chat.db import init_db
+from chat.mount import mount_chat
 from graph.builder import get_graph
+from graph.chat import get_chat_graph
 from ingestion.embedder import get_embedding_model
 from ingestion.indexer import get_qdrant_client
 
@@ -18,8 +21,12 @@ async def lifespan(app: FastAPI):
     get_qdrant_client()
     # Warm up FastEmbed model (downloads ONNX if needed)
     get_embedding_model()
-    # Compile LangGraph singleton
+    # Compile LangGraph singletons
     get_graph()
+    get_chat_graph()
+    # Accounts and conversations of the chat (SQLite file)
+    if app.state.chat_enabled:
+        init_db()
     yield
     # Shutdown - nothing to close for these singletons
 
@@ -38,6 +45,9 @@ add_security_middleware(app)
 app.include_router(health.router, prefix="/api")
 app.include_router(query.router, prefix="/api")
 app.include_router(ingest.router, prefix="/api")
+
+# Chat interface (Chainlit on /chat) and account pages, when CHAINLIT_AUTH_SECRET is set
+app.state.chat_enabled = mount_chat(app)
 
 
 @app.get("/", dependencies=[Depends(rate_limit_health)])

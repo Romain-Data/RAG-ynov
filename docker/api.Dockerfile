@@ -30,7 +30,7 @@ COPY --from=builder /app/.venv /app/.venv
 COPY . .
 
 # Create cache directory for FastEmbed model (persisted via volume in compose if needed)
-RUN mkdir -p /app/.fastembed_cache && chown -R appuser:appuser /app
+RUN mkdir -p /app/.fastembed_cache /app/chat_data && chown -R appuser:appuser /app
 ENV FAST_EMBED_CACHE_DIR=/app/.fastembed_cache
 
 # Switch to non-root user

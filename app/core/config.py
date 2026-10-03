@@ -34,10 +34,17 @@ class Settings(BaseSettings):
     # CORS — comma-separated origins, or "*" for all (dev only)
     cors_origins: str = "*"
 
+    # Chat interface (Chainlit, mounted on /chat): SQLite file holding the accounts and
+    # the conversations, and the secret signing the session cookies. Without the secret
+    # the chat is not mounted (Chainlit refuses to start without it).
+    chat_db_path: str = "chat_data/chat.db"
+    chainlit_auth_secret: str = ""
+
     # Rate limiting (requests per minute per IP)
     rate_limit_query: int = 30
     rate_limit_ingest: int = 5
     rate_limit_health: int = 120
+    rate_limit_account: int = 20
 
     # Misc
     log_level: str = "INFO"
