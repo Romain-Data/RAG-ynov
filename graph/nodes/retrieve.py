@@ -51,8 +51,11 @@ def search(
 
 
 def retrieve_node(state: GraphState) -> dict:
-    """Embed question and search Qdrant for relevant chunks."""
-    question = state.get("question", "")
+    """Embed question and search Qdrant for relevant chunks.
+
+    A follow-up question is searched through its standalone rewrite, when there is one.
+    """
+    question = state.get("rewritten") or state.get("question", "")
     if not question:
         return {"retrieved": []}
     return {"retrieved": search(question)}
