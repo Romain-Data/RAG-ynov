@@ -99,6 +99,7 @@ CLAUDE.md
 # Chat interface: accounts and conversations (SQLite), files and translations Chainlit
 # generates at startup (only fr-FR is kept: it is forced by chat/.chainlit/config.toml)
 chat_data/
+chat_backups/
 chat/.files/
 chat/chainlit.md
 chat/.chainlit/translations/*
@@ -107,3 +108,6 @@ chat/.chainlit/translations/*
 # Generated when a chainlit command runs from the project root (the app uses chat/)
 /.chainlit/
 /chainlit.md
+
+# Local documentation (not committed)
+documentation/

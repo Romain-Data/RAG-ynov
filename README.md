@@ -74,7 +74,9 @@ docker compose up -d --build
 
 Without `CHAINLIT_AUTH_SECRET` the chat is not mounted and the API works as before.
 Accounts and conversations live in one SQLite file (`CHAT_DB_PATH`, the `chat_data`
-volume): back it up. Pages: `/compte/inscription`, `/compte/recuperation`,
+volume): back it up. `python -m chat.backup` copies it (SQLite backup API, integrity check,
+14 copies kept); in production a daily task in Coolify runs it and the copies land on the host in
+`/data/rag-ynov-backups`, outside the Docker volume. Pages: `/compte/inscription`, `/compte/recuperation`,
 `/compte/suppression` (deletes the account and its conversations).
 
 ## Roadmap

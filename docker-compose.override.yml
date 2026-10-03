@@ -5,3 +5,4 @@ services:
   api:
     volumes:
       - ./data:/app/data:ro
+      - ./chat_backups:/app/backups

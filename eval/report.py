@@ -14,7 +14,7 @@ EDGE_CASES = EVAL_DIR / "edge_cases.yaml"
 VERDICT_ICONS = {"correct": "✅", "partial": "🟡", "wrong": "❌", "refused": "⛔",
                  "no_answer": "∅", "error": "⚠️"}
 STATUS_LABELS = {"open": "🔴 ouvert", "mitigated": "🟠 atténué", "fixed": "🟢 corrigé",
-                 "lesson": "📘 enseignement"}
+                 "lesson": "📘 enseignement", "wontfix": "⚪ abandonné"}
 
 
 def _config_summary(run: dict) -> str:

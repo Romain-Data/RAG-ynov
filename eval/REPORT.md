@@ -8,7 +8,7 @@
 - **Dernier test en prod** (`2026-10-02_35_prod-apres-ec14-ec15`) : 12/16 ✅ · 3 🟡 · 0 ❌ · hors périmètre 10/10.
 - **Dernière évaluation de la recherche** (`2026-10-02_37_modele-minilm-300-corpus-corrige`) : 14/16 · hors périmètre 8/8 ⛔.
 - **Dernière passe de conversation** (`2026-10-03_04_local-conversations-jeu-c2`) : 14/17 ✅ · 0 🟡 · 0 ❌ · hors périmètre 1/1.
-- **Cas limites** : 16 documentés, dont 6 ouverts ou atténués (EC-04, EC-05, EC-06, EC-07, EC-11, EC-16).
+- **Cas limites** : 16 documentés, dont 5 ouverts ou atténués (EC-04, EC-05, EC-06, EC-07, EC-11).
 
 ## Historique des passages
 
@@ -189,7 +189,7 @@ Sur les réponses revues à la main, le verdict automatique (`answer_must`) conc
 | EC-13 | Le LLM invente une règle générale à partir de quelques exemples | 🟢 corrigé | generation | q16 | `2026-10-02_26_local-apres-prompt-seuil` |
 | EC-14 | Un chunk sépare des chiffres du titre auquel ils se rapportent | 🟢 corrigé | chunking | q15 | `2026-10-02_34_local-e5-large-300` |
 | EC-15 | Le fichier d'exemple fictif est indexé en prod | 🟢 corrigé | source-data | q07, q09 | `2026-10-02_34_local-e5-large-300` |
-| EC-16 | Les salutations et les remerciements sont refusés | 🔴 ouvert | grading | c07.2, c08.1 | `2026-10-03_04_local-conversations-jeu-c2` |
+| EC-16 | Les salutations et les remerciements sont refusés | ⚪ abandonné | grading | c07.2, c08.1 | `2026-10-03_04_local-conversations-jeu-c2` |
 
 ### EC-01 — Les embeddings ne lisent que 128 tokens
 
@@ -328,12 +328,12 @@ Sur les réponses revues à la main, le verdict automatique (`answer_must`) conc
 
 ### EC-16 — Les salutations et les remerciements sont refusés
 
-**Statut** : 🔴 ouvert · **Catégorie** : grading
+**Statut** : ⚪ abandonné · **Catégorie** : grading
 
 - **Symptôme** : « Bonjour » en début de conversation et « Merci beaucoup ! » après une réponse reçoivent « Je n'ai pas trouvé d'information pertinente dans les documents Ynov pour répondre à votre question. ».
 - **Preuve** : Passage 04 du 2026-10-03 (scénarios c07 et c08) : les deux sont refusés par le seuil. « Bonjour » sans appel du LLM ; « Merci beaucoup ! » reste inchangé après reformulation. Même résultat avec « D'accord, super. » à la main.
 - **Cause** : Le seuil compare la question aux chunks du corpus ; une formule de politesse ne ressemble à aucun chunk. Sans effet dans l'API à une question, gênant dans un chat.
-- **Correction** : À faire : repérer les messages de politesse avant la recherche (règles simples ou appel LLM) et répondre en une phrase, en rappelant ce que l'assistant sait faire. À mesurer avec les scénarios c07 et c08.
+- **Correction** : Abandonné le 2026-10-04 (décision de ne pas le traiter, limite acceptée). Piste si cela change : repérer les messages de politesse avant la recherche (règles simples ou appel LLM) et répondre en une phrase, en rappelant ce que l'assistant sait faire. À mesurer avec les scénarios c07 et c08.
 
 ## Ajouter un passage
 
