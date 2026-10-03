@@ -15,11 +15,20 @@ Plan du projet RAG Ynov. Chaque chantier est suivi dans une issue GitHub (label 
 | [#14](https://github.com/Romain-Data/RAG-ynov/issues/14) | Améliorer la qualité des réponses | qualité | — |
 | [#15](https://github.com/Romain-Data/RAG-ynov/issues/15) | Mettre en place l'intégration continue | infra | — |
 | [#16](https://github.com/Romain-Data/RAG-ynov/issues/16) | Tableau de bord de l'évolution des résultats | produit | #18, #19 (pour les indicateurs d'usage) |
-| [#17](https://github.com/Romain-Data/RAG-ynov/issues/17) | Interface utilisateur de chat | produit | #14 (liens vers les sources) |
+| [#17](https://github.com/Romain-Data/RAG-ynov/issues/17) | Interface utilisateur de chat (Chainlit, comptes, historique) | produit | #14 (liens vers les sources) |
 | [#18](https://github.com/Romain-Data/RAG-ynov/issues/18) | Journal des réponses pour la revue manuelle | produit | — |
 | [#19](https://github.com/Romain-Data/RAG-ynov/issues/19) | Bouton « réponse satisfaisante ou non » | produit | #17, #18 |
 | [#20](https://github.com/Romain-Data/RAG-ynov/issues/20) | Rapport des questions sans réponse | produit | #18 |
 | [#21](https://github.com/Romain-Data/RAG-ynov/issues/21) | Rafraîchissement automatique du corpus et suivi des versions | données | — |
+
+## Interface de chat (#17) : décisions du 3 octobre 2026
+
+- **Technologie : [Chainlit](https://docs.chainlit.io)**, monté dans l'API FastAPI actuelle. Agent Chat UI a été écarté : il impose un serveur LangGraph (Aegra), PostgreSQL et un front Next.js, soit trois services de plus. Un prototype Chainlit a validé la connexion, l'historique, la reprise d'une conversation et le cloisonnement entre comptes.
+- **Connexion obligatoire, pseudo + mot de passe uniquement** (hachage argon2, ni e-mail ni nom). Code de secours affiché une seule fois à l'inscription, seul moyen de changer un mot de passe oublié.
+- **Stockage** : SQLite au départ (volume persistant), comptes et conversations. C'est la base dont ont besoin le journal (#18) et les avis (#19).
+- **À faire dans cet ordre** : (1) graphe de conversation avec condensation des relances ; (2) comptes, inscription, récupération par code de secours ; (3) Chainlit branché sur le graphe, thème et textes français ; (4) déploiement Coolify.
+- **À vérifier avant de s'engager** : une déconnexion inexpliquée vue une fois en cliquant sur une conversation de la barre latérale (non reproduite) ; il n'y a ni page ni lien d'inscription natifs.
+- **Pièges de Chainlit 2.12.0** : `requests` et `greenlet` non déclarés (à ajouter), schéma SQL qui change entre versions (figer la version), chemins des fichiers de `public/` à préfixer par le point de montage.
 
 ## Ordre suggéré
 
