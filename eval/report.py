@@ -19,7 +19,7 @@ STATUS_LABELS = {"open": "🔴 ouvert", "mitigated": "🟠 atténué", "fixed": 
 
 def _config_summary(run: dict) -> str:
     c = run.get("config", {})
-    if run["kind"] == "e2e":
+    if run["kind"] in ("e2e", "conversation"):
         return f"chunks {c.get('chunk_size', '?')}, k={c.get('limit', '?')}"
     cap = c.get("max_per_section")
     return (f"chunks {c.get('chunk_size')}, k={c.get('limit')}, "
@@ -46,7 +46,7 @@ def _score(run: dict) -> str:
 def _cell(run: dict, result: dict | None) -> str:
     if result is None:
         return "·"
-    if run["kind"] == "e2e":
+    if run["kind"] in ("e2e", "conversation"):
         return VERDICT_ICONS.get(result["verdict"], "?")
     if result.get("in_context") and not result.get("rank"):
         mark = "✅ ctx"
@@ -61,12 +61,18 @@ def _cell(run: dict, result: dict | None) -> str:
     return mark
 
 
+def _short_id(run: dict) -> str:
+    """Month-day and sequence of a run id ("10-03_02"): the sequence restarts every day."""
+    return run["run_id"][5:13]
+
+
 def build() -> str:
     runs = load_runs()
     questions = load_questions()
     cases = yaml.safe_load(EDGE_CASES.read_text(encoding="utf-8"))
     e2e = [r for r in runs if r["kind"] == "e2e"]
     retrieval = [r for r in runs if r["kind"] == "retrieval"]
+    conversations = [r for r in runs if r["kind"] == "conversation"]
     out = ["# Rapport d'évaluation du RAG", "",
            "> Généré par `uv run python -m eval.report` à partir de `eval/results/*.json` et "
            "`eval/edge_cases.yaml` : ne pas modifier à la main.", ""]
@@ -86,6 +92,10 @@ def build() -> str:
         last = retrieval[-1]
         out.append(f"- **Dernière évaluation de la recherche** (`{last['run_id']}`) : "
                    f"{_score(last)}.")
+    if conversations:
+        last = conversations[-1]
+        out.append(f"- **Dernière passe de conversation** (`{last['run_id']}`) : "
+                   f"{_score(last)}.")
     open_cases = [c for c in cases if c["status"] in ("open", "mitigated")]
     out.append(f"- **Cas limites** : {len(cases)} documentés, dont {len(open_cases)} ouverts "
                f"ou atténués ({', '.join(c['id'] for c in open_cases)}).")
@@ -103,13 +113,14 @@ def build() -> str:
                    f"{_score(r)} |")
     out.append("")
 
-    milestones = [r for r in runs if r.get("milestone")]
+    # The matrix is per question of questions.yaml: conversation runs have their own table
+    milestones = [r for r in runs if r.get("milestone") and r["kind"] != "conversation"]
     out += ["## Matrice par question (étapes clés)", "",
             "Recherche : ✅ rang de la bonne section · ✅ ctx = fait présent dans le contexte · "
             "❌ absente · (d/m) sections distinctes / requises · ⛔ refusée par le seuil. "
             "Bout en bout : " + " · ".join(f"{i} {v}" for v, i in VERDICT_ICONS.items()) + ".",
             ""]
-    header = " | ".join(f"{r['run_id'][11:13]} {r['kind'][:3]}" for r in milestones)
+    header = " | ".join(f"{_short_id(r)} {r['kind'][:3]}" for r in milestones)
     out += [f"| Question | {header} |", "|---|" + "---|" * len(milestones)]
     for q in questions:
         cells = []
@@ -118,8 +129,21 @@ def build() -> str:
             cells.append(_cell(r, res))
         out.append(f"| **{q['id']}** {q['question'][:60]} | {' | '.join(cells)} |")
     out.append("")
-    out += ["Colonnes : " + " · ".join(f"`{r['run_id'][11:13]}` {r['label']}"
+    out += ["Colonnes : " + " · ".join(f"`{_short_id(r)}` {r['label']}"
                                        for r in milestones), ""]
+
+    if conversations:
+        last = conversations[-1]
+        out += [f"## Détail de la dernière passe de conversation (`{last['run_id']}`)", "",
+                "| Tour | Question | Reformulée | Verdict | Cas limites | Commentaire |",
+                "|---|---|---|---|---|---|"]
+        for res in last["results"]:
+            out.append(f"| **{res['question_id']}** | {res['question'][:45]} | "
+                       f"{(res.get('rewritten') or '—')[:60]} | "
+                       f"{VERDICT_ICONS.get(res['verdict'], '?')} {res['verdict']} | "
+                       f"{', '.join(res.get('edge_cases', []))} | "
+                       f"{res.get('review_note', '').replace('|', '/')} |")
+        out.append("")
 
     if e2e:
         last = e2e[-1]

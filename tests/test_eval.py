@@ -67,6 +67,30 @@ def test_report_builds_from_runs(results_dir: Path):
     assert "### EC-02" in md  # edge cases catalog is included
 
 
+def test_report_keeps_conversation_runs_apart_from_the_question_matrix(results_dir: Path):
+    results.save_run({
+        "run_id": "2026-10-02_01_e2e", "date": "2026-10-02", "kind": "e2e",
+        "environment": "prod", "question_set": "v7", "label": "e2e", "milestone": True,
+        "config": {}, "results": [{"question_id": "q01", "question": "Combien ?", "passed": True,
+                                   "verdict": "correct", "edge_cases": []}],
+    })
+    results.save_run({
+        "run_id": "2026-10-03_01_conv", "date": "2026-10-03", "kind": "conversation",
+        "environment": "local", "question_set": "c1", "label": "conv", "milestone": True,
+        "config": {}, "results": [{
+            "question_id": "c01.2", "conversation": "c01", "turn": 2, "passed": True,
+            "question": "Et à Lyon ?", "rewritten": "Le BTS ERA est-il proposé à Lyon ?",
+            "verdict": "correct", "edge_cases": [], "review_note": "",
+        }],
+    })
+    md = report.build()
+    assert "Dernière passe de conversation" in md
+    assert "Le BTS ERA est-il proposé à Lyon ?" in md  # the rewrite is shown
+    # Matrix columns carry the day: sequence numbers restart every day
+    assert "| Question | 10-02_01 e2e |" in md
+    assert "10-03_01" not in md.split("## Matrice par question")[1].split("## Détail")[0]
+
+
 class TestOutOfScope:
     OOS = {"id": "q26", "question": "Conditions d'admission à Polytechnique ?",
            "out_of_scope": "llm"}

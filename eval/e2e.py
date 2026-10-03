@@ -14,6 +14,11 @@ deploying them.
 Usage:
     uv run python -m eval.e2e --save "label" [--url https://rag.romaincollery.com]
     uv run python -m eval.e2e --local --save "label"
+    uv run python -m eval.e2e --local --conversations --save "label"
+
+With --conversations (local only), the scenarios of eval/conversations.yaml are played
+through the conversation graph (graph/chat.py): each turn is asked with the previous
+turns as history, and the standalone rewrite of the question is saved for review.
 """
 import argparse
 import atexit
@@ -25,9 +30,11 @@ from pathlib import Path
 import httpx
 
 from eval.results import (
+    CONVERSATION_SET,
     QUESTION_SET,
     check_answer,
     git_commit,
+    load_conversations,
     load_questions,
     next_run_id,
     save_run,
@@ -51,16 +58,18 @@ def ask(url: str, question: str) -> Answer:
 
 
 def local_asker(data_dir: Path, embedding_model: str | None = None,
-                threshold: float | None = None,
-                chunk_size: int | None = None) -> tuple[Callable[[str], Answer], dict]:
+                threshold: float | None = None, chunk_size: int | None = None,
+                conversations: bool = False) -> tuple[Callable[..., Answer], dict]:
     """Run the graph in process on the local evaluation index. Returns (ask, config).
 
     embedding_model, threshold and chunk_size override the configured values, to test
     another embedding model end to end (its index must be built: eval/retrieval.py).
+    With `conversations`, ask takes the list of messages and runs the conversation graph
+    (graph/chat.py) instead of a question and the single-question graph.
     """
     from app.core.config import settings
     from eval.retrieval import build_index
-    from graph import builder
+    from graph import builder, chat
     from graph.nodes import grade, retrieve
     from ingestion.chunking import CHUNK_SIZE
 
@@ -72,14 +81,17 @@ def local_asker(data_dir: Path, embedding_model: str | None = None,
     client, info = build_index(data_dir, chunk_size)
     atexit.register(client.close)  # avoids a noisy error when the interpreter exits
     retrieve.get_qdrant_client = lambda: client
-    graph = builder.build_graph()
+    graph = chat.build_chat_graph() if conversations else builder.build_graph()
 
-    def ask_local(question: str) -> Answer:
+    def ask_local(question_or_messages: str | list[dict]) -> Answer:
         start = time.time()
         try:
-            state = graph.invoke({"question": question})
-            return ({"answer": state.get("answer", ""), "sources": state.get("sources", [])},
-                    time.time() - start, None)
+            if conversations:
+                state = graph.invoke({"messages": question_or_messages})
+            else:
+                state = graph.invoke({"question": question_or_messages})
+            return ({"answer": state.get("answer", ""), "sources": state.get("sources", []),
+                     "rewritten": state.get("rewritten")}, time.time() - start, None)
         except (httpx.HTTPError, KeyError) as exc:  # LLM call failed
             return None, time.time() - start, str(exc)
 
@@ -126,12 +138,47 @@ def run(ask_fn: Callable[[str], Answer], ids: set[str] | None, pause: float) -> 
     return results
 
 
+def run_conversations(ask_fn: Callable[[list[dict]], Answer], ids: set[str] | None,
+                      pause: float) -> list[dict]:
+    """Play every scenario of eval/conversations.yaml, one result per turn."""
+    results = []
+    for scenario in load_conversations():
+        if ids and scenario["id"] not in ids:
+            continue
+        messages: list[dict] = []
+        for number, turn in enumerate(scenario["turns"], start=1):
+            messages.append({"role": "user", "content": turn["question"]})
+            data, latency, error = ask_fn(messages)
+            result_id = f"{scenario['id']}.{number}"
+            base = {"question_id": result_id, "conversation": scenario["id"], "turn": number,
+                    "question": turn["question"], "out_of_scope": turn.get("out_of_scope"),
+                    "latency_s": round(latency, 2)}
+            if data is None:
+                result = {**base, "passed": False, "verdict": "error", "error": error}
+            else:
+                check = check_answer(turn, data["answer"], refused=not data["sources"])
+                result = {**base, "passed": check["verdict"] == "correct",
+                          "verdict": check["verdict"], "auto_check": check,
+                          "rewritten": data.get("rewritten"), "answer": data["answer"].strip(),
+                          "sources": data["sources"], "edge_cases": []}
+                messages.append({"role": "assistant", "content": data["answer"].strip()})
+            results.append(result)
+            print(f"{result['verdict']:9s} {result_id} {turn['question'][:60]}"
+                  f"  -> {data.get('rewritten') if data else '?'}  ({result['latency_s']}s)")
+            if data is None:
+                break  # the next turns would miss this answer in their history
+            time.sleep(pause)
+    return results
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--url", default=DEFAULT_URL)
     parser.add_argument("--ids", help="comma-separated question ids (default: all)")
     parser.add_argument("--local", action="store_true",
                         help="run the graph in process on the local evaluation index")
+    parser.add_argument("--conversations", action="store_true",
+                        help="--local only: play eval/conversations.yaml (multi-turn)")
     parser.add_argument("--data", type=Path, default=Path("data"))
     parser.add_argument("--embedding-model", help="--local only: override the model")
     parser.add_argument("--threshold", type=float, help="--local only: grading threshold")
@@ -141,11 +188,16 @@ def main() -> None:
     parser.add_argument("--notes", default="")
     args = parser.parse_args()
 
+    if args.conversations and not args.local:
+        parser.error("--conversations needs --local")
     ids = set(args.ids.split(",")) if args.ids else None
     if args.local:
         ask_fn, config = local_asker(args.data, args.embedding_model, args.threshold,
-                                     args.chunk_size)
-        results = run(ask_fn, ids, pause=0.5)
+                                     args.chunk_size, conversations=args.conversations)
+        if args.conversations:
+            results = run_conversations(ask_fn, ids, pause=0.5)
+        else:
+            results = run(ask_fn, ids, pause=0.5)
     else:
         config = {"url": args.url}
         results = run(lambda question: ask(args.url, question), ids, RATE_LIMIT_PAUSE_S)
@@ -157,10 +209,10 @@ def main() -> None:
         path = save_run({
             "run_id": next_run_id(date, args.save),
             "date": date,
-            "kind": "e2e",
+            "kind": "conversation" if args.conversations else "e2e",
             "environment": args.environment or ("local" if args.local else "prod"),
             "git_commit": git_commit(),
-            "question_set": QUESTION_SET,
+            "question_set": CONVERSATION_SET if args.conversations else QUESTION_SET,
             "milestone": False,
             "label": args.save,
             "notes": args.notes,

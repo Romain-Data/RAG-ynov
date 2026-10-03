@@ -150,7 +150,7 @@
   title: Limites du modèle d'embedding
   category: embedding-model
   status: open
-  questions: [q08, q16]
+  questions: [q08, q16, c02.3]
   discovered_in: 2026-10-02_22_retrieval-final-pr5
   symptom: >
     Après PR #5, deux questions échouent encore en recherche : les blocs Cybersécurité
@@ -171,6 +171,9 @@
     recherche MiniLM 14/16 (6 questions au rang 1, écart +0,055, 172 s) contre e5-large
     15/16 (11 au rang 1, écart +0,020, 1 905 s) ; de bout en bout, MiniLM 12/16 en prod
     contre e5-large 13/16 en local (q16 corrigée), aucune réponse fausse pour les deux.
+    Même limite en conversation (passage 2026-10-03_04) : « Quel niveau faut-il pour entrer
+    au BTS ERA ? » ramène « modalités d'évaluations certificatives » au lieu de « Infos clés »,
+    avec ou sans historique.
   cause: Capacité du modèle.
   fix: >
     e5-large est désormais meilleur de bout en bout (+1 question, q16) mais coûte cher :
@@ -350,3 +353,25 @@
     supprimé du serveur et la réingestion a retiré ses points de l'index (synchronisation de
     l'indexeur). Aucune source ne le cite plus aux passages 35 et 38.
   links: ["PR #11"]
+
+- id: EC-16
+  title: Les salutations et les remerciements sont refusés
+  category: grading
+  status: open
+  questions: [c07.2, c08.1]
+  discovered_in: 2026-10-03_04_local-conversations-jeu-c2
+  symptom: >
+    « Bonjour » en début de conversation et « Merci beaucoup ! » après une réponse reçoivent
+    « Je n'ai pas trouvé d'information pertinente dans les documents Ynov pour répondre à
+    votre question. ».
+  evidence: >
+    Passage 04 du 2026-10-03 (scénarios c07 et c08) : les deux sont refusés par le seuil.
+    « Bonjour » sans appel du LLM ; « Merci beaucoup ! » reste inchangé après reformulation.
+    Même résultat avec « D'accord, super. » à la main.
+  cause: >
+    Le seuil compare la question aux chunks du corpus ; une formule de politesse ne ressemble
+    à aucun chunk. Sans effet dans l'API à une question, gênant dans un chat.
+  fix: >
+    À faire : repérer les messages de politesse avant la recherche (règles simples ou appel
+    LLM) et répondre en une phrase, en rappelant ce que l'assistant sait faire. À mesurer avec
+    les scénarios c07 et c08.
