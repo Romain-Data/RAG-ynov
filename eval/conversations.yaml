@@ -1,0 +1,79 @@
+# Multi-turn evaluation set (eval/e2e.py --local --conversations). Each scenario is a
+# conversation: its turns are asked in order, every turn seeing the previous ones.
+# A turn has the fields of a question of questions.yaml: `answer_must`,
+# `answer_must_not`, `out_of_scope: llm` (the LLM must decline). The follow-ups are
+# deliberately not self-contained ("Et à Lyon ?"), they only make sense with the history.
+#
+# Set versions (recorded in each result file as `question_set`):
+#   c1  6 scenarios, 15 turns (2026-10-03)
+#   c2  c07 (thanks) and c08 (greeting) added: 8 scenarios, 18 turns (2026-10-03)
+
+- id: c01
+  title: Une formation, plusieurs questions de suite
+  turns:
+    - question: Combien de temps dure le Bachelor Informatique ?
+      answer_must: ['3 ans|trois ans']
+    - question: Et dans quelles villes est-il proposé ?
+      answer_must: [Lyon, Bordeaux, Strasbourg]
+    - question: Et quand est la prochaine rentrée ?
+      answer_must: ['septembre 2027']
+
+- id: c02
+  title: Relances sur le BTS ERA
+  turns:
+    - question: Où peut-on suivre le BTS ERA ?
+      answer_must: [Strasbourg]
+    - question: Et combien de temps dure-t-il ?
+      answer_must: ['2 ans|deux ans']
+    - question: Quel niveau faut-il pour y entrer ?
+      answer_must: ['BAC']
+
+- id: c03
+  title: Changement de formation avec « Et le … ? »
+  turns:
+    - question: Combien de temps dure le Bachelor Informatique ?
+      answer_must: ['3 ans|trois ans']
+    - question: Et le BTS ERA ?
+      answer_must: ['2 ans|deux ans']
+
+- id: c04
+  title: Nouveau sujet en cours de route (la reformulation ne doit pas traîner l'ancien)
+  turns:
+    - question: Combien coûte le Mastère Expert en intelligence artificielle ?
+      answer_must: ['9[  ]?000|9[  ]?500']
+    - question: Et une VAE chez Ynov, combien ça coûte ?
+      answer_must: ['500', '2[  ]?000']
+
+- id: c05
+  title: Relance hors sujet entre deux questions Ynov
+  turns:
+    - question: Combien de temps dure le Bachelor Informatique ?
+      answer_must: ['3 ans|trois ans']
+    - question: Et les frais de scolarité de HEC Paris ?
+      out_of_scope: llm
+    - question: Et pour le BTS ERA, combien de temps ?
+      answer_must: ['2 ans|deux ans']
+
+- id: c06
+  title: Mastère 100 % en ligne puis relance sur une ville
+  turns:
+    - question: Le Mastère Expert en cybersécurité - Pentester se fait-il en présentiel ?
+      answer_must: [en ligne]
+      answer_must_not: ['^\W*oui\b']
+    - question: Et à Lyon ?
+      answer_must: [en ligne]
+      answer_must_not: ['^\W*oui\b']
+
+- id: c07
+  title: Remerciement en cours de conversation (EC-16)
+  turns:
+    - question: Combien de temps dure le Bachelor Informatique ?
+      answer_must: ['3 ans|trois ans']
+    - question: Merci beaucoup !
+      answer_must: ['de rien|avec plaisir|n.hésitez pas|bonne (journée|continuation)']
+
+- id: c08
+  title: Salutation en début de conversation (EC-16)
+  turns:
+    - question: Bonjour
+      answer_must: ['bonjour|bienvenue|puis-je vous aider|comment puis-je']

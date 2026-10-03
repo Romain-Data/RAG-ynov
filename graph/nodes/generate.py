@@ -35,7 +35,10 @@ SYSTEM_PROMPT = (
 
 def generate_node(state: GraphState) -> dict:
     """Generate answer using Mammouth LLM with retrieved context."""
-    question = state.get("question", "")
+    # The standalone rewrite of a follow-up is unambiguous; the history lets the model
+    # keep the thread of the conversation.
+    question = state.get("rewritten") or state.get("question", "")
+    history = state.get("history") or []
     retrieved = state.get("retrieved", [])
 
     if not retrieved:
@@ -82,6 +85,7 @@ Réponse :"""
         "model": settings.mammouth_chat_model,
         "messages": [
             {"role": "system", "content": system_prompt},
+            *history,
             {"role": "user", "content": user_prompt},
         ],
         "temperature": 0.2,

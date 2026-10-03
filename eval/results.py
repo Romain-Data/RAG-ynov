@@ -7,7 +7,7 @@ saved with the same structure, so runs can be compared over time and plotted:
       "schema_version": 1,
       "run_id": "2026-10-02_09_e2e-prod",        # date + sequence + label, sortable
       "date": "2026-10-02",
-      "kind": "retrieval" | "e2e",             # chunks retrieved / LLM answers
+      "kind": "retrieval" | "e2e" | "conversation",  # chunks / LLM answers / multi-turn answers
       "environment": "local" | "prod",
       "git_commit": "adfd056",
       "question_set": "v4",                     # see eval/questions.yaml
@@ -21,7 +21,8 @@ saved with the same structure, so runs can be compared over time and plotted:
 Per-question fields: `passed`, and for retrieval `rank` (1-based, null when absent),
 `distinct_sections`, `top_score`, `refused_by_threshold`; for e2e `answer`,
 `sources`, `latency_s`, `verdict` (correct | partial | wrong | refused | no_answer |
-error), `auto_check`, and `edge_cases` (ids from eval/edge_cases.yaml).
+error), `auto_check`, and `edge_cases` (ids from eval/edge_cases.yaml). A conversation run
+has one result per turn (`question_id` "c01.2", `conversation`, `turn`, `rewritten`).
 """
 import json
 import re
@@ -34,6 +35,8 @@ EVAL_DIR = Path(__file__).parent
 RESULTS_DIR = EVAL_DIR / "results"
 QUESTIONS = EVAL_DIR / "questions.yaml"
 QUESTION_SET = "v7"
+CONVERSATIONS = EVAL_DIR / "conversations.yaml"
+CONVERSATION_SET = "c2"
 SCHEMA_VERSION = 1
 
 VERDICTS = ("correct", "partial", "wrong", "refused", "no_answer", "error")
@@ -49,6 +52,11 @@ _NO_ANSWER = re.compile(
 def load_questions() -> list[dict]:
     questions: list[dict] = yaml.safe_load(QUESTIONS.read_text(encoding="utf-8"))
     return questions
+
+
+def load_conversations() -> list[dict]:
+    conversations: list[dict] = yaml.safe_load(CONVERSATIONS.read_text(encoding="utf-8"))
+    return conversations
 
 
 def git_commit() -> str | None:
