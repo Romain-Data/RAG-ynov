@@ -43,6 +43,10 @@ class Settings(BaseSettings):
     chat_backup_keep: int = 14
     chainlit_auth_secret: str = ""
 
+    # HTTP Basic password in front of the whole site (user "preprod"), for the preprod.
+    # Empty = no protection (production).
+    site_password: str = ""
+
     # Rate limiting (requests per minute per IP)
     rate_limit_query: int = 30
     rate_limit_ingest: int = 5
