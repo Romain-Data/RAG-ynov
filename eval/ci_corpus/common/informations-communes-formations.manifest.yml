@@ -1,0 +1,8 @@
+source: informations-communes-formations.md
+doc_type: info
+program: null
+year: 2026
+title: Informations communes à toutes les formations Ynov
+language: fr
+extra:
+  generated_from: data/formations

@@ -1,0 +1,37 @@
+{
+  "question_set": "v7",
+  "config": {
+    "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "chunk_size": 300,
+    "limit": 10,
+    "candidates": 40,
+    "max_per_section": 2,
+    "grade_threshold": 0.45
+  },
+  "passed": {
+    "q01": true,
+    "q02": true,
+    "q03": true,
+    "q04": true,
+    "q05": true,
+    "q06": true,
+    "q07": true,
+    "q08": false,
+    "q09": true,
+    "q10": true,
+    "q11": true,
+    "q12": true,
+    "q13": true,
+    "q14": true,
+    "q15": true,
+    "q16": false,
+    "q17": true,
+    "q18": true,
+    "q20": true,
+    "q21": true,
+    "q22": true,
+    "q23": true,
+    "q24": true,
+    "q25": true
+  }
+}

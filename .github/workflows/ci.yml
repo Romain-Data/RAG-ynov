@@ -45,3 +45,28 @@ jobs:
           enable-cache: true
       - run: uv sync --locked --extra dev
       - run: uv run pytest -q
+
+  retrieval:
+    name: retrieval
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      FAST_EMBED_CACHE_DIR: ${{ github.workspace }}/.fastembed_cache
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - run: uv sync --locked --extra dev
+      # The embedding model (downloaded once) and the index of the frozen corpus. The index
+      # carries a fingerprint of its chunks: a stale cache is rebuilt, never trusted.
+      - uses: actions/cache@v4
+        with:
+          path: |
+            .fastembed_cache
+            .eval_qdrant
+          key: retrieval-${{ hashFiles('eval/ci_corpus/**', 'ingestion/**', 'uv.lock') }}
+          restore-keys: retrieval-
+      # Search only, no LLM: fails when a question that passes in eval/ci_baseline.json
+      # now fails. After a deliberate change, rewrite the baseline (see CLAUDE.md).
+      - run: uv run python -m eval.retrieval --data eval/ci_corpus --check eval/ci_baseline.json

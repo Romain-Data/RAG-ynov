@@ -296,6 +296,39 @@ def evaluate(
     return results
 
 
+def make_baseline(results: list[dict], config: dict) -> dict:
+    """What a later run is compared with: which questions pass, with which settings."""
+    return {
+        "question_set": QUESTION_SET,
+        "config": config,
+        "passed": {r["question_id"]: r["passed"] for r in results},
+    }
+
+
+def regressions(results: list[dict], baseline: dict, config: dict) -> list[str]:
+    """Reasons why a run is worse than its baseline (empty list: no regression).
+
+    A question that passed and now fails is a regression; one that failed in the baseline may
+    stay failed or get fixed. A changed question set or setting is also reported: the
+    baseline has to be rewritten on purpose (--write-baseline), not drift silently.
+    """
+    problems = []
+    if baseline["question_set"] != QUESTION_SET:
+        problems.append(
+            f"question set {QUESTION_SET}, but the baseline has {baseline['question_set']}"
+        )
+    if baseline["config"] != config:
+        problems.append(f"settings {config}, but the baseline has {baseline['config']}")
+    now = {r["question_id"]: r["passed"] for r in results}
+    for qid, was_ok in baseline["passed"].items():
+        if qid not in now:
+            problems.append(f"{qid}: in the baseline, not in the run")
+        elif was_ok and not now[qid]:
+            problems.append(f"{qid}: passed in the baseline, fails now")
+    problems += [f"{qid}: not in the baseline" for qid in now if qid not in baseline["passed"]]
+    return problems
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--data", type=Path, default=Path("data"))
@@ -315,6 +348,15 @@ def main() -> None:
     )
     parser.add_argument("--save", metavar="LABEL", help="save the run in eval/results/")
     parser.add_argument("--notes", default="", help="free text saved with the run")
+    parser.add_argument(
+        "--check",
+        metavar="BASELINE",
+        type=Path,
+        help="exit with 1 when a question that passes in this baseline file now fails",
+    )
+    parser.add_argument(
+        "--write-baseline", metavar="PATH", type=Path, help="write the baseline file and stop"
+    )
     parser.add_argument("-v", "--verbose", action="store_true", help="show every result")
     args = parser.parse_args()
     if args.embedding_model:
@@ -323,6 +365,28 @@ def main() -> None:
     results = evaluate(
         client, args.limit, args.candidates, args.max_per_section, args.verbose, args.threshold
     )
+
+    run_config = {
+        "embedding_model": settings.embedding_model,
+        "chunk_size": args.chunk_size,
+        "limit": args.limit,
+        "candidates": args.candidates,
+        "max_per_section": args.max_per_section,
+        "grade_threshold": args.threshold,
+    }
+    if args.write_baseline:
+        args.write_baseline.write_text(
+            json.dumps(make_baseline(results, run_config), indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+        )
+        print(f"Référence écrite : {args.write_baseline}")
+    if args.check:
+        problems = regressions(results, json.loads(args.check.read_text()), run_config)
+        for problem in problems:
+            print(f"RÉGRESSION {problem}")
+        if problems:
+            sys.exit(1)
+        print(f"Aucune régression par rapport à {args.check}")
 
     if args.save:
         date = dt.date.today().isoformat()
