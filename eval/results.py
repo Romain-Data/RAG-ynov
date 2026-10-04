@@ -8,7 +8,7 @@ saved with the same structure, so runs can be compared over time and plotted:
       "run_id": "2026-10-02_09_e2e-prod",        # date + sequence + label, sortable
       "date": "2026-10-02",
       "kind": "retrieval" | "e2e" | "conversation",  # chunks / LLM answers / multi-turn answers
-      "environment": "local" | "prod",
+      "environment": "local" | "preprod" | "prod",
       "git_commit": "adfd056",
       "question_set": "v4",                     # see eval/questions.yaml
       "milestone": true,                        # highlighted in the report

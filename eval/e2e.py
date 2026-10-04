@@ -25,6 +25,7 @@ import argparse
 import atexit
 import datetime as dt
 import os
+import sys
 import time
 from collections.abc import Callable
 from pathlib import Path
@@ -214,6 +215,31 @@ def run_conversations(
     return results
 
 
+def markdown_summary(results: list[dict], title: str) -> str:
+    """A short Markdown report of a run, for the summary page of a GitHub Actions run."""
+    counts: dict[str, int] = {}
+    for r in results:
+        counts[r["verdict"]] = counts.get(r["verdict"], 0) + 1
+    lines = [
+        f"### {title}",
+        "",
+        f"{counts.get('correct', 0)}/{len(results)} réponses correctes "
+        "(vérification automatique, à relire à la main).",
+        "",
+        "| Verdict | Nombre |",
+        "|---|---|",
+        *[f"| {verdict} | {n} |" for verdict, n in sorted(counts.items())],
+    ]
+    others = [r for r in results if r["verdict"] != "correct"]
+    if others:
+        lines += ["", "| Question | Verdict |", "|---|---|"]
+        lines += [
+            f"| {r.get('question_id', '?')} {r.get('question', '')[:70]} | {r['verdict']} |"
+            for r in others
+        ]
+    return "\n".join(lines) + "\n"
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--url", default=DEFAULT_URL)
@@ -235,6 +261,15 @@ def main() -> None:
     parser.add_argument("--environment", default=None, help="default: prod, or local")
     parser.add_argument("--save", metavar="LABEL", help="save the run in eval/results/")
     parser.add_argument("--notes", default="")
+    parser.add_argument(
+        "--fail-on-error",
+        action="store_true",
+        help="exit with 1 when a question got no answer (HTTP error, LLM down); "
+        "the automatic verdicts themselves are to be reviewed by hand",
+    )
+    parser.add_argument(
+        "--summary", metavar="PATH", type=Path, help="append a Markdown report to this file"
+    )
     args = parser.parse_args()
 
     if args.conversations and not args.local:
@@ -276,6 +311,14 @@ def main() -> None:
             }
         )
         print(f"Résultats enregistrés : {path}")
+
+    if args.summary:
+        with args.summary.open("a", encoding="utf-8") as f:
+            f.write(markdown_summary(results, f"eval.e2e sur {args.environment or args.url}"))
+    errors = [r for r in results if r["verdict"] == "error"]
+    if args.fail_on_error and errors:
+        print(f"{len(errors)} question(s) sans réponse : {errors[0].get('error')}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
