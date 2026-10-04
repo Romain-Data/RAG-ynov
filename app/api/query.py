@@ -1,10 +1,15 @@
 """Query endpoint with rate limiting."""
 
-from fastapi import APIRouter, Depends, Request
+import logging
+
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 
 from app.core.security import rate_limit_query
 from app.schemas import QueryRequest, QueryResponse
 from graph.builder import get_graph
+from graph.llm import LLMUnavailableError
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["query"])
 
@@ -16,7 +21,15 @@ async def query_rag(request: QueryRequest, _request: Request) -> QueryResponse:
     """
     graph = get_graph()
     initial_state = {"question": request.question}
-    result = await graph.ainvoke(initial_state)
+    try:
+        result = await graph.ainvoke(initial_state)
+    except LLMUnavailableError as exc:
+        logger.error("The LLM is unavailable: %s", exc)
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Le service de génération est momentanément indisponible, réessayez.",
+            headers={"Retry-After": "10"},
+        ) from exc
 
     return QueryResponse(
         answer=result.get("answer", ""),

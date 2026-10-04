@@ -121,7 +121,7 @@ class TestGenerateNode:
         assert result["answer"] == ""
         assert result["sources"] == []
 
-    @patch("graph.nodes.generate.httpx.Client")
+    @patch("graph.llm.httpx.Client")
     def test_generate_builds_sources_and_calls_llm(self, mock_httpx_cls):
         """Generate calls Mammouth and maps retrieved chunks to sources."""
         from graph.nodes.generate import generate_node
@@ -166,7 +166,7 @@ class TestEndToEndGraph:
         assert result["grade"] == "refuse"
         assert result["sources"] == []
 
-    @patch("graph.nodes.generate.httpx.Client")
+    @patch("graph.llm.httpx.Client")
     @patch("graph.nodes.retrieve.embed_query", return_value=[0.1] * 384)
     @patch("graph.nodes.retrieve.get_qdrant_client")
     def test_full_graph_ok(self, mock_client, mock_embed, mock_httpx_cls):

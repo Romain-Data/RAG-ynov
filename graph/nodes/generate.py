@@ -1,6 +1,5 @@
-import httpx
-
 from app.core.config import settings
+from graph.llm import chat_completion
 from graph.state import GraphState
 
 # Rules 2-3 fix EC-03 (a shared footnote listing campuses was read as the places of an
@@ -77,12 +76,6 @@ Question : {question}
 
 Réponse :"""
 
-    # Call Mammouth API
-    url = f"{settings.mammouth_base_url}/chat/completions"
-    headers = {
-        "Authorization": f"Bearer {settings.mammouth_api_key}",
-        "Content-Type": "application/json",
-    }
     payload = {
         "model": settings.mammouth_chat_model,
         "messages": [
@@ -93,11 +86,7 @@ Réponse :"""
         "temperature": 0.2,
         "max_tokens": 512,
     }
-
-    with httpx.Client(timeout=30.0) as client:
-        resp = client.post(url, headers=headers, json=payload)
-        resp.raise_for_status()
-        data = resp.json()
+    data = chat_completion(payload)
 
     answer = data["choices"][0]["message"]["content"].strip()
 
