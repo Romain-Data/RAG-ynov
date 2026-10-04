@@ -10,6 +10,7 @@ The boilerplate dropped here is not lost: ingestion.build_common gathers it into
 single "informations communes" document. Info pages (admission, alternance, VAE…)
 use another template and are parsed by parse_info_page.
 """
+
 import re
 import unicodedata
 
@@ -51,7 +52,11 @@ TARIF_BOILERPLATE_HEADERS = {"alternance", "formation professionnelle continue"}
 
 # Info-page blocks (CMS block id) that carry no content.
 EXCLUDED_INFO_BLOCK_IDS = {
-    "Menu-d-ancres", "Reassurance", "Slider-Logo", "Separateur", "Media-Simple",
+    "Menu-d-ancres",
+    "Reassurance",
+    "Slider-Logo",
+    "Separateur",
+    "Media-Simple",
 }
 
 _BLOCK_TAGS = {"p", "div", "li", "ul", "ol", "h1", "h2", "h3", "h4", "h5", "h6", "section"}
@@ -73,9 +78,10 @@ def _decode_cf_emails(soup: BeautifulSoup) -> None:
 
     The hex payload is XOR-encoded with its first byte as the key.
     """
+
     def decode(hex_str: str) -> str:
         key = int(hex_str[:2], 16)
-        return "".join(chr(int(hex_str[i:i + 2], 16) ^ key) for i in range(2, len(hex_str), 2))
+        return "".join(chr(int(hex_str[i : i + 2], 16) ^ key) for i in range(2, len(hex_str), 2))
 
     for el in soup.select("[data-cfemail]"):
         el.replace_with(NavigableString(decode(str(el["data-cfemail"]))))
@@ -187,17 +193,24 @@ def _key_info(soup: Tag, name: str) -> dict:
         if len(campuses) == 1:
             places = f"{question} Uniquement à {campuses[0]} (un seul campus Ynov)."
         else:
-            places = (f"{question} Dans {len(campuses)} villes (campus Ynov) : "
-                      f"{', '.join(campuses)}.")
+            places = (
+                f"{question} Dans {len(campuses)} villes (campus Ynov) : {', '.join(campuses)}."
+            )
         if online:
             places += " Elle est aussi disponible 100 % en ligne via Ynov Connect."
     elif online:
-        places = (f"{question} Uniquement 100 % en ligne via Ynov Connect, "
-                  "sur aucun campus physique.")
+        places = (
+            f"{question} Uniquement 100 % en ligne via Ynov Connect, sur aucun campus physique."
+        )
     else:
         places = ""
-    return {"text": "\n".join(lines), "places": places, "campuses": campuses,
-            "online": online, "duration": duration}
+    return {
+        "text": "\n".join(lines),
+        "places": places,
+        "campuses": campuses,
+        "online": online,
+        "duration": duration,
+    }
 
 
 def _key_facts(info: dict) -> str:
@@ -250,7 +263,7 @@ def _accordion_sections(
         body = "\n".join(t for t in (_to_text(panel), programme) if t)
         # Some panels repeat their own title as first words ("Passerelles Ce programme…")
         if _normalize_title(body).startswith(_normalize_title(title)):
-            body = body[len(title):].lstrip(" \n:")
+            body = body[len(title) :].lstrip(" \n:")
         if title == "Tarifs" and not keep_generic:
             body = _strip_tarif_boilerplate(body)
         sections.append((title, body))
@@ -291,7 +304,9 @@ def parse_formation_page(html: str, keep_generic: bool = False) -> dict:
             presentation.append(_to_text(block))
         elif btype == "block_programme_details":
             sections += _accordion_sections(
-                block, "Bloc-ProgrammeDetails-Item", "Bloc-ProgrammeDetails-Item-Title",
+                block,
+                "Bloc-ProgrammeDetails-Item",
+                "Bloc-ProgrammeDetails-Item-Title",
                 keep_generic,
             )
         elif btype == "block_faq":
@@ -308,8 +323,10 @@ def parse_formation_page(html: str, keep_generic: bool = False) -> dict:
                 sections.append((title, text))
 
     if presentation:
-        sections.insert(len(sections) if not sections else 1 + bool(info["places"]),
-                        ("Présentation", "\n".join(presentation)))
+        sections.insert(
+            len(sections) if not sections else 1 + bool(info["places"]),
+            ("Présentation", "\n".join(presentation)),
+        )
 
     return {
         "formation": formation,
@@ -345,7 +362,7 @@ def _split_by_subheadings(block: Tag, block_title: str) -> list[list[str]]:
     awaiting_title = False  # h3 text may sit on the line after the mark (nested tags)
     for line in _to_text(block).split("\n"):
         if line.startswith(_SUBSECTION_MARK):
-            subtitle = line[len(_SUBSECTION_MARK):].strip()
+            subtitle = line[len(_SUBSECTION_MARK) :].strip()
             sections.append([f"{block_title} — {subtitle}", ""])
             awaiting_title = not subtitle
         elif awaiting_title:

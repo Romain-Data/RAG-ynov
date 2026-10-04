@@ -4,6 +4,7 @@ A recovery code is shown once at sign-up (and again after each recovery): it is 
 way to reset a forgotten password, since there is no e-mail to write to. Only argon2
 hashes are stored. AccountError messages are in French and safe to show to the user.
 """
+
 import re
 import secrets
 import sqlite3
@@ -56,7 +57,7 @@ def _check_throttle(pseudo: str) -> None:
 
 def _new_code() -> str:
     chars = [secrets.choice(_CODE_ALPHABET) for _ in range(16)]
-    return "-".join("".join(chars[i:i + 4]) for i in range(0, 16, 4))
+    return "-".join("".join(chars[i : i + 4]) for i in range(0, 16, 4))
 
 
 def _normalize_code(code: str) -> str:
@@ -118,9 +119,7 @@ def authenticate(pseudo: str, password: str) -> str | None:
         ).fetchone()
         # An unknown pseudo costs the same time as a wrong password
         if _verify(row[1] if row else _DUMMY_HASH, password) and row:
-            conn.execute(
-                "UPDATE accounts SET last_login_at = ? WHERE pseudo = ?", (_now(), row[0])
-            )
+            conn.execute("UPDATE accounts SET last_login_at = ? WHERE pseudo = ?", (_now(), row[0]))
             return str(row[0])
     _record_failure(pseudo)
     return None
@@ -155,8 +154,11 @@ def delete_account(pseudo: str, password: str) -> None:
         raise AccountError("Pseudo ou mot de passe incorrect.")
     with db() as conn:
         threads = "SELECT id FROM threads WHERE userIdentifier = ?"
-        for table, column in (("steps", "threadId"), ("elements", "threadId"),
-                              ("feedbacks", "threadId")):
+        for table, column in (
+            ("steps", "threadId"),
+            ("elements", "threadId"),
+            ("feedbacks", "threadId"),
+        ):
             conn.execute(f"DELETE FROM {table} WHERE {column} IN ({threads})", (account,))
         conn.execute("DELETE FROM threads WHERE userIdentifier = ?", (account,))
         conn.execute("DELETE FROM users WHERE identifier = ?", (account,))

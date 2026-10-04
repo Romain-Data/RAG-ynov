@@ -1,4 +1,5 @@
 """Mount the chat (Chainlit on /chat) and the account pages (/compte) on the API."""
+
 import logging
 import os
 from pathlib import Path

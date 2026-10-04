@@ -1,4 +1,5 @@
 """Pure helpers of the chat: the sources block of an answer and the history of a thread."""
+
 import re
 from collections.abc import Mapping, Sequence
 from typing import Any
@@ -51,6 +52,7 @@ def history_from_steps(steps: Sequence[Mapping[str, Any]], skip: str | None = No
         content = (step.get("output") or "").strip()
         if role is None or not content or content == skip:
             continue
-        history.append({"role": role, "content": strip_sources(content) if role == "assistant"
-                        else content})
+        history.append(
+            {"role": role, "content": strip_sources(content) if role == "assistant" else content}
+        )
     return history

@@ -1,4 +1,5 @@
 """Pytest fixtures. Env vars are set before app imports."""
+
 import os
 from contextlib import asynccontextmanager
 from pathlib import Path

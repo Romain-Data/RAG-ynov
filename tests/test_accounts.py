@@ -1,4 +1,5 @@
 """Tests for the accounts of the chat (no LLM, no network)."""
+
 import re
 import sqlite3
 
@@ -104,16 +105,22 @@ class TestDeleteAccount:
     @staticmethod
     def _add_conversation(owner: str, thread_id: str) -> None:
         with db() as conn:
-            conn.execute("INSERT INTO users (id, identifier, metadata) VALUES (?, ?, '{}')",
-                         (f"u-{owner}", owner))
-            conn.execute("INSERT INTO threads (id, userId, userIdentifier) VALUES (?, ?, ?)",
-                         (thread_id, f"u-{owner}", owner))
+            conn.execute(
+                "INSERT INTO users (id, identifier, metadata) VALUES (?, ?, '{}')",
+                (f"u-{owner}", owner),
+            )
+            conn.execute(
+                "INSERT INTO threads (id, userId, userIdentifier) VALUES (?, ?, ?)",
+                (thread_id, f"u-{owner}", owner),
+            )
             conn.execute(
                 "INSERT INTO steps (id, name, type, threadId) VALUES (?, 'x', 'user_message', ?)",
-                (f"s-{thread_id}", thread_id))
+                (f"s-{thread_id}", thread_id),
+            )
             conn.execute(
                 "INSERT INTO feedbacks (id, forId, threadId, value) VALUES (?, 's', ?, 1)",
-                (f"f-{thread_id}", thread_id))
+                (f"f-{thread_id}", thread_id),
+            )
 
     @staticmethod
     def _count(table: str) -> int:

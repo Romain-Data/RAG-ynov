@@ -1,4 +1,5 @@
 """Tests for the account pages and the conditional mount of the chat (no LLM)."""
+
 import json
 import re
 from pathlib import Path
@@ -25,9 +26,14 @@ def chat_db(tmp_path, monkeypatch):
 
 
 def signup(client, pseudo="alice", password="mot-de-passe-1", confirm=None):
-    return client.post("/compte/inscription", data={
-        "pseudo": pseudo, "password": password,
-        "confirm": password if confirm is None else confirm})
+    return client.post(
+        "/compte/inscription",
+        data={
+            "pseudo": pseudo,
+            "password": password,
+            "confirm": password if confirm is None else confirm,
+        },
+    )
 
 
 class TestPages:
@@ -59,31 +65,46 @@ class TestPages:
 
     def test_recovery_flow(self, client):
         code = CODE.search(signup(client).text).group()
-        resp = client.post("/compte/recuperation", data={
-            "pseudo": "alice", "code": code, "password": "nouveau-mot-de-passe",
-            "confirm": "nouveau-mot-de-passe"})
+        resp = client.post(
+            "/compte/recuperation",
+            data={
+                "pseudo": "alice",
+                "code": code,
+                "password": "nouveau-mot-de-passe",
+                "confirm": "nouveau-mot-de-passe",
+            },
+        )
         assert resp.status_code == 200 and CODE.search(resp.text).group() != code
         assert accounts.authenticate("alice", "nouveau-mot-de-passe") == "alice"
 
     def test_recovery_with_a_wrong_code(self, client):
         signup(client)
-        resp = client.post("/compte/recuperation", data={
-            "pseudo": "alice", "code": "AAAA-BBBB-CCCC-DDDD", "password": "nouveau-mot-de-passe",
-            "confirm": "nouveau-mot-de-passe"})
+        resp = client.post(
+            "/compte/recuperation",
+            data={
+                "pseudo": "alice",
+                "code": "AAAA-BBBB-CCCC-DDDD",
+                "password": "nouveau-mot-de-passe",
+                "confirm": "nouveau-mot-de-passe",
+            },
+        )
         assert resp.status_code == 400 and "incorrect" in resp.text
 
     def test_deletion_flow(self, client):
         signup(client)
         bad = client.post("/compte/suppression", data={"pseudo": "alice", "password": "mauvais"})
         assert bad.status_code == 400
-        ok = client.post("/compte/suppression", data={"pseudo": "alice",
-                                                      "password": "mot-de-passe-1"})
+        ok = client.post(
+            "/compte/suppression", data={"pseudo": "alice", "password": "mot-de-passe-1"}
+        )
         assert ok.status_code == 200 and "supprimés" in ok.text
         assert accounts.authenticate("alice", "mot-de-passe-1") is None
 
     def test_the_pages_are_rate_limited(self, client):
-        statuses = [client.get("/compte/inscription").status_code
-                    for _ in range(settings.rate_limit_account + 1)]
+        statuses = [
+            client.get("/compte/inscription").status_code
+            for _ in range(settings.rate_limit_account + 1)
+        ]
         assert statuses[-1] == 429 and set(statuses[:-1]) == {200}
 
 
@@ -97,6 +118,7 @@ class TestMount:
 
     def test_chat_is_mounted_on_the_api(self, client):
         from app.main import app
+
         assert app.state.chat_enabled is True
         assert any(getattr(r, "path", "") == "/chat" for r in app.routes)
         assert client.get("/api/health").status_code in (200, 429)  # the API is untouched
@@ -113,8 +135,9 @@ class TestTheme:
             for name, value in mode.items():
                 assert re.fullmatch(r"\d{1,3} \d{1,3}% \d{1,3}%", value), (name, value)
 
-    @pytest.mark.parametrize("name", ["logo_light.png", "logo_dark.png", "favicon.png",
-                                      "login-bg.jpg", "login-links.js"])
+    @pytest.mark.parametrize(
+        "name", ["logo_light.png", "logo_dark.png", "favicon.png", "login-bg.jpg", "login-links.js"]
+    )
     def test_public_files_exist(self, name):
         assert (self.PUBLIC / name).stat().st_size > 0
 

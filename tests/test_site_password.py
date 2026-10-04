@@ -1,4 +1,5 @@
 """The optional site password: HTTP and WebSocket, health exempt, off by default."""
+
 import base64
 import secrets
 from unittest.mock import MagicMock, patch

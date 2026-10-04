@@ -8,6 +8,7 @@ The graph keeps no state between calls: the caller sends the whole conversation 
 `messages` ([{"role": "user" | "assistant", "content": ...}, ...], the last one being
 the new question) and gets the answer for that last question.
 """
+
 from langgraph.graph import END, StateGraph
 from langgraph.graph.state import CompiledStateGraph
 
@@ -33,9 +34,7 @@ def prepare_node(state: ChatState) -> dict:
     if not messages or messages[-1].get("role") != "user":
         return {"question": "", "history": [], "rewritten": None}
     previous = messages[:-1][-MAX_HISTORY_MESSAGES:]
-    history = [
-        {"role": m["role"], "content": m["content"][:MAX_HISTORY_CHARS]} for m in previous
-    ]
+    history = [{"role": m["role"], "content": m["content"][:MAX_HISTORY_CHARS]} for m in previous]
     return {"question": messages[-1]["content"], "history": history, "rewritten": None}
 
 

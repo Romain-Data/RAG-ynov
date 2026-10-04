@@ -27,8 +27,9 @@ def _snapshot_without_symlinks(name: str, cache_dir: str | None) -> Path | None:
     external data that resolves outside the model directory. Hard links share the blob
     without using more disk; a plain copy is the fallback across filesystems.
     """
-    description = next((m for m in TextEmbedding.list_supported_models()
-                        if m["model"] == name), None)
+    description = next(
+        (m for m in TextEmbedding.list_supported_models() if m["model"] == name), None
+    )
     repo = (description or {}).get("sources", {}).get("hf")
     if not repo:
         return None
@@ -64,8 +65,9 @@ def get_embedding_model() -> TextEmbedding:
             path = _snapshot_without_symlinks(name, cache_dir)
             if path is None:
                 raise
-            _models[name] = TextEmbedding(model_name=name, cache_dir=cache_dir,
-                                          specific_model_path=str(path))
+            _models[name] = TextEmbedding(
+                model_name=name, cache_dir=cache_dir, specific_model_path=str(path)
+            )
     return _models[name]
 
 

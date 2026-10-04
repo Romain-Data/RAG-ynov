@@ -52,17 +52,19 @@ def generate_node(state: GraphState) -> dict:
         source = r.get("source", "")
         page = r.get("page")
         score = r.get("score", 0.0)
-        source_label = f"[Source {i+1}: {source}"
+        source_label = f"[Source {i + 1}: {source}"
         if page:
             source_label += f", p.{page}"
         source_label += "]"
         context_parts.append(f"{source_label}\n{text}")
-        sources.append({
-            "source": source,
-            "page": page,
-            "section": r.get("section"),
-            "score": score,
-        })
+        sources.append(
+            {
+                "source": source,
+                "page": page,
+                "section": r.get("section"),
+                "score": score,
+            }
+        )
 
     context = "\n\n".join(context_parts)
 

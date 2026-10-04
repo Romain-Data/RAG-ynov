@@ -1,4 +1,5 @@
 """Tests for the pure helpers of the chat: sources block and history of a thread."""
+
 import re
 
 from chat.messages import AUTHOR, cited_numbers, history_from_steps, strip_sources, with_sources
@@ -17,8 +18,9 @@ class TestSources:
 
     def test_lists_only_the_cited_sources_numbered_like_the_text(self):
         text = with_sources("Dure 3 ans [Source 1]. Lieux : Lyon [Source 3].", SOURCES)
-        assert text.endswith("**Sources**\n1. bachelor-informatique.html — Infos clés\n"
-                             "3. programme.pdf (p. 4)")
+        assert text.endswith(
+            "**Sources**\n1. bachelor-informatique.html — Infos clés\n3. programme.pdf (p. 4)"
+        )
 
     def test_the_page_is_shown_for_pdfs_only(self):
         text = with_sources("A [Source 1]. B [Source 3].", SOURCES)
@@ -30,7 +32,8 @@ class TestSources:
 
     def test_a_refusal_has_no_sources_block(self):
         assert with_sources("Je n'ai pas trouvé d'information.", []) == (
-            "Je n'ai pas trouvé d'information.")
+            "Je n'ai pas trouvé d'information."
+        )
 
     def test_strip_sources_gives_back_the_answer(self):
         answer = "Dure 3 ans [Source 1]."

@@ -7,6 +7,7 @@ class GraphState(TypedDict, total=False):
     """State that flows through the LangGraph.
 
     total=False: each node returns only the keys it updates."""
+
     # Input
     question: str
     rewritten: str | None  # standalone version of a follow-up question (graph/chat.py)

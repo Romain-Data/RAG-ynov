@@ -4,6 +4,7 @@ Loaded by Chainlit itself (chat/mount.py), hence the single file of @cl.* handle
 heavy lifting is in graph/chat.py (the RAG with history), chat/accounts.py (login) and
 chat/messages.py (history and sources).
 """
+
 import asyncio
 import logging
 
@@ -24,8 +25,7 @@ GREETING = (
     "relances.\n\n[Supprimer mon compte](/compte/suppression)"
 )
 ERROR_MESSAGE = (
-    "Désolé, je n'ai pas pu répondre à cause d'un problème technique. Réessayez dans un "
-    "instant."
+    "Désolé, je n'ai pas pu répondre à cause d'un problème technique. Réessayez dans un instant."
 )
 
 
@@ -64,8 +64,4 @@ async def on_message(message: cl.Message) -> None:
         return  # the question is not kept in the history: the user can ask again
     answer = result.get("answer", "").strip()
     cl.user_session.set("history", [*history, {"role": "assistant", "content": answer}])
-    await cl.Message(
-        content=with_sources(answer, result.get("sources", [])), author=AUTHOR
-    ).send()
-
-
+    await cl.Message(content=with_sources(answer, result.get("sources", [])), author=AUTHOR).send()

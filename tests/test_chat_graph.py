@@ -1,4 +1,5 @@
 """Tests for the conversation graph (graph/chat.py) and its condense step."""
+
 from unittest.mock import MagicMock, patch
 
 import httpx
@@ -45,8 +46,9 @@ class TestPrepareNode:
         assert result["history"] == messages[:2]
 
     def test_keeps_only_the_last_messages(self):
-        messages = [{"role": "user" if i % 2 == 0 else "assistant", "content": str(i)}
-                    for i in range(21)]
+        messages = [
+            {"role": "user" if i % 2 == 0 else "assistant", "content": str(i)} for i in range(21)
+        ]
         result = prepare_node({"messages": messages})
         assert len(result["history"]) == MAX_HISTORY_MESSAGES
         assert result["history"][-1]["content"] == "19"
@@ -66,11 +68,15 @@ class TestCondenseNode:
     @patch("graph.nodes.condense.httpx.Client")
     def test_rewrites_with_history(self, mock_httpx_cls):
         client = _mock_http(mock_httpx_cls, "  Le BTS ERA est-il proposé à Lyon ?  ")
-        result = condense_node({
-            "question": "Et à Lyon ?",
-            "history": [{"role": "user", "content": "Où peut-on suivre le BTS ERA ?"},
-                        {"role": "assistant", "content": "À Strasbourg."}],
-        })
+        result = condense_node(
+            {
+                "question": "Et à Lyon ?",
+                "history": [
+                    {"role": "user", "content": "Où peut-on suivre le BTS ERA ?"},
+                    {"role": "assistant", "content": "À Strasbourg."},
+                ],
+            }
+        )
         assert result["rewritten"] == "Le BTS ERA est-il proposé à Lyon ?"
         sent = client.post.call_args.kwargs["json"]["messages"][1]["content"]
         assert "BTS ERA" in sent and "Et à Lyon ?" in sent
@@ -80,8 +86,9 @@ class TestCondenseNode:
         client = MagicMock()
         client.post.side_effect = httpx.ConnectError("down")
         mock_httpx_cls.return_value.__enter__.return_value = client
-        result = condense_node({"question": "Et à Lyon ?",
-                                "history": [{"role": "user", "content": "x"}]})
+        result = condense_node(
+            {"question": "Et à Lyon ?", "history": [{"role": "user", "content": "x"}]}
+        )
         assert result == {"rewritten": None}
 
 
@@ -109,17 +116,23 @@ class TestChatGraph:
     @patch("graph.nodes.generate.httpx.Client")
     @patch("graph.nodes.retrieve.embed_query", return_value=[0.1] * 384)
     @patch("graph.nodes.retrieve.get_qdrant_client")
-    def test_follow_up_is_searched_through_its_rewrite(self, mock_qdrant, mock_embed,
-                                                       mock_httpx_cls):
+    def test_follow_up_is_searched_through_its_rewrite(
+        self, mock_qdrant, mock_embed, mock_httpx_cls
+    ):
         mock_qdrant.return_value.query_points.return_value = MagicMock(points=[_point()])
-        client = _mock_http(mock_httpx_cls, "Le BTS ERA est-il proposé à Lyon ?",
-                            "Non, seulement à Strasbourg.")
+        client = _mock_http(
+            mock_httpx_cls, "Le BTS ERA est-il proposé à Lyon ?", "Non, seulement à Strasbourg."
+        )
 
-        result = get_chat_graph().invoke({"messages": [
-            {"role": "user", "content": "Où peut-on suivre le BTS ERA ?"},
-            {"role": "assistant", "content": "À Strasbourg."},
-            {"role": "user", "content": "Et à Lyon ?"},
-        ]})
+        result = get_chat_graph().invoke(
+            {
+                "messages": [
+                    {"role": "user", "content": "Où peut-on suivre le BTS ERA ?"},
+                    {"role": "assistant", "content": "À Strasbourg."},
+                    {"role": "user", "content": "Et à Lyon ?"},
+                ]
+            }
+        )
         assert result["answer"] == "Non, seulement à Strasbourg."
         mock_embed.assert_called_once_with("Le BTS ERA est-il proposé à Lyon ?")
         sent = client.post.call_args_list[1].kwargs["json"]["messages"]
@@ -133,10 +146,15 @@ class TestChatGraph:
     def test_refuses_when_nothing_relevant(self, mock_qdrant, mock_embed, mock_httpx_cls):
         mock_qdrant.return_value.query_points.return_value = MagicMock(points=[])
         client = _mock_http(mock_httpx_cls, "Question reformulée")
-        result = get_chat_graph().invoke({"messages": [
-            {"role": "user", "content": "a"}, {"role": "assistant", "content": "b"},
-            {"role": "user", "content": "c"},
-        ]})
+        result = get_chat_graph().invoke(
+            {
+                "messages": [
+                    {"role": "user", "content": "a"},
+                    {"role": "assistant", "content": "b"},
+                    {"role": "user", "content": "c"},
+                ]
+            }
+        )
         assert result["grade"] == "refuse"
         assert result["sources"] == []
         assert client.post.call_count == 1  # the rewrite only: refused before generation

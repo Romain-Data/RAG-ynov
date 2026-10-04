@@ -12,6 +12,7 @@ The HTML loader drops the boilerplate sections repeated on every formation page
 Usage:
     uv run python -m ingestion.build_common [--formations data/formations] [--out data/common]
 """
+
 import argparse
 import collections
 import difflib

@@ -1,4 +1,5 @@
 """Tests for the backup of the chat database (no LLM, no network)."""
+
 import sqlite3
 from datetime import UTC, datetime, timedelta
 
@@ -46,8 +47,11 @@ def test_only_the_newest_copies_are_kept(tmp_path):
     for day in range(5):
         backup(dest, keep=3, now=T0 + timedelta(days=day))
     names = sorted(p.name for p in dest.iterdir())
-    assert names == ["chat-20261006-030000.db", "chat-20261007-030000.db",
-                     "chat-20261008-030000.db"]
+    assert names == [
+        "chat-20261006-030000.db",
+        "chat-20261007-030000.db",
+        "chat-20261008-030000.db",
+    ]
 
 
 def test_no_partial_file_is_left_behind(tmp_path):

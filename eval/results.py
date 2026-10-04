@@ -24,6 +24,7 @@ Per-question fields: `passed`, and for retrieval `rank` (1-based, null when abse
 error), `auto_check`, and `edge_cases` (ids from eval/edge_cases.yaml). A conversation run
 has one result per turn (`question_id` "c01.2", `conversation`, `turn`, `rewritten`).
 """
+
 import json
 import re
 import subprocess
@@ -61,10 +62,19 @@ def load_conversations() -> list[dict]:
 
 def git_commit() -> str | None:
     try:
-        out = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True,
-                             text=True, check=True, cwd=EVAL_DIR)
-        dirty = subprocess.run(["git", "status", "--porcelain", "--untracked-files=no"],
-                               capture_output=True, text=True, cwd=EVAL_DIR).stdout.strip()
+        out = subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"],
+            capture_output=True,
+            text=True,
+            check=True,
+            cwd=EVAL_DIR,
+        )
+        dirty = subprocess.run(
+            ["git", "status", "--porcelain", "--untracked-files=no"],
+            capture_output=True,
+            text=True,
+            cwd=EVAL_DIR,
+        ).stdout.strip()
         return out.stdout.strip() + ("+dirty" if dirty else "")
     except (OSError, subprocess.CalledProcessError):
         return None
@@ -77,8 +87,9 @@ def check_answer(question: dict, answer: str, refused: bool = False) -> dict:
     """
     text = re.sub(r"[\s  ]+", " ", answer.replace("**", ""))
     must = {p: bool(re.search(p, text, re.IGNORECASE)) for p in question.get("answer_must", [])}
-    must_not_hits = [p for p in question.get("answer_must_not", [])
-                     if re.search(p, text, re.IGNORECASE)]
+    must_not_hits = [
+        p for p in question.get("answer_must_not", []) if re.search(p, text, re.IGNORECASE)
+    ]
     if question.get("out_of_scope"):
         # Nothing to answer: refusing (threshold) or declining (LLM) is the right outcome
         verdict = "correct" if refused or _NO_ANSWER.search(text) else "wrong"
@@ -103,15 +114,22 @@ def summarize(kind: str, results: list[dict]) -> dict:
         # In-scope questions refused by the threshold are errors; out-of-scope ones
         # refused are the expected outcome, counted apart.
         summary["refused_by_threshold"] = sum(
-            bool(r.get("refused_by_threshold")) and not r.get("out_of_scope") for r in results)
+            bool(r.get("refused_by_threshold")) and not r.get("out_of_scope") for r in results
+        )
         summary["out_of_scope_refused"] = sum(
-            bool(r.get("refused_by_threshold")) and bool(r.get("out_of_scope"))
-            for r in results)
+            bool(r.get("refused_by_threshold")) and bool(r.get("out_of_scope")) for r in results
+        )
         # Score gap used to calibrate the grading threshold of an embedding model
-        in_tops = [r["top_score"] for r in results
-                   if not r.get("out_of_scope") and r.get("top_score") is not None]
-        out_tops = [r["top_score"] for r in results
-                    if r.get("out_of_scope") and r.get("top_score") is not None]
+        in_tops = [
+            r["top_score"]
+            for r in results
+            if not r.get("out_of_scope") and r.get("top_score") is not None
+        ]
+        out_tops = [
+            r["top_score"]
+            for r in results
+            if r.get("out_of_scope") and r.get("top_score") is not None
+        ]
         if in_tops and out_tops:
             summary["in_scope_min_top_score"] = min(in_tops)
             summary["out_of_scope_max_top_score"] = max(out_tops)
@@ -125,7 +143,8 @@ def summarize(kind: str, results: list[dict]) -> dict:
             summary["in_scope_correct"] = sum(r.get("verdict") == "correct" for r in in_scope)
             summary["out_of_scope_total"] = len(results) - len(in_scope)
             summary["out_of_scope_correct"] = sum(
-                r.get("verdict") == "correct" for r in results if r.get("out_of_scope"))
+                r.get("verdict") == "correct" for r in results if r.get("out_of_scope")
+            )
     return summary
 
 
@@ -145,5 +164,4 @@ def save_run(run: dict) -> Path:
 
 
 def load_runs() -> list[dict]:
-    return [json.loads(p.read_text(encoding="utf-8"))
-            for p in sorted(RESULTS_DIR.glob("*.json"))]
+    return [json.loads(p.read_text(encoding="utf-8")) for p in sorted(RESULTS_DIR.glob("*.json"))]
