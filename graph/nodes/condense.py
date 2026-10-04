@@ -1,8 +1,7 @@
 import logging
 
-import httpx
-
 from app.core.config import settings
+from graph.llm import LLMUnavailableError, chat_completion
 from graph.state import GraphState
 
 logger = logging.getLogger(__name__)
@@ -46,18 +45,9 @@ def condense_node(state: GraphState) -> dict:
         "temperature": 0.0,
         "max_tokens": 150,
     }
-    headers = {
-        "Authorization": f"Bearer {settings.mammouth_api_key}",
-        "Content-Type": "application/json",
-    }
     try:
-        with httpx.Client(timeout=30.0) as client:
-            resp = client.post(
-                f"{settings.mammouth_base_url}/chat/completions", headers=headers, json=payload
-            )
-            resp.raise_for_status()
-            rewritten = resp.json()["choices"][0]["message"]["content"].strip()
-    except (httpx.HTTPError, KeyError, IndexError) as exc:
+        rewritten = chat_completion(payload)["choices"][0]["message"]["content"].strip()
+    except (LLMUnavailableError, KeyError, IndexError) as exc:
         logger.warning("Question rewriting failed, keeping the original: %s", exc)
         return {"rewritten": None}
     return {"rewritten": rewritten or None}

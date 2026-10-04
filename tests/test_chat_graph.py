@@ -59,13 +59,13 @@ class TestPrepareNode:
 
 
 class TestCondenseNode:
-    @patch("graph.nodes.condense.httpx.Client")
+    @patch("graph.llm.httpx.Client")
     def test_no_history_means_no_llm_call(self, mock_httpx_cls):
         result = condense_node({"question": "Combien ?", "history": []})
         assert result == {"rewritten": None}
         mock_httpx_cls.assert_not_called()
 
-    @patch("graph.nodes.condense.httpx.Client")
+    @patch("graph.llm.httpx.Client")
     def test_rewrites_with_history(self, mock_httpx_cls):
         client = _mock_http(mock_httpx_cls, "  Le BTS ERA est-il proposé à Lyon ?  ")
         result = condense_node(
@@ -81,7 +81,7 @@ class TestCondenseNode:
         sent = client.post.call_args.kwargs["json"]["messages"][1]["content"]
         assert "BTS ERA" in sent and "Et à Lyon ?" in sent
 
-    @patch("graph.nodes.condense.httpx.Client")
+    @patch("graph.llm.httpx.Client")
     def test_llm_failure_keeps_the_original_question(self, mock_httpx_cls):
         client = MagicMock()
         client.post.side_effect = httpx.ConnectError("down")
@@ -99,7 +99,7 @@ class TestChatGraph:
     def test_singleton(self):
         assert get_chat_graph() is get_chat_graph()
 
-    @patch("graph.nodes.generate.httpx.Client")
+    @patch("graph.llm.httpx.Client")
     @patch("graph.nodes.retrieve.embed_query", return_value=[0.1] * 384)
     @patch("graph.nodes.retrieve.get_qdrant_client")
     def test_first_question_skips_condense(self, mock_qdrant, mock_embed, mock_httpx_cls):
@@ -113,7 +113,7 @@ class TestChatGraph:
         assert client.post.call_count == 1  # generation only, no rewrite
         mock_embed.assert_called_once_with("Combien coûte le BTS ?")
 
-    @patch("graph.nodes.generate.httpx.Client")
+    @patch("graph.llm.httpx.Client")
     @patch("graph.nodes.retrieve.embed_query", return_value=[0.1] * 384)
     @patch("graph.nodes.retrieve.get_qdrant_client")
     def test_follow_up_is_searched_through_its_rewrite(
@@ -140,7 +140,7 @@ class TestChatGraph:
         assert [m["role"] for m in sent] == ["system", "user", "assistant", "user"]
         assert "Le BTS ERA est-il proposé à Lyon ?" in sent[-1]["content"]
 
-    @patch("graph.nodes.generate.httpx.Client")
+    @patch("graph.llm.httpx.Client")
     @patch("graph.nodes.retrieve.embed_query", return_value=[0.1] * 384)
     @patch("graph.nodes.retrieve.get_qdrant_client")
     def test_refuses_when_nothing_relevant(self, mock_qdrant, mock_embed, mock_httpx_cls):
