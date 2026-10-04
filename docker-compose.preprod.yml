@@ -1,3 +1,7 @@
+# Preprod (Coolify application "RAG Ynov (preprod)", https://rag-preprod.romaincollery.com).
+# Same stack as docker-compose.yml, deployed before production; only the host folders
+# differ, because Coolify does not read variables in host paths.
+# tests/test_compose.py checks that both files stay identical apart from these folders.
 services:
   api:
     build:
@@ -21,19 +25,12 @@ services:
     env_file:
       - .env
     volumes:
-      # Corpus read by /api/ingest. data/ is not in git nor in the image (.dockerignore),
-      # so it is copied to this folder on the server. Hard-coded: Coolify does not read
-      # variables in host paths ("${VAR:-./data}" becomes its own app folder, and
-      # "${VAR:-/data/x}" always /data/x). Hence the preprod has its own file,
-      # docker-compose.preprod.yml, identical except for these host folders.
-      # Local dev mounts ./data instead, via docker-compose.override.yml.
-      - /data/rag-ynov:/app/data:ro
+      # Copy of the production corpus, to try a new corpus before production
+      - /data/rag-ynov-preprod:/app/data:ro
       # Accounts and conversations of the chat (SQLite): the only state worth a backup
       - chat_data:/app/chat_data
-      # Daily copies of that database (python -m chat.backup, a scheduled task in Coolify): on the
-      # host, outside the Docker volume, so that losing the volume does not lose them. The
-      # folder is created on the server, owned by uid 999 (the appuser of the image).
-      - /data/rag-ynov-backups:/app/backups
+      # Own backup folder: the rotation of chat.backup would delete production copies
+      - /data/rag-ynov-preprod-backups:/app/backups
     depends_on:
       qdrant:
         condition: service_healthy
