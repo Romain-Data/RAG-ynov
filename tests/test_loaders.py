@@ -1,4 +1,5 @@
 """Unit tests for loaders and chunking (no Qdrant / FastEmbed)."""
+
 from pathlib import Path
 
 import pytest
@@ -75,8 +76,9 @@ class TestChunking:
         assert len(chunks) >= 2
         # chunk_index restarts at 0 for each section document
         for section in {c["metadata"]["section"] for c in chunks}:
-            indexes = [c["metadata"]["chunk_index"] for c in chunks
-                       if c["metadata"]["section"] == section]
+            indexes = [
+                c["metadata"]["chunk_index"] for c in chunks if c["metadata"]["section"] == section
+            ]
             assert indexes == list(range(len(indexes)))
         assert all(c["text"].startswith("Admissions Ynov 2026 — FAQ — ") for c in chunks)
         # Manifest fields survive the split

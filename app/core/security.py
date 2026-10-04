@@ -8,7 +8,6 @@ from slowapi.util import get_remote_address
 
 from app.core.config import settings
 
-
 # In-memory limiter — fine for a single API instance.
 limiter = Limiter(
     key_func=get_remote_address,
@@ -29,7 +28,8 @@ def add_security_middleware(app: FastAPI) -> None:
     )
 
     app.state.limiter = limiter
-    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+    # slowapi types its handler for RateLimitExceeded, Starlette expects Exception
+    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)  # type: ignore[arg-type]
 
 
 # FastAPI dependencies: each one is a slowapi-decorated Request handler.

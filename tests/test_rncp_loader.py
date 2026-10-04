@@ -1,4 +1,5 @@
 """Unit tests for the France Compétences RNCP fiche parser."""
+
 from pathlib import Path
 
 from ingestion.fetch import cited_rncp_numbers

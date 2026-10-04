@@ -1,4 +1,5 @@
 """Qdrant indexer: syncs the collection with the chunks of the current corpus."""
+
 import collections
 import uuid
 
@@ -31,7 +32,8 @@ def ensure_collection(client: QdrantClient, vector_size: int = 384) -> None:
 
     if settings.qdrant_collection_name in names:
         params = client.get_collection(settings.qdrant_collection_name).config.params
-        existing = params.vectors.size if hasattr(params.vectors, "size") else None
+        vectors = params.vectors
+        existing = vectors.size if isinstance(vectors, VectorParams) else None
         if existing is not None and existing != vector_size:
             raise ValueError(
                 f"Collection {settings.qdrant_collection_name!r} holds {existing}-dim vectors "
@@ -85,14 +87,17 @@ def index_chunks(chunks: list[dict], client: QdrantClient | None = None) -> int:
 
     ids = point_ids(chunks)
     points = [
-        PointStruct(id=point_id, vector=chunk["vector"], payload={"text": chunk["text"],
-                                                                  **chunk["metadata"]})
+        PointStruct(
+            id=point_id,
+            vector=chunk["vector"],
+            payload={"text": chunk["text"], **chunk["metadata"]},
+        )
         for point_id, chunk in zip(ids, chunks, strict=True)
     ]
     for start in range(0, len(points), UPSERT_BATCH_SIZE):
         client.upsert(
             collection_name=settings.qdrant_collection_name,
-            points=points[start:start + UPSERT_BATCH_SIZE],
+            points=points[start : start + UPSERT_BATCH_SIZE],
         )
 
     if ids:  # never wipe the collection on an empty corpus

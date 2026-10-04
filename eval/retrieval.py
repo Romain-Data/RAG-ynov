@@ -23,6 +23,7 @@ Usage:
     uv run python -m eval.retrieval --embedding-model intfloat/multilingual-e5-large \
         --chunk-size 500 --threshold 0.8 --save "e5-large-500"
 """
+
 import argparse
 import datetime as dt
 import hashlib
@@ -59,8 +60,9 @@ EMBED_BATCH = 256
 BUDGET_EXHAUSTED = 3  # exit code: index not finished, run again to resume
 
 
-def embed_with_checkpoint(texts: list[str], directory: Path, digest: str,
-                          max_minutes: float | None) -> tuple[list[list[float]], float] | None:
+def embed_with_checkpoint(
+    texts: list[str], directory: Path, digest: str, max_minutes: float | None
+) -> tuple[list[list[float]], float] | None:
     """Embed `texts` in batches, saving progress in `directory`.
 
     Returns (vectors, seconds spent in this run and previous ones), or None when the time
@@ -72,8 +74,10 @@ def embed_with_checkpoint(texts: list[str], directory: Path, digest: str,
         saved = json.loads(checkpoint.read_text())
         if saved.get("digest") == digest:
             state = saved
-            print(f"Reprise : {len(state['vectors'])}/{len(texts)} embeddings déjà calculés",
-                  flush=True)
+            print(
+                f"Reprise : {len(state['vectors'])}/{len(texts)} embeddings déjà calculés",
+                flush=True,
+            )
     start = time.time()
     while len(state["vectors"]) < len(texts):
         if max_minutes is not None and time.time() - start > max_minutes * 60:
@@ -81,11 +85,13 @@ def embed_with_checkpoint(texts: list[str], directory: Path, digest: str,
             return None
         done = len(state["vectors"])
         batch_start = time.time()
-        state["vectors"] += embed_passages(texts[done:done + EMBED_BATCH])
+        state["vectors"] += embed_passages(texts[done : done + EMBED_BATCH])
         state["seconds"] += time.time() - batch_start
         checkpoint.write_text(json.dumps(state))
-        print(f"  embeddings {len(state['vectors'])}/{len(texts)} "
-              f"({state['seconds'] / 60:.1f} min)", flush=True)
+        print(
+            f"  embeddings {len(state['vectors'])}/{len(texts)} ({state['seconds'] / 60:.1f} min)",
+            flush=True,
+        )
     checkpoint.unlink()
     return state["vectors"], state["seconds"]
 
@@ -104,12 +110,16 @@ def truncation_stats(chunks: list[dict]) -> dict:
         tokenizer.enable_truncation(max_length)
     except (AttributeError, KeyError, TypeError):
         return {}
-    return {"max_tokens": max_length, "median_tokens": int(statistics.median(lengths)),
-            "truncated_share": round(sum(n > max_length for n in lengths) / len(lengths), 3)}
+    return {
+        "max_tokens": max_length,
+        "median_tokens": int(statistics.median(lengths)),
+        "truncated_share": round(sum(n > max_length for n in lengths) / len(lengths), 3),
+    }
 
 
-def build_index(data_dir: Path, chunk_size: int = CHUNK_SIZE,
-                max_minutes: float | None = None) -> tuple[QdrantClient, dict]:
+def build_index(
+    data_dir: Path, chunk_size: int = CHUNK_SIZE, max_minutes: float | None = None
+) -> tuple[QdrantClient, dict]:
     """Index data/ with the configured embedding model (cached per model and chunk size).
 
     Returns (client, info) with n_chunks, build_seconds (None when cached) and the
@@ -118,8 +128,11 @@ def build_index(data_dir: Path, chunk_size: int = CHUNK_SIZE,
     docs = load_directory(data_dir, settings.ingest_exclude_doc_type_list())
     chunks = chunk_documents(docs, chunk_size=chunk_size)
     digest = hashlib.sha256(
-        json.dumps([settings.embedding_model] + [(c["text"], c["metadata"]) for c in chunks],
-                   sort_keys=True, default=str).encode()
+        json.dumps(
+            [settings.embedding_model] + [(c["text"], c["metadata"]) for c in chunks],
+            sort_keys=True,
+            default=str,
+        ).encode()
     ).hexdigest()
     directory = index_dir(settings.embedding_model, chunk_size)
     directory.mkdir(parents=True, exist_ok=True)
@@ -133,11 +146,13 @@ def build_index(data_dir: Path, chunk_size: int = CHUNK_SIZE,
         return client, {**info, "build_seconds": None}
 
     print(f"Indexation de {len(chunks)} chunks avec {settings.embedding_model}…", flush=True)
-    embedded = embed_with_checkpoint([c["text"] for c in chunks], directory, digest,
-                                     max_minutes)
+    embedded = embed_with_checkpoint([c["text"] for c in chunks], directory, digest, max_minutes)
     if embedded is None:
-        print(f"Budget de {max_minutes} min écoulé : relancer la même commande pour "
-              "reprendre l'indexation.", flush=True)
+        print(
+            f"Budget de {max_minutes} min écoulé : relancer la même commande pour "
+            "reprendre l'indexation.",
+            flush=True,
+        )
         sys.exit(BUDGET_EXHAUSTED)
     vectors, embed_seconds = embedded
     if client.collection_exists(settings.qdrant_collection_name):
@@ -145,8 +160,11 @@ def build_index(data_dir: Path, chunk_size: int = CHUNK_SIZE,
     for chunk, vector in zip(chunks, vectors, strict=True):
         chunk["vector"] = vector
     index_chunks(chunks, client)
-    info = {"n_chunks": len(chunks), "embed_seconds": round(embed_seconds, 1),
-            **truncation_stats(chunks)}
+    info = {
+        "n_chunks": len(chunks),
+        "embed_seconds": round(embed_seconds, 1),
+        **truncation_stats(chunks),
+    }
     info_file.write_text(json.dumps(info))
     fingerprint.write_text(digest)
     print(f"Embeddings calculés en {embed_seconds:.0f} s", flush=True)
@@ -154,29 +172,43 @@ def build_index(data_dir: Path, chunk_size: int = CHUNK_SIZE,
 
 
 def _matches(hit: dict, expect: dict) -> bool:
-    return (hit["source"] == expect["source"]
-            and expect["section"].lower() in (hit["section"] or "").lower())
+    return (
+        hit["source"] == expect["source"]
+        and expect["section"].lower() in (hit["section"] or "").lower()
+    )
 
 
-def evaluate(client: QdrantClient, limit: int, candidates: int,
-             max_per_section: int | None, verbose: bool,
-             threshold: float = GRADE_THRESHOLD) -> list[dict]:
+def evaluate(
+    client: QdrantClient,
+    limit: int,
+    candidates: int,
+    max_per_section: int | None,
+    verbose: bool,
+    threshold: float = GRADE_THRESHOLD,
+) -> list[dict]:
     results = []
     for q in load_questions():
         if q.get("out_of_scope") == "llm":
             continue  # passes the threshold by design; only the LLM can decline it
         start = time.time()
-        hits = retrieve.search(q["question"], client, limit=limit, candidates=candidates,
-                               max_per_section=max_per_section)
+        hits = retrieve.search(
+            q["question"],
+            client,
+            limit=limit,
+            candidates=candidates,
+            max_per_section=max_per_section,
+        )
         search_ms = (time.time() - start) * 1000
-        matched = [i for i, h in enumerate(hits)
-                   if any(_matches(h, e) for e in q.get("expect", []))]
+        matched = [
+            i for i, h in enumerate(hits) if any(_matches(h, e) for e in q.get("expect", []))
+        ]
         distinct = {(hits[i]["source"], hits[i]["section"]) for i in matched}
         ok = len(distinct) >= q.get("min_distinct", 1)
         # The fact may also reach the LLM through another chunk (e.g. every chunk of a
         # formation carries "100 % en ligne" in its prefix): expect_text checks that.
         in_context = bool(q.get("expect_text")) and any(
-            q["expect_text"].lower() in h["text"].lower() for h in hits
+            q["expect_text"].lower() in h["text"].lower()
+            for h in hits
             if h["source"] in {e["source"] for e in q.get("expect", [])}
         )
         ok = ok or in_context
@@ -184,54 +216,83 @@ def evaluate(client: QdrantClient, limit: int, candidates: int,
         refused = top_score < threshold
         if q.get("out_of_scope"):
             ok = refused  # an out-of-scope question passes when the threshold refuses it
-        results.append({
-            "question_id": q["id"],
-            "question": q["question"],
-            "out_of_scope": q.get("out_of_scope"),
-            "passed": ok,
-            "rank": matched[0] + 1 if matched else None,
-            "in_context": in_context,
-            "distinct_sections": len(distinct),
-            "min_distinct": q.get("min_distinct", 1),
-            "top_score": round(top_score, 3),
-            "refused_by_threshold": refused,
-            "search_ms": round(search_ms, 1),
-            "retrieved": [{"source": h["source"], "section": h["section"],
-                           "score": round(h["score"], 3)} for h in hits],
-        })
+        results.append(
+            {
+                "question_id": q["id"],
+                "question": q["question"],
+                "out_of_scope": q.get("out_of_scope"),
+                "passed": ok,
+                "rank": matched[0] + 1 if matched else None,
+                "in_context": in_context,
+                "distinct_sections": len(distinct),
+                "min_distinct": q.get("min_distinct", 1),
+                "top_score": round(top_score, 3),
+                "refused_by_threshold": refused,
+                "search_ms": round(search_ms, 1),
+                "retrieved": [
+                    {"source": h["source"], "section": h["section"], "score": round(h["score"], 3)}
+                    for h in hits
+                ],
+            }
+        )
 
-        rank = ("hors périmètre" if q.get("out_of_scope")
-                else f"rang {matched[0] + 1}" if matched
-                else "fait présent dans le contexte" if in_context else "absent")
-        print(f"{'✅' if ok else '❌'} {q['id']} {q['question'][:70]:70s} {rank}"
-              + (f", {len(distinct)}/{q['min_distinct']} sections"
-                 if q.get("min_distinct") else "")
-              + (f"  ⛔ refusée (score {top_score:.3f} < {threshold})" if refused
-                 else f"  (score {top_score:.3f})" if q.get("out_of_scope") else ""))
+        rank = (
+            "hors périmètre"
+            if q.get("out_of_scope")
+            else f"rang {matched[0] + 1}"
+            if matched
+            else "fait présent dans le contexte"
+            if in_context
+            else "absent"
+        )
+        print(
+            f"{'✅' if ok else '❌'} {q['id']} {q['question'][:70]:70s} {rank}"
+            + (f", {len(distinct)}/{q['min_distinct']} sections" if q.get("min_distinct") else "")
+            + (
+                f"  ⛔ refusée (score {top_score:.3f} < {threshold})"
+                if refused
+                else f"  (score {top_score:.3f})"
+                if q.get("out_of_scope")
+                else ""
+            )
+        )
         if verbose or not ok:
             for i, h in enumerate(hits):
                 mark = "→" if i in matched else " "
-                print(f"     {mark} {h['score']:.3f} {h['source'][:45]:45s} | "
-                      f"{(h['section'] or '')[:55]}")
+                print(
+                    f"     {mark} {h['score']:.3f} {h['source'][:45]:45s} | "
+                    f"{(h['section'] or '')[:55]}"
+                )
     in_scope = [r for r in results if not r["out_of_scope"]]
     out_scope = [r for r in results if r["out_of_scope"]]
-    print(f"\nDans le périmètre : {sum(r['passed'] for r in in_scope)}/{len(in_scope)} réussies, "
-          f"{sum(r['refused_by_threshold'] for r in in_scope)} refusée(s) à tort par le seuil")
+    print(
+        f"\nDans le périmètre : {sum(r['passed'] for r in in_scope)}/{len(in_scope)} réussies, "
+        f"{sum(r['refused_by_threshold'] for r in in_scope)} refusée(s) à tort par le seuil"
+    )
     if out_scope:
-        print(f"Hors périmètre : {sum(r['passed'] for r in out_scope)}/{len(out_scope)} "
-              f"refusées par le seuil")
+        print(
+            f"Hors périmètre : {sum(r['passed'] for r in out_scope)}/{len(out_scope)} "
+            f"refusées par le seuil"
+        )
     if in_scope and out_scope:
         weakest = min(in_scope, key=lambda r: r["top_score"])
         strongest = max(out_scope, key=lambda r: r["top_score"])
         gap = weakest["top_score"] - strongest["top_score"]
-        print(f"Scores : question légitime la plus faible {weakest['top_score']:.3f} "
-              f"({weakest['question_id']}), hors périmètre la plus forte "
-              f"{strongest['top_score']:.3f} ({strongest['question_id']}) → écart {gap:+.3f}"
-              + (f", seuil médian {(weakest['top_score'] + strongest['top_score']) / 2:.3f}"
-                 if gap > 0 else " : aucun seuil ne les sépare"))
-    print(f"(limit={limit}, candidates={candidates}, max_per_section={max_per_section}, "
-          f"seuil={threshold}, recherche {statistics.median(r['search_ms'] for r in results):.0f}"
-          f" ms en médiane)")
+        print(
+            f"Scores : question légitime la plus faible {weakest['top_score']:.3f} "
+            f"({weakest['question_id']}), hors périmètre la plus forte "
+            f"{strongest['top_score']:.3f} ({strongest['question_id']}) → écart {gap:+.3f}"
+            + (
+                f", seuil médian {(weakest['top_score'] + strongest['top_score']) / 2:.3f}"
+                if gap > 0
+                else " : aucun seuil ne les sépare"
+            )
+        )
+    print(
+        f"(limit={limit}, candidates={candidates}, max_per_section={max_per_section}, "
+        f"seuil={threshold}, recherche {statistics.median(r['search_ms'] for r in results):.0f}"
+        f" ms en médiane)"
+    )
     return results
 
 
@@ -243,10 +304,15 @@ def main() -> None:
     parser.add_argument("--max-per-section", type=int, default=retrieve.MAX_PER_SECTION)
     parser.add_argument("--chunk-size", type=int, default=CHUNK_SIZE)
     parser.add_argument("--embedding-model", help="override settings.embedding_model")
-    parser.add_argument("--max-minutes", type=float,
-                        help="time budget for embeddings in this run (resumable)")
-    parser.add_argument("--threshold", type=float, default=GRADE_THRESHOLD,
-                        help="grading threshold to check refusals against")
+    parser.add_argument(
+        "--max-minutes", type=float, help="time budget for embeddings in this run (resumable)"
+    )
+    parser.add_argument(
+        "--threshold",
+        type=float,
+        default=GRADE_THRESHOLD,
+        help="grading threshold to check refusals against",
+    )
     parser.add_argument("--save", metavar="LABEL", help="save the run in eval/results/")
     parser.add_argument("--notes", default="", help="free text saved with the run")
     parser.add_argument("-v", "--verbose", action="store_true", help="show every result")
@@ -254,33 +320,36 @@ def main() -> None:
     if args.embedding_model:
         settings.embedding_model = args.embedding_model
     client, info = build_index(args.data, args.chunk_size, args.max_minutes)
-    results = evaluate(client, args.limit, args.candidates, args.max_per_section,
-                       args.verbose, args.threshold)
+    results = evaluate(
+        client, args.limit, args.candidates, args.max_per_section, args.verbose, args.threshold
+    )
 
     if args.save:
         date = dt.date.today().isoformat()
-        path = save_run({
-            "run_id": next_run_id(date, args.save),
-            "date": date,
-            "kind": "retrieval",
-            "environment": "local",
-            "git_commit": git_commit(),
-            "question_set": QUESTION_SET,
-            "milestone": False,
-            "label": args.save,
-            "notes": args.notes,
-            "config": {
-                "embedding_model": settings.embedding_model,
-                "chunk_size": args.chunk_size,
-                "chunk_overlap": CHUNK_OVERLAP,
-                "limit": args.limit,
-                "candidates": args.candidates,
-                "max_per_section": args.max_per_section,
-                "grade_threshold": args.threshold,
-                **info,
-            },
-            "results": results,
-        })
+        path = save_run(
+            {
+                "run_id": next_run_id(date, args.save),
+                "date": date,
+                "kind": "retrieval",
+                "environment": "local",
+                "git_commit": git_commit(),
+                "question_set": QUESTION_SET,
+                "milestone": False,
+                "label": args.save,
+                "notes": args.notes,
+                "config": {
+                    "embedding_model": settings.embedding_model,
+                    "chunk_size": args.chunk_size,
+                    "chunk_overlap": CHUNK_OVERLAP,
+                    "limit": args.limit,
+                    "candidates": args.candidates,
+                    "max_per_section": args.max_per_section,
+                    "grade_threshold": args.threshold,
+                    **info,
+                },
+                "results": results,
+            }
+        )
         print(f"Résultats enregistrés : {path}")
 
 

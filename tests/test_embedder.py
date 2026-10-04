@@ -1,4 +1,5 @@
 """Embedder tests with a fake model: prefixes and per-model instances."""
+
 import pytest
 
 from app.core.config import settings
@@ -29,8 +30,9 @@ def test_e5_gets_query_and_passage_prefixes(fake: FakeModel, monkeypatch: pytest
 
 
 def test_paraphrase_models_get_no_prefix(fake: FakeModel, monkeypatch: pytest.MonkeyPatch):
-    monkeypatch.setattr(settings, "embedding_model",
-                        "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+    monkeypatch.setattr(
+        settings, "embedding_model", "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    )
     embedder.embed_query("prix ?")
     assert fake.seen == ["prix ?"]
 
@@ -43,8 +45,11 @@ def test_snapshot_without_symlinks(tmp_path, monkeypatch: pytest.MonkeyPatch):
     snapshot = tmp_path / "models--org--model" / "snapshots" / "rev1"
     snapshot.mkdir(parents=True)
     (snapshot / "model.onnx_data").symlink_to("../../../blobs/abc")
-    monkeypatch.setattr(embedder.TextEmbedding, "list_supported_models",
-                        lambda: [{"model": "org/model", "sources": {"hf": "org/model"}}])
+    monkeypatch.setattr(
+        embedder.TextEmbedding,
+        "list_supported_models",
+        lambda: [{"model": "org/model", "sources": {"hf": "org/model"}}],
+    )
 
     path = embedder._snapshot_without_symlinks("org/model", str(tmp_path))
 

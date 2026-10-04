@@ -1,4 +1,5 @@
 """HTML of the account pages: sign-up, recovery and deletion (Chainlit has none)."""
+
 from html import escape
 
 APP_NAME = "Chatbot Ynov (non officiel)"  # same as name in chat/.chainlit/config.toml
@@ -44,57 +45,94 @@ def _error(message: str | None) -> str:
     return f'<p class="error" role="alert">{escape(message)}</p>' if message else ""
 
 
-def _field(name: str, label: str, kind: str = "text", value: str = "",
-           autocomplete: str = "off") -> str:
-    return (f'<label for="{name}">{escape(label)}</label>'
-            f'<input id="{name}" name="{name}" type="{kind}" value="{escape(value)}" '
-            f'autocomplete="{autocomplete}" required>')
+def _field(
+    name: str, label: str, kind: str = "text", value: str = "", autocomplete: str = "off"
+) -> str:
+    return (
+        f'<label for="{name}">{escape(label)}</label>'
+        f'<input id="{name}" name="{name}" type="{kind}" value="{escape(value)}" '
+        f'autocomplete="{autocomplete}" required>'
+    )
 
 
 LOGIN_LINK = '<div class="links"><a href="/chat/login">Retour à la connexion</a></div>'
 
 
 def signup_form(error: str | None = None, pseudo: str = "") -> str:
-    return page("Créer un compte", (
-        "<p>Un pseudo et un mot de passe suffisent : ni e-mail, ni nom. Évitez d'utiliser "
-        "votre vrai nom comme pseudo.</p>" + _error(error) +
-        '<form method="post">' + _field("pseudo", "Pseudo", value=pseudo, autocomplete="username") +
-        _field("password", "Mot de passe (8 caractères minimum)", "password",
-               autocomplete="new-password") +
-        _field("confirm", "Confirmez le mot de passe", "password", autocomplete="new-password") +
-        "<button>Créer mon compte</button></form>" + LOGIN_LINK))
+    return page(
+        "Créer un compte",
+        (
+            "<p>Un pseudo et un mot de passe suffisent : ni e-mail, ni nom. Évitez d'utiliser "
+            "votre vrai nom comme pseudo.</p>"
+            + _error(error)
+            + '<form method="post">'
+            + _field("pseudo", "Pseudo", value=pseudo, autocomplete="username")
+            + _field(
+                "password",
+                "Mot de passe (8 caractères minimum)",
+                "password",
+                autocomplete="new-password",
+            )
+            + _field(
+                "confirm", "Confirmez le mot de passe", "password", autocomplete="new-password"
+            )
+            + "<button>Créer mon compte</button></form>"
+            + LOGIN_LINK
+        ),
+    )
 
 
 def code_page(title: str, intro: str, code: str) -> str:
-    return page(title, (
-        f"<p>{escape(intro)}</p>"
-        "<p><strong>Voici votre code de secours. Notez-le maintenant : il ne sera plus "
-        "affiché.</strong> Sans e-mail, c'est le seul moyen de retrouver votre compte si vous "
-        "oubliez votre mot de passe.</p>"
-        f'<div class="code">{escape(code)}</div>'
-        '<div class="links"><a href="/chat/login">Se connecter</a></div>'))
+    return page(
+        title,
+        (
+            f"<p>{escape(intro)}</p>"
+            "<p><strong>Voici votre code de secours. Notez-le maintenant : il ne sera plus "
+            "affiché.</strong> Sans e-mail, c'est le seul moyen de retrouver votre compte si vous "
+            "oubliez votre mot de passe.</p>"
+            f'<div class="code">{escape(code)}</div>'
+            '<div class="links"><a href="/chat/login">Se connecter</a></div>'
+        ),
+    )
 
 
 def recover_form(error: str | None = None, pseudo: str = "") -> str:
-    return page("Mot de passe oublié", (
-        "<p>Entrez votre pseudo, le code de secours reçu à l'inscription et un nouveau mot de "
-        "passe. Un nouveau code de secours vous sera donné.</p>" + _error(error) +
-        '<form method="post">' + _field("pseudo", "Pseudo", value=pseudo, autocomplete="username") +
-        _field("code", "Code de secours") +
-        _field("password", "Nouveau mot de passe", "password", autocomplete="new-password") +
-        _field("confirm", "Confirmez le nouveau mot de passe", "password",
-               autocomplete="new-password") +
-        "<button>Changer mon mot de passe</button></form>" + LOGIN_LINK))
+    return page(
+        "Mot de passe oublié",
+        (
+            "<p>Entrez votre pseudo, le code de secours reçu à l'inscription et un nouveau mot de "
+            "passe. Un nouveau code de secours vous sera donné.</p>"
+            + _error(error)
+            + '<form method="post">'
+            + _field("pseudo", "Pseudo", value=pseudo, autocomplete="username")
+            + _field("code", "Code de secours")
+            + _field("password", "Nouveau mot de passe", "password", autocomplete="new-password")
+            + _field(
+                "confirm",
+                "Confirmez le nouveau mot de passe",
+                "password",
+                autocomplete="new-password",
+            )
+            + "<button>Changer mon mot de passe</button></form>"
+            + LOGIN_LINK
+        ),
+    )
 
 
 def delete_form(error: str | None = None, pseudo: str = "") -> str:
-    return page("Supprimer mon compte", (
-        "<p>Votre compte et toutes vos conversations seront supprimés définitivement. "
-        "Cette action est irréversible.</p>" + _error(error) +
-        '<form method="post">' + _field("pseudo", "Pseudo", value=pseudo, autocomplete="username") +
-        _field("password", "Mot de passe", "password", autocomplete="current-password") +
-        '<button class="danger">Supprimer définitivement</button></form>'
-        '<div class="links"><a href="/chat/">Retour au chat</a></div>'))
+    return page(
+        "Supprimer mon compte",
+        (
+            "<p>Votre compte et toutes vos conversations seront supprimés définitivement. "
+            "Cette action est irréversible.</p>"
+            + _error(error)
+            + '<form method="post">'
+            + _field("pseudo", "Pseudo", value=pseudo, autocomplete="username")
+            + _field("password", "Mot de passe", "password", autocomplete="current-password")
+            + '<button class="danger">Supprimer définitivement</button></form>'
+            '<div class="links"><a href="/chat/">Retour au chat</a></div>'
+        ),
+    )
 
 
 def message_page(title: str, text: str) -> str:

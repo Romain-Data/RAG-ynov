@@ -8,7 +8,9 @@ The graph keeps no state between calls: the caller sends the whole conversation 
 `messages` ([{"role": "user" | "assistant", "content": ...}, ...], the last one being
 the new question) and gets the answer for that last question.
 """
+
 from langgraph.graph import END, StateGraph
+from langgraph.graph.state import CompiledStateGraph
 
 from graph.builder import should_generate
 from graph.nodes.condense import condense_node
@@ -32,13 +34,11 @@ def prepare_node(state: ChatState) -> dict:
     if not messages or messages[-1].get("role") != "user":
         return {"question": "", "history": [], "rewritten": None}
     previous = messages[:-1][-MAX_HISTORY_MESSAGES:]
-    history = [
-        {"role": m["role"], "content": m["content"][:MAX_HISTORY_CHARS]} for m in previous
-    ]
+    history = [{"role": m["role"], "content": m["content"][:MAX_HISTORY_CHARS]} for m in previous]
     return {"question": messages[-1]["content"], "history": history, "rewritten": None}
 
 
-def build_chat_graph():
+def build_chat_graph() -> CompiledStateGraph:
     workflow = StateGraph(ChatState)
     workflow.add_node("prepare", prepare_node)
     workflow.add_node("condense", condense_node)
@@ -59,10 +59,10 @@ def build_chat_graph():
     return workflow.compile()
 
 
-_chat_graph = None
+_chat_graph: CompiledStateGraph | None = None
 
 
-def get_chat_graph():
+def get_chat_graph() -> CompiledStateGraph:
     global _chat_graph
     if _chat_graph is None:
         _chat_graph = build_chat_graph()

@@ -1,4 +1,5 @@
 """Retrieval tests against an in-memory Qdrant, with a stubbed query embedding."""
+
 import pytest
 from qdrant_client import QdrantClient
 
@@ -19,8 +20,8 @@ def client(monkeypatch: pytest.MonkeyPatch) -> QdrantClient:
     query = [1.0] + [0.0] * 383
     monkeypatch.setattr(retrieve, "embed_query", lambda _q: query)
     client = QdrantClient(":memory:")
-    near = [1.0, 0.1] + [0.0] * 382   # very close to the query
-    far = [1.0, 0.5] + [0.0] * 382    # less close
+    near = [1.0, 0.1] + [0.0] * 382  # very close to the query
+    far = [1.0, 0.5] + [0.0] * 382  # less close
     chunks = [_chunk("Programme", i, near) for i in range(5)] + [_chunk("Tarifs", 0, far)]
     index_chunks(chunks, client)
     return client

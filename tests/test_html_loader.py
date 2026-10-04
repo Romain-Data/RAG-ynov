@@ -1,4 +1,5 @@
 """Unit tests for the HTML loader (ynov.com formation pages + generic fallback)."""
+
 from pathlib import Path
 
 from ingestion.build_common import build
@@ -136,8 +137,15 @@ class TestFormationPage:
             "Ce titre en quelques chiffres",
         ]
         all_text = "\n".join(b for _, b in page["sections"])
-        for noise in ("14 campus", "Moodle", "Projets", "Candidater", "Mentions légales",
-                      "Formations Cybersécurité", "Date de dernière modification"):
+        for noise in (
+            "14 campus",
+            "Moodle",
+            "Projets",
+            "Candidater",
+            "Mentions légales",
+            "Formations Cybersécurité",
+            "Date de dernière modification",
+        ):
             assert noise not in all_text
 
     def test_campus_count_is_explicit_and_not_duplicated(self):
@@ -151,18 +159,25 @@ class TestFormationPage:
         assert "Lyon" not in dict(page["sections"])["Infos clés"]
 
     def test_single_campus_wording(self):
-        one = FORMATION_HTML.replace("""Lyon,
+        one = FORMATION_HTML.replace(
+            """Lyon,
         Paris,
         et
-        Strasbourg""", "Strasbourg")
+        Strasbourg""",
+            "Strasbourg",
+        )
         places = dict(parse_formation_page(one)["sections"])["Lieux"]
-        assert places.endswith("Uniquement à Strasbourg (un seul campus Ynov). "
-                               "Elle est aussi disponible 100 % en ligne via Ynov Connect.")
+        assert places.endswith(
+            "Uniquement à Strasbourg (un seul campus Ynov). "
+            "Elle est aussi disponible 100 % en ligne via Ynov Connect."
+        )
 
     def test_key_facts_are_written_as_questions(self):
         key_info = dict(parse_formation_page(FORMATION_HTML)["sections"])["Infos clés"]
-        assert ("Quand a lieu la prochaine rentrée de la formation Mastère Expert en "
-                "intelligence artificielle ? Septembre 2027.") in key_info
+        assert (
+            "Quand a lieu la prochaine rentrée de la formation Mastère Expert en "
+            "intelligence artificielle ? Septembre 2027."
+        ) in key_info
 
     def test_key_facts_summary(self):
         assert parse_formation_page(FORMATION_HTML)["key_facts"] == "3 campus et en ligne"
@@ -218,8 +233,10 @@ class TestLoadHtml:
         chunks = chunk_documents(load_file(_write_page(tmp_path)), chunk_size=60, chunk_overlap=0)
         programme = [c for c in chunks if c["metadata"]["section"] == "Programme du Mastère"]
         assert len(programme) > 1
-        prefix = ("Mastère Expert en intelligence artificielle (3 campus et en ligne) — "
-                  "Programme du Mastère\n")
+        prefix = (
+            "Mastère Expert en intelligence artificielle (3 campus et en ligne) — "
+            "Programme du Mastère\n"
+        )
         assert all(c["text"].startswith(prefix) for c in programme)
 
     def test_generic_html_fallback(self, tmp_path: Path):
@@ -319,7 +336,8 @@ class TestInfoPageSubheadings:
         sections = dict(parse_info_page(CFA_HTML)["sections"])
         cyber = sections["Taux de réussite apprentis — Expert en Cybersécurité – [RNCP40897]"]
         dev = sections[
-            "Taux de réussite apprentis — Expert en Développement Logiciel – [RNCP39583]"]
+            "Taux de réussite apprentis — Expert en Développement Logiciel – [RNCP39583]"
+        ]
         assert "79%" in cyber and "121 certifiés" in cyber
         assert dev == "- Taux de réussite des apprentis : 77%"  # h3 text in nested tags
         assert "02." not in cyber  # numbering of the next item is dropped

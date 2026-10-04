@@ -1,4 +1,5 @@
 """End-to-end test of the ingestion pipeline on the sample Markdown."""
+
 import asyncio
 from pathlib import Path
 

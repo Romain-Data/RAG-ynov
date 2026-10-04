@@ -12,6 +12,7 @@ already fetched pages and keeps active certifications only.
 The HTML is always refreshed; an existing manifest is left untouched so manual
 edits survive a re-fetch.
 """
+
 import argparse
 import hashlib
 import re
@@ -107,12 +108,20 @@ def fetch_rncp(number: str, out_dir: Path, data_dir: Path) -> str:
         "title": f"{fiche['rncp']} — {fiche['title']}",
         "language": "fr",
     }
-    _write_manifest(out_dir / f"{slug}.manifest.yml", {
-        "source": f"{slug}.html", "doc_type": "fiche_rncp", **common,
-        "rncp": number,
-        "extra": {"url": RNCP_URL.format(number), "level": fiche["level"],
-                  "expiry": fiche["expiry"]},
-    })
+    _write_manifest(
+        out_dir / f"{slug}.manifest.yml",
+        {
+            "source": f"{slug}.html",
+            "doc_type": "fiche_rncp",
+            **common,
+            "rncp": number,
+            "extra": {
+                "url": RNCP_URL.format(number),
+                "level": fiche["level"],
+                "expiry": fiche["expiry"],
+            },
+        },
+    )
 
     # A référentiel already in data/ (e.g. added by hand) is not downloaded twice.
     known = {hashlib.sha256(p.read_bytes()).hexdigest() for p in data_dir.rglob("*.pdf")}
@@ -128,14 +137,22 @@ def fetch_rncp(number: str, out_dir: Path, data_dir: Path) -> str:
             duplicates += 1
             continue
         (out_dir / f"{name}.pdf").write_bytes(pdf)
-        _write_manifest(out_dir / f"{name}.manifest.yml", {
-            "source": f"{name}.pdf", "doc_type": "referentiel", **common,
-            "rncp": number, "extra": {"url": RNCP_BASE + href, "level": fiche["level"]},
-        })
+        _write_manifest(
+            out_dir / f"{name}.manifest.yml",
+            {
+                "source": f"{name}.pdf",
+                "doc_type": "referentiel",
+                **common,
+                "rncp": number,
+                "extra": {"url": RNCP_BASE + href, "level": fiche["level"]},
+            },
+        )
         saved += 1
-    return (f"RNCP{number} active: fiche + {saved} référentiel(s)"
-            + (f", {duplicates} ignoré(s) (doublon ou non-PDF)" if duplicates else "")
-            + ("" if fiche["referentiel_urls"] else ", pas de référentiel publié"))
+    return (
+        f"RNCP{number} active: fiche + {saved} référentiel(s)"
+        + (f", {duplicates} ignoré(s) (doublon ou non-PDF)" if duplicates else "")
+        + ("" if fiche["referentiel_urls"] else ", pas de référentiel publié")
+    )
 
 
 def sitemap_urls() -> list[str]:

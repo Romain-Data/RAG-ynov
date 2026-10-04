@@ -1,4 +1,5 @@
 """Document loaders for various formats."""
+
 import re
 from collections.abc import Iterable
 from pathlib import Path
@@ -66,11 +67,13 @@ def load_markdown(path: Path) -> list[dict]:
         if not body:
             continue
         base_meta = {"source": path.name, "page": 1, "section": section}
-        docs.append({
-            "text": body,
-            "metadata": _merge_metadata(base_meta, manifest),
-            "prefix": f"{doc_title} — {section}\n" if doc_title else f"{section}\n",
-        })
+        docs.append(
+            {
+                "text": body,
+                "metadata": _merge_metadata(base_meta, manifest),
+                "prefix": f"{doc_title} — {section}\n" if doc_title else f"{section}\n",
+            }
+        )
     return docs
 
 
@@ -84,10 +87,12 @@ def load_pdf(path: Path) -> list[dict]:
         if text.strip():
             base_meta = {"source": path.name, "page": i + 1, "section": None}
             metadata = _merge_metadata(base_meta, manifest)
-            chunks.append({
-                "text": text,
-                "metadata": metadata,
-            })
+            chunks.append(
+                {
+                    "text": text,
+                    "metadata": metadata,
+                }
+            )
     return chunks
 
 
@@ -108,8 +113,12 @@ def load_html(path: Path) -> list[dict]:
             {
                 "text": body,
                 "metadata": _merge_metadata(
-                    {"source": path.name, "page": 1, "section": title,
-                     "rncp_status": fiche["status"]},
+                    {
+                        "source": path.name,
+                        "page": 1,
+                        "section": title,
+                        "rncp_status": fiche["status"],
+                    },
                     manifest,
                 ),
                 "prefix": f"{fiche['rncp']} {fiche['title']} — {title}\n",
@@ -123,8 +132,12 @@ def load_html(path: Path) -> list[dict]:
             {
                 "text": body,
                 "metadata": _merge_metadata(
-                    {"source": path.name, "page": 1, "section": title,
-                     "last_modified": info["last_modified"]},
+                    {
+                        "source": path.name,
+                        "page": 1,
+                        "section": title,
+                        "last_modified": info["last_modified"],
+                    },
                     manifest,
                 ),
                 "prefix": f"{info['title']} — {title}\n",
@@ -134,10 +147,12 @@ def load_html(path: Path) -> list[dict]:
 
     if not is_formation_page(html):
         base_meta = {"source": path.name, "page": 1, "section": None}
-        return [{
-            "text": parse_generic_page(html),
-            "metadata": _merge_metadata(base_meta, manifest),
-        }]
+        return [
+            {
+                "text": parse_generic_page(html),
+                "metadata": _merge_metadata(base_meta, manifest),
+            }
+        ]
 
     page = parse_formation_page(html)
     docs = []
@@ -150,12 +165,17 @@ def load_html(path: Path) -> list[dict]:
             "campuses": page["campuses"],
             "last_modified": page["last_modified"],
         }
-        docs.append({
-            "text": body,
-            "metadata": _merge_metadata(base_meta, manifest),
-            "prefix": (f"{page['formation']} ({page['key_facts']}) — {title}\n"
-                       if page["key_facts"] else f"{page['formation']} — {title}\n"),
-        })
+        docs.append(
+            {
+                "text": body,
+                "metadata": _merge_metadata(base_meta, manifest),
+                "prefix": (
+                    f"{page['formation']} ({page['key_facts']}) — {title}\n"
+                    if page["key_facts"]
+                    else f"{page['formation']} — {title}\n"
+                ),
+            }
+        )
     return docs
 
 

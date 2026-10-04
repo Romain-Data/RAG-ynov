@@ -1,4 +1,5 @@
 """Tests for the RAG Ynov API."""
+
 from unittest.mock import AsyncMock, patch
 
 
@@ -32,16 +33,12 @@ class TestQueryEndpoint:
             "question": "Quels sont les frais de scolarité ?",
             "grade": "ok",
             "answer": "Les frais varient selon le niveau.",
-            "sources": [
-                {"source": "admissions_faq.md", "page": 1, "section": None, "score": 0.85}
-            ],
+            "sources": [{"source": "admissions_faq.md", "page": 1, "section": None, "score": 0.85}],
             "retrieved": [],
         }
         mock_get_graph.return_value = mock_graph
 
-        resp = client.post(
-            "/api/query", json={"question": "Quels sont les frais de scolarité ?"}
-        )
+        resp = client.post("/api/query", json={"question": "Quels sont les frais de scolarité ?"})
         assert resp.status_code == 200
         data = resp.json()
         assert data["answer"] == "Les frais varient selon le niveau."

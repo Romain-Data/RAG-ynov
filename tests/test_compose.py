@@ -1,4 +1,5 @@
 """The preprod compose file must stay a copy of the production one, host folders aside."""
+
 from pathlib import Path
 
 import yaml

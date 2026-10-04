@@ -1,4 +1,5 @@
 """SQLite file shared by the accounts and by Chainlit's data layer (threads, messages)."""
+
 import sqlite3
 from collections.abc import Iterator
 from contextlib import contextmanager

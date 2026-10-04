@@ -1,4 +1,5 @@
 """Indexer tests against an in-memory Qdrant (no server needed)."""
+
 import pytest
 from qdrant_client import QdrantClient
 

@@ -8,6 +8,7 @@ copies. Meant to run daily (a scheduled task in Coolify, inside the api containe
 The folder should live outside the Docker volume that holds the database, so that
 losing the volume does not lose the copies.
 """
+
 import argparse
 import sqlite3
 from datetime import UTC, datetime

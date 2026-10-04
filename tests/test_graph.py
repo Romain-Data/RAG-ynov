@@ -1,4 +1,5 @@
 """Tests for the LangGraph RAG pipeline."""
+
 from unittest.mock import MagicMock, patch
 
 from graph.builder import get_graph
@@ -30,30 +31,36 @@ class TestGradeNode:
         """Scores below 0.5 should grade as 'refuse'."""
         from graph.nodes.grade import grade_node
 
-        result = grade_node({
-            "question": "test",
-            "retrieved": [{"text": "a", "score": 0.3}, {"text": "b", "score": 0.4}],
-        })
+        result = grade_node(
+            {
+                "question": "test",
+                "retrieved": [{"text": "a", "score": 0.3}, {"text": "b", "score": 0.4}],
+            }
+        )
         assert result["grade"] == "refuse"
 
     def test_grade_above_threshold(self):
         """Max score >= 0.5 should grade as 'ok'."""
         from graph.nodes.grade import grade_node
 
-        result = grade_node({
-            "question": "test",
-            "retrieved": [{"text": "a", "score": 0.6}],
-        })
+        result = grade_node(
+            {
+                "question": "test",
+                "retrieved": [{"text": "a", "score": 0.6}],
+            }
+        )
         assert result["grade"] == "ok"
 
     def test_grade_exact_threshold(self):
         """Score exactly 0.5 should grade as 'ok'."""
         from graph.nodes.grade import grade_node
 
-        result = grade_node({
-            "question": "test",
-            "retrieved": [{"text": "a", "score": 0.5}],
-        })
+        result = grade_node(
+            {
+                "question": "test",
+                "retrieved": [{"text": "a", "score": 0.5}],
+            }
+        )
         assert result["grade"] == "ok"
 
 
@@ -95,9 +102,7 @@ class TestRetrieveNode:
         """Retrieve formats Qdrant payloads into retrieved dicts."""
         from graph.nodes.retrieve import retrieve_node
 
-        mock_client.return_value.query_points.return_value = _query_response(
-            [_scored_point()]
-        )
+        mock_client.return_value.query_points.return_value = _query_response([_scored_point()])
 
         result = retrieve_node({"question": "test", "retrieved": []})
         assert len(result["retrieved"]) == 1
@@ -170,9 +175,7 @@ class TestEndToEndGraph:
             [_scored_point(text="doc text", score=0.8)]
         )
         mock_resp = MagicMock()
-        mock_resp.json.return_value = {
-            "choices": [{"message": {"content": "Réponse générée"}}]
-        }
+        mock_resp.json.return_value = {"choices": [{"message": {"content": "Réponse générée"}}]}
         mock_http = MagicMock()
         mock_http.post.return_value = mock_resp
         mock_httpx_cls.return_value.__enter__.return_value = mock_http

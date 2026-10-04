@@ -1,9 +1,11 @@
-from langgraph.graph import StateGraph, END
-from graph.state import GraphState
-from graph.nodes.retrieve import retrieve_node
-from graph.nodes.grade import grade_node
+from langgraph.graph import END, StateGraph
+from langgraph.graph.state import CompiledStateGraph
+
 from graph.nodes.generate import generate_node
+from graph.nodes.grade import grade_node
 from graph.nodes.refuse import refuse_node
+from graph.nodes.retrieve import retrieve_node
+from graph.state import GraphState
 
 
 def should_generate(state: GraphState) -> str:
@@ -11,7 +13,7 @@ def should_generate(state: GraphState) -> str:
     return "generate" if state.get("grade") == "ok" else "refuse"
 
 
-def build_graph():
+def build_graph() -> CompiledStateGraph:
     """Build and compile the RAG LangGraph."""
     workflow = StateGraph(GraphState)
 
@@ -39,10 +41,10 @@ def build_graph():
 
 
 # Singleton instance (lazy)
-_graph = None
+_graph: CompiledStateGraph | None = None
 
 
-def get_graph():
+def get_graph() -> CompiledStateGraph:
     global _graph
     if _graph is None:
         _graph = build_graph()

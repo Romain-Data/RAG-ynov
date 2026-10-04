@@ -4,6 +4,7 @@ A fiche has a header (title, état, "L'essentiel": niveau, NSF, échéance) and 
 (résumé, blocs de compétences, emplois, voies d'accès…) split by h3 headings. Each h3
 becomes one section, tables are flattened to "column: value" lines.
 """
+
 import re
 
 from bs4 import BeautifulSoup, Tag
@@ -123,8 +124,9 @@ def parse_rncp_page(html: str) -> dict:
             continue
         for h in headings:
             section_title = _clean(h.get_text(" ")).rstrip(" :")
-            if (section_title in SKIPPED_SECTIONS
-                    or section_title.startswith(SKIPPED_SECTION_PREFIXES)):
+            if section_title in SKIPPED_SECTIONS or section_title.startswith(
+                SKIPPED_SECTION_PREFIXES
+            ):
                 continue
             text = _section_text(h)
             if text and text != "-":

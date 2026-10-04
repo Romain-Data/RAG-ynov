@@ -37,14 +37,16 @@ def search(
         if max_per_section is not None and per_section.get(key, 0) >= max_per_section:
             continue
         per_section[key] = per_section.get(key, 0) + 1
-        retrieved.append({
-            "text": payload.get("text", ""),
-            "score": point.score,
-            "source": payload.get("source", ""),
-            "page": payload.get("page"),
-            "section": payload.get("section"),
-            "metadata": payload,
-        })
+        retrieved.append(
+            {
+                "text": payload.get("text", ""),
+                "score": point.score,
+                "source": payload.get("source", ""),
+                "page": payload.get("page"),
+                "section": payload.get("section"),
+                "metadata": payload,
+            }
+        )
         if len(retrieved) == limit:
             break
     return retrieved
