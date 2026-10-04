@@ -11,6 +11,11 @@ ROOT = Path(__file__).resolve().parent.parent
 os.environ.setdefault("MAMMOUTH_API_KEY", "test-key")
 os.environ.setdefault("INGEST_API_KEY", "test-ingest-key")
 os.environ.setdefault("QDRANT_HOST", "localhost")
+# Models asserted by the health test: set here so that it does not depend on a local .env
+os.environ.setdefault("MAMMOUTH_CHAT_MODEL", "mistral-medium-3-5")
+os.environ.setdefault(
+    "EMBEDDING_MODEL", "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+)
 os.environ.setdefault("CHAINLIT_AUTH_SECRET", "test-secret-for-the-chat-tests")
 os.environ.setdefault(
     "FAST_EMBED_CACHE_DIR",

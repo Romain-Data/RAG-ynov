@@ -1,0 +1,47 @@
+name: CI
+
+# Checks on every pull request and on main. No call to the LLM: the Mammouth key is not
+# available here, and the LLM URL points to a closed port, so that a call which escaped
+# the mocks fails at once instead of spending the budget (issue #15).
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  MAMMOUTH_API_KEY: ci-no-llm
+  MAMMOUTH_BASE_URL: http://127.0.0.1:9/v1
+
+jobs:
+  quality:
+    name: quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - run: uv sync --locked --extra dev
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run mypy app ingestion graph chat eval
+
+  tests:
+    name: tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - run: uv sync --locked --extra dev
+      - run: uv run pytest -q
