@@ -1,0 +1,67 @@
+name: Evaluation before production
+
+# The only workflow that makes the LLM answer (issue #15): it asks the 26 reference questions
+# to a deployed server (the preprod by default), whose own Mammouth key pays. Run by hand
+# after deploying the preprod, before deploying production:
+#   gh workflow run production.yml -f label="preprod-<what changed>"
+# The key of the LLM is never given to GitHub: only the password of the preprod is.
+on:
+  workflow_dispatch:
+    inputs:
+      label:
+        description: Label of the run (saved in the result file)
+        required: true
+      url:
+        description: Server to ask
+        default: https://rag-preprod.romaincollery.com
+      environment:
+        description: Environment recorded in the result file
+        default: preprod
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-evaluation
+  cancel-in-progress: false
+
+jobs:
+  e2e:
+    name: e2e
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      EVAL_SITE_PASSWORD: ${{ secrets.PREPROD_SITE_PASSWORD }}
+      MAMMOUTH_API_KEY: not-used-here
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - run: uv sync --locked
+      # After an ingestion the server answers 503 for about a minute (the healthcheck failed)
+      - name: Wait for the server
+        env:
+          URL: ${{ inputs.url }}
+        run: |
+          for i in $(seq 1 30); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "$URL/api/health" || true)
+            echo "attempt $i: HTTP $code"
+            [ "$code" = "200" ] && exit 0
+            sleep 10
+          done
+          echo "The server does not answer"; exit 1
+      - name: Ask the 26 questions
+        env:
+          URL: ${{ inputs.url }}
+          LABEL: ${{ inputs.label }}
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          uv run python -m eval.e2e --url "$URL" --environment "$ENVIRONMENT" \
+            --save "$LABEL" --fail-on-error --summary "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: eval-results
+          path: eval/results/*.json
+          if-no-files-found: ignore
