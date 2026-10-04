@@ -9,6 +9,7 @@ import logging
 
 import chainlit as cl
 from chainlit.data.sql_alchemy import SQLAlchemyDataLayer
+from chainlit.types import ThreadDict
 
 from chat import accounts
 from chat.db import sqlalchemy_url
@@ -47,7 +48,7 @@ async def start() -> None:
 
 
 @cl.on_chat_resume
-async def resume(thread: dict) -> None:
+async def resume(thread: ThreadDict) -> None:
     cl.user_session.set("history", history_from_steps(thread["steps"], skip=GREETING))
 
 

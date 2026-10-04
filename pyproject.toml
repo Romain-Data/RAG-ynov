@@ -39,6 +39,7 @@ dev = [
     "httpx>=0.28",
     "ruff>=0.8",
     "mypy>=1.13",
+    "types-PyYAML>=6.0",
 ]
 
 [build-system]
@@ -51,6 +52,8 @@ packages = ["app", "ingestion", "graph"]
 [tool.ruff]
 target-version = "py312"
 line-length = 100
+
+[tool.ruff.lint]
 select = ["E", "F", "I", "W", "UP", "B", "C4", "ARG", "PTH"]
 ignore = ["ARG001", "ARG002"]
 

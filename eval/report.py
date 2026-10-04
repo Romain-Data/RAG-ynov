@@ -63,7 +63,7 @@ def _cell(run: dict, result: dict | None) -> str:
 
 def _short_id(run: dict) -> str:
     """Month-day and sequence of a run id ("10-03_02"): the sequence restarts every day."""
-    return run["run_id"][5:13]
+    return str(run["run_id"][5:13])
 
 
 def build() -> str:

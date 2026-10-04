@@ -31,7 +31,8 @@ def ensure_collection(client: QdrantClient, vector_size: int = 384) -> None:
 
     if settings.qdrant_collection_name in names:
         params = client.get_collection(settings.qdrant_collection_name).config.params
-        existing = params.vectors.size if hasattr(params.vectors, "size") else None
+        vectors = params.vectors
+        existing = vectors.size if isinstance(vectors, VectorParams) else None
         if existing is not None and existing != vector_size:
             raise ValueError(
                 f"Collection {settings.qdrant_collection_name!r} holds {existing}-dim vectors "

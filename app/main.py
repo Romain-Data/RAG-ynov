@@ -1,6 +1,7 @@
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
-from fastapi import Depends, FastAPI, Request
+from fastapi import Depends, FastAPI
 
 from app.api import health, ingest, query
 from app.core.config import settings
@@ -16,7 +17,7 @@ from ingestion.indexer import get_qdrant_client
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     # Startup
     setup_logging()
     # Initialize Qdrant client (validates connection)

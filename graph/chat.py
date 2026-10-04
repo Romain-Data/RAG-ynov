@@ -9,6 +9,7 @@ The graph keeps no state between calls: the caller sends the whole conversation 
 the new question) and gets the answer for that last question.
 """
 from langgraph.graph import END, StateGraph
+from langgraph.graph.state import CompiledStateGraph
 
 from graph.builder import should_generate
 from graph.nodes.condense import condense_node
@@ -38,7 +39,7 @@ def prepare_node(state: ChatState) -> dict:
     return {"question": messages[-1]["content"], "history": history, "rewritten": None}
 
 
-def build_chat_graph():
+def build_chat_graph() -> CompiledStateGraph:
     workflow = StateGraph(ChatState)
     workflow.add_node("prepare", prepare_node)
     workflow.add_node("condense", condense_node)
@@ -59,10 +60,10 @@ def build_chat_graph():
     return workflow.compile()
 
 
-_chat_graph = None
+_chat_graph: CompiledStateGraph | None = None
 
 
-def get_chat_graph():
+def get_chat_graph() -> CompiledStateGraph:
     global _chat_graph
     if _chat_graph is None:
         _chat_graph = build_chat_graph()

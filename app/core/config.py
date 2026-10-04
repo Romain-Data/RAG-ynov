@@ -66,4 +66,4 @@ class Settings(BaseSettings):
         return [o.strip() for o in raw.split(",") if o.strip()]
 
 
-settings = Settings()
+settings = Settings()  # type: ignore[call-arg]  # required fields come from the environment

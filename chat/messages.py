@@ -1,5 +1,7 @@
 """Pure helpers of the chat: the sources block of an answer and the history of a thread."""
 import re
+from collections.abc import Mapping, Sequence
+from typing import Any
 
 # Author of the assistant messages: its avatar is requested as /avatars/<author>, and Chainlit
 # only accepts letters, digits, spaces, "_", "." and "-" there (the app name has parentheses).
@@ -37,7 +39,7 @@ def strip_sources(text: str) -> str:
     return text.split(_SOURCES_SEPARATOR, 1)[0]
 
 
-def history_from_steps(steps: list[dict], skip: str | None = None) -> list[dict]:
+def history_from_steps(steps: Sequence[Mapping[str, Any]], skip: str | None = None) -> list[dict]:
     """Rebuild the chat history of a resumed thread from its persisted steps.
 
     `skip` is the greeting, an assistant message that is not part of the conversation.
