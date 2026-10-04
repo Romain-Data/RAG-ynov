@@ -2,18 +2,20 @@
 
 Plan du projet RAG Ynov. Chaque chantier est suivi dans une issue GitHub (label `roadmap`), qui contient le détail des tâches, les critères de fin et les dépendances. Ce fichier donne la vue d'ensemble ; l'avancement se lit dans les issues.
 
-## Où en est le projet (2 octobre 2026)
+## Où en est le projet (4 octobre 2026)
 
 - **Corpus** : 42 formations ynov.com, 7 pages d'information, un document des règles communes et 29 fiches RNCP actives, soit 6 470 chunks.
 - **Qualité en prod** : 12 réponses correctes sur 16 questions de référence, aucune réponse fausse, 10 questions hors sujet sur 10 écartées (`eval/results/2026-10-02_35_prod-apres-ec14-ec15.json`).
+- **LLM** : `mammouth-recommended` en prod et en préprod depuis le 4 octobre 2026 (environ 11 fois moins cher que `mistral-medium-3-5` : 0,5 $ contre 5,6 $ pour 1 000 questions), 21 réponses correctes sur 26 (11 sur 16 questions Ynov, contre 12 sur 16 avant), aucune fausse, 10 hors sujet sur 10 écartées.
+- **Intégration continue** : en place (#15) ; une préprod protégée par mot de passe, évaluée avant chaque mise en production.
 - **Suivi** : chaque test est enregistré dans `eval/results/`, chaque anomalie documentée dans `eval/edge_cases.yaml` ; synthèse dans `eval/REPORT.md`.
 
 ## Chantiers
 
 | # | Chantier | Domaine | Dépend de |
 |---|---|---|---|
-| [#14](https://github.com/Romain-Data/RAG-ynov/issues/14) | Améliorer la qualité des réponses | qualité | — |
-| [#15](https://github.com/Romain-Data/RAG-ynov/issues/15) | Mettre en place l'intégration continue | infra | — |
+| [#14](https://github.com/Romain-Data/RAG-ynov/issues/14) | Améliorer la qualité des réponses (dont EC-16, salutations et remerciements) | qualité | — |
+| [#15](https://github.com/Romain-Data/RAG-ynov/issues/15) | ~~Mettre en place l'intégration continue~~ **fait le 4 octobre 2026** (aucun appel au LLM sur les PR ; évaluation sur la préprod avant la mise en production) | infra | — |
 | [#16](https://github.com/Romain-Data/RAG-ynov/issues/16) | Tableau de bord de l'évolution des résultats | produit | #18, #19 (pour les indicateurs d'usage) |
 | [#17](https://github.com/Romain-Data/RAG-ynov/issues/17) | Interface utilisateur de chat (Chainlit, comptes, historique) | produit | #14 (liens vers les sources) |
 | [#18](https://github.com/Romain-Data/RAG-ynov/issues/18) | Journal des réponses pour la revue manuelle | produit | — |
@@ -26,13 +28,14 @@ Plan du projet RAG Ynov. Chaque chantier est suivi dans une issue GitHub (label 
 - **Technologie : [Chainlit](https://docs.chainlit.io)**, monté dans l'API FastAPI actuelle. Agent Chat UI a été écarté : il impose un serveur LangGraph (Aegra), PostgreSQL et un front Next.js, soit trois services de plus. Un prototype Chainlit a validé la connexion, l'historique, la reprise d'une conversation et le cloisonnement entre comptes.
 - **Connexion obligatoire, pseudo + mot de passe uniquement** (hachage argon2, ni e-mail ni nom). Code de secours affiché une seule fois à l'inscription, seul moyen de changer un mot de passe oublié.
 - **Stockage** : SQLite au départ (volume persistant), comptes et conversations. C'est la base dont ont besoin le journal (#18) et les avis (#19).
-- **À faire dans cet ordre** : (1) graphe de conversation avec condensation des relances ; (2) comptes, inscription, récupération par code de secours ; (3) Chainlit branché sur le graphe, thème et textes français ; (4) déploiement Coolify.
-- **À vérifier avant de s'engager** : une déconnexion inexpliquée vue une fois en cliquant sur une conversation de la barre latérale (non reproduite) ; il n'y a ni page ni lien d'inscription natifs.
+- **Avancement** : (1) graphe de conversation avec condensation des relances, **fait et fusionné** (PR #25, mesuré : pas de régression, 15 tours sur 18 corrects) ; (2) application Chainlit + comptes + pages d'inscription, de récupération et de suppression, **faite et fusionnée** (PR #28, qui reprend #26 et #27) ; (3) thème Ynov (fond, accent vert/crème, logos clair et sombre, image de connexion, nom « Chatbot Ynov (non officiel) »), **fait et fusionné** (PR #28) ; (4) déploiement Coolify, **fait le 3 octobre** (variable `CHAINLIT_AUTH_SECRET` **créée dans Coolify le 3 octobre**, sauvegarde quotidienne du volume `chat_data` **en place le 4 octobre**).
+- **Vu en prototype, non reproduit dans l'application réelle** : une déconnexion en cliquant sur une conversation de la barre latérale. Les liens d'inscription et de récupération sont ajoutés sous le formulaire de connexion par `chat/public/login-links.js`.
 - **Pièges de Chainlit 2.12.0** : `requests` et `greenlet` non déclarés (à ajouter), schéma SQL qui change entre versions (figer la version), chemins des fichiers de `public/` à préfixer par le point de montage.
+- **Constats** : salutations et remerciements refusés (EC-16, **inscrit au chantier #14**) ; `POST /api/query` répond désormais 503 (et non 500) quand le LLM est indisponible, après trois tentatives sur 429 et 5xx (PR #38) ; une question qui échoue laisse une conversation vide dans l'historique du chat ; budget de la clé à surveiller ; `INGEST_API_KEY` a été remplacée le 4 octobre (elle valait `changeme`).
 
 ## Ordre suggéré
 
-1. **#15 Intégration continue** : protège tout le reste, chaque PR est vérifiée avant le merge.
+1. ~~**#15 Intégration continue**~~ : **fait**. `main` est protégée : une PR et trois vérifications (`quality`, `tests`, `retrieval`) sont obligatoires.
 2. **#14 Qualité des réponses** et **#21 Rafraîchissement du corpus** : peuvent avancer en parallèle. #21 apporte les versions du corpus, utiles pour comparer les résultats dans le temps.
 3. **#18 Journal des réponses** : la base de #19, #20 et des indicateurs d'usage de #16.
 4. **#17 Interface utilisateur**, puis **#19 Bouton d'avis**.
@@ -43,3 +46,11 @@ Plan du projet RAG Ynov. Chaque chantier est suivi dans une issue GitHub (label 
 - Une branche par sujet, jamais de commit sur `main` : `feat/…`, `fix/…`, `chore/…`.
 - Dans la description de la PR, écrire `Closes #N` : l'issue se ferme automatiquement au merge.
 - Pour tout changement qui touche la recherche ou les réponses : mesurer avant et après avec `eval/retrieval.py` et `eval/e2e.py`, enregistrer les passages et mettre à jour les cas limites concernés.
+
+## Intégration continue et préprod (#15) : décisions du 4 octobre 2026
+
+- **Aucun appel au LLM sur les PR** : `ruff`, `ruff format`, `mypy`, `pytest` (LLM simulé) et `eval.retrieval` sur un petit corpus figé (`eval/ci_corpus/`, 24 sources, 3,7 Mo). La clé Mammouth n'est jamais donnée à GitHub ; l'URL du LLM y pointe vers un port fermé.
+- **Préprod** : copie complète de la prod sur le même serveur (application Coolify, base Qdrant, base de chat, corpus et clé Mammouth séparés), derrière un mot de passe géré par l'application (`SITE_PASSWORD`). Le workflow manuel `production.yml` lui pose les 26 questions avant le déploiement de la prod, la clé du LLM restant côté serveur.
+- **Protection de `main`** : PR obligatoire, `quality`, `tests` et `retrieval` obligatoires, pas de contournement, pas de suppression ni de réécriture de l'historique.
+- **Modèle du LLM** : comparaison de six modèles sur la préprod (qwen3.5-9b trop lent, deepseek-v4-flash instable, quatre autres à 21/26) ; `mammouth-recommended` retenu pour son coût, sa vitesse et l'absence de réponse fausse. C'est un alias : si les réponses changent sans modification du code, regarder d'abord le modèle derrière.
+- Détail et pièges dans `documentation/integration-continue.md` et `documentation/preprod.md` (notes locales).
