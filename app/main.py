@@ -3,8 +3,10 @@ from contextlib import asynccontextmanager
 from fastapi import Depends, FastAPI, Request
 
 from app.api import health, ingest, query
+from app.core.config import settings
 from app.core.logging import setup_logging
 from app.core.security import add_security_middleware, rate_limit_health
+from app.core.site_password import SitePasswordMiddleware
 from chat.db import init_db
 from chat.mount import mount_chat
 from graph.builder import get_graph
@@ -40,6 +42,10 @@ app = FastAPI(
 
 # Security middleware (CORS + rate limiting)
 add_security_middleware(app)
+
+# Preprod only: a password in front of everything, added last so that it is the outermost
+if settings.site_password:
+    app.add_middleware(SitePasswordMiddleware, password=settings.site_password)
 
 # Routers with rate limiting
 app.include_router(health.router, prefix="/api")

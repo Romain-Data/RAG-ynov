@@ -23,6 +23,7 @@ turns as history, and the standalone rewrite of the question is saved for review
 import argparse
 import atexit
 import datetime as dt
+import os
 import time
 from collections.abc import Callable
 from pathlib import Path
@@ -50,7 +51,10 @@ Answer = tuple[dict | None, float, str | None]  # (response, latency in s, error
 def ask(url: str, question: str) -> Answer:
     start = time.time()
     try:
-        resp = httpx.post(f"{url}/api/query", json={"question": question}, timeout=120)
+        # The preprod sits behind a password (SITE_PASSWORD on the server)
+        password = os.environ.get("EVAL_SITE_PASSWORD")
+        resp = httpx.post(f"{url}/api/query", json={"question": question}, timeout=120,
+                          auth=("preprod", password) if password else None)
         resp.raise_for_status()
         return resp.json(), time.time() - start, None
     except httpx.HTTPError as exc:
