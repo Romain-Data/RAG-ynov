@@ -266,7 +266,20 @@ def _accordion_sections(
             body = body[len(title) :].lstrip(" \n:")
         if title == "Tarifs" and not keep_generic:
             body = _strip_tarif_boilerplate(body)
-        sections.append((title, body))
+        if programme:
+            sections += _split_programme(title, body)
+        else:
+            sections.append((title, body))
+    return sections
+
+
+def _split_programme(title: str, body: str) -> list[tuple[str, str]]:
+    """One section per year/module of a programme ("Programme du Mastère — Mastère 2 —
+    Module 1"), so the per-section cap of retrieval applies per module, not to the whole
+    programme (EC-05)."""
+    parts = re.split(r"^### (.+)$", body, flags=re.MULTILINE)
+    sections = [(title, parts[0].strip())] if parts[0].strip() else []
+    sections += [(f"{title} — {h.strip()}", b.strip()) for h, b in zip(parts[1::2], parts[2::2])]
     return sections
 
 

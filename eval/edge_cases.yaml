@@ -54,6 +54,7 @@
     plus cher que laisser le LLM décliner une question hors sujet. q13 correcte en local
     (passages 26-27) puis en prod (passage 29). À recalibrer avec eval/retrieval.py si le découpage ou le modèle
     d'embedding changent.
+    Recalibrage du 2026-10-05 (lot 3, #14) : les sections de module, plus ciblées, ont fait monter la question hors sujet la plus forte à 0,462 (q23) au-dessus de 0,45 ; seuil passé à 0,47 (marges 0,008 et 0,022, écart +0,030).
   links: ["fix/prompt-and-threshold"]
 
 - id: EC-03
@@ -86,7 +87,7 @@
 - id: EC-04
   title: Les tableaux d'équivalences RNCP saturent les résultats
   category: retrieval
-  status: mitigated
+  status: fixed
   questions: [q08]
   discovered_in: 2026-10-02_01_e2e-prod-premier-test
   symptom: >
@@ -100,12 +101,13 @@
   fix: >
     Sections d'équivalences et références légales retirées des fiches RNCP. Le problème
     restant (1 bloc sur 4, runs 22 et 23) relève du modèle d'embedding (EC-07).
+    Lot 3 (#14) : section de synthèse « Blocs de compétences » par titre (liste des intitulés, en question-réponse). Passage 2026-10-05_06 : q08 et q27 correctes avec les 4 blocs.
   links: ["PR #5"]
 
 - id: EC-05
   title: Le plafond par section coupe les réponses qui s'étalent sur plusieurs chunks
   category: retrieval
-  status: open
+  status: fixed
   questions: [q10]
   discovered_in: 2026-10-02_23_e2e-prod-apres-pr5-pr6
   symptom: >
@@ -120,6 +122,7 @@
   fix: >
     À faire : une section par module (« Programme — Mastère 2 — Module 1 ») pour que le
     plafond s'applique par module ; à mesurer avec eval/retrieval.py et eval/e2e.py.
+    Lot 3 (#14) : une section par année et module (« Programme du Mastère — Mastère 2 — Module 1 »), le plafond s'applique par module. Passage 2026-10-05_06 : q10 et q28 correctes.
   links: []
 
 - id: EC-06
@@ -182,6 +185,7 @@
     processus sur 7,8 Go, recherche 71 ms au lieu de 9 ms, et un seuil fragile (écart
     +0,020). Décision à prendre ; q08 (blocs Cybersécurité) reste partielle avec les deux
     modèles.
+    Lot 3 : q08 corrigée sans changer de modèle (EC-04). Restent q16 (Parcoursup) et q32 / c02.3 (niveau d'entrée du BTS ERA), visées par la recherche hybride (lot 4).
   links: ["feat/embedding-model-comparison"]
 
 - id: EC-08
@@ -402,6 +406,7 @@
     des chunks retrouvés. Passage 2026-10-05_02 : 16/22 questions avec tous leurs faits dans le
     contexte (14 avant), q07 et q11 corrigées ; de bout en bout (passage 03) q11 correcte.
     Reste les sections plus longues (q28 : programme d'un Bachelor), voir EC-05.
+    Lot 3 : les programmes sont découpés par module, ce qui rend q28 correcte.
   links: []
 
 - id: EC-18

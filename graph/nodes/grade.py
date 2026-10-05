@@ -8,7 +8,9 @@ from graph.state import GraphState
 # the LLM decline an off-topic one. Questions on other schools score 0.59-0.61 and
 # cannot be filtered here (EC-12): the prompt handles them. Recalibrate with
 # eval/retrieval.py when chunking or the embedding model change.
-GRADE_THRESHOLD = 0.45
+# 2026-10-05 (one section per programme module, #14): focused module sections lift the best
+# off-topic question to 0.462 (q23), the weakest in-scope one stays at 0.492 (q13): 0.47.
+GRADE_THRESHOLD = 0.47
 
 
 def grade_node(state: GraphState) -> GraphState:
