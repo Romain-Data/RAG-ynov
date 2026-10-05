@@ -23,6 +23,10 @@
 #       q16 answer_must_not (other BTS named or "all BTS", EC-13)
 #   v6  q07 answer check: the 500 € discount only ("9 500 €" matched before)
 #   v7  q07 answer check fixed: v6 also rejected "remise de 500 €" (space before 500)
+#   v8  `context_must` (optional, default `answer_must`): facts that must be in the context
+#       sent to the LLM, checked by eval/retrieval.py; q16 only needs the Parcoursup
+#       sentence (the BTS names are on every BTS page); control questions q27-q32, so that
+#       fixes are not tuned to the first 16 questions only
 
 - id: q01
   question: Combien coûte le Mastère Expert en intelligence artificielle ?
@@ -132,6 +136,7 @@
   question: Quels BTS sont accessibles via Parcoursup ?
   expect:
     - {source: condition-admission.html, section: Parcoursup}
+  context_must: ['BTS accessibles via Parcoursup']
   answer_must: [CIEL, SLAM, SISR]
   # Only these 3 BTS are on Parcoursup: naming another one, or "all BTS", is wrong (EC-13)
   answer_must_not: ['BTS (Communication|NDRC|MCO|GPME|ERA|MEC)\b', 'tous les BTS']
@@ -177,3 +182,42 @@
 - id: q26
   question: Quelles sont les conditions d'admission à Polytechnique ?
   out_of_scope: llm
+
+# ---- Control questions (v8): not used to design the fixes -------------------------------
+
+- id: q27
+  question: Quels sont les blocs de compétences du titre RNCP Expert en développement logiciel ?
+  min_distinct: 4
+  expect:
+    - {source: rncp-39583.html, section: RNCP39583BC}
+  answer_must: ['Cadrer un projet', 'Concevoir et développer', 'Coordonner et piloter', 'Maintenir l.application']
+
+- id: q28
+  question: Quels modules sont enseignés en Bachelor 1 Cybersécurité ?
+  expect:
+    - {source: bachelor-cybersecurite.html, section: Programme du Bachelor}
+  answer_must: ['Découverte de la programmation', 'Initiation au développement web']
+
+- id: q29
+  question: Combien de temps a-t-on pour valider son inscription après le rendez-vous d'admission ?
+  expect:
+    - {source: condition-admission.html, section: Le rendez-vous d'admission}
+  answer_must: ['10 jours']
+
+- id: q30
+  question: Quelle remise obtient-on en payant les frais de scolarité comptant ?
+  expect:
+    - {source: informations-communes-formations.md, section: Modalités de paiement}
+  answer_must: ['(?<![0-9][  ])(?<![0-9])500 ?(€|euros)']
+
+- id: q31
+  question: Les Bachelors Ynov passent-ils par Parcoursup ?
+  expect:
+    - {source: condition-admission.html, section: Parcoursup}
+  answer_must: ['sans passer par Parcoursup|accessibles directement']
+
+- id: q32
+  question: Quel niveau faut-il pour entrer en BTS ERA ?
+  expect:
+    - {source: bts-era.html, section: Infos clés}
+  answer_must: ['BAC et BAC\+2']
