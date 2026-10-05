@@ -32,29 +32,37 @@ SYSTEM_PROMPT = (
 )
 
 
+MAX_CONTEXT_CHARS = 12000  # budget of the context; the best sections come first
+
+
 def build_context(retrieved: list[dict]) -> tuple[str, list[dict]]:
     """The context text sent to the LLM and the matching sources, from retrieved chunks.
 
-    Kept apart from generate_node so that eval/ measures exactly what the LLM reads.
+    One entry per (source, section), in the order of its best chunk: the whole section when
+    the index stores it (`section_text`, short sections), else the retrieved chunks of that
+    section. Kept apart from generate_node so that eval/ measures what the LLM reads.
     """
-    context_parts = []
-    sources = []
-    for i, r in enumerate(retrieved):
-        text = r.get("text", "")
-        source = r.get("source", "")
-        page = r.get("page")
-        score = r.get("score", 0.0)
-        source_label = f"[Source {i + 1}: {source}"
-        if page:
-            source_label += f", p.{page}"
-        source_label += "]"
-        context_parts.append(f"{source_label}\n{text}")
+    groups: dict[tuple, list[dict]] = {}
+    for r in retrieved:
+        groups.setdefault((r.get("source", ""), r.get("section")), []).append(r)
+
+    context_parts: list[str] = []
+    sources: list[dict] = []
+    total = 0
+    for (source, section), hits in groups.items():
+        text = hits[0].get("section_text") or "\n".join(h.get("text", "") for h in hits)
+        page = hits[0].get("page")
+        label = f"[Source {len(sources) + 1}: {source}" + (f", p.{page}" if page else "") + "]"
+        if sources and total + len(text) > MAX_CONTEXT_CHARS:
+            break
+        total += len(text)
+        context_parts.append(f"{label}\n{text}")
         sources.append(
             {
                 "source": source,
                 "page": page,
-                "section": r.get("section"),
-                "score": score,
+                "section": section,
+                "score": max(h.get("score", 0.0) for h in hits),
             }
         )
     return "\n\n".join(context_parts), sources

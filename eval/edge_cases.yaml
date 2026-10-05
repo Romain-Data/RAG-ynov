@@ -380,7 +380,7 @@
 - id: EC-17
   title: Le fait cherché est dans la section récupérée, mais pas dans les chunks transmis
   category: retrieval
-  status: open
+  status: mitigated
   questions: [q07, q11, q28]
   discovered_in: 2026-10-05_01_contexte-reference
   symptom: >
@@ -397,8 +397,11 @@
     Les sections sont coupées en chunks de 300 caractères, le LLM ne reçoit que ceux qui
     ressemblent à la question, pas le reste de leur section.
   fix: >
-    À faire (chantier #14, lot 2) : stocker le texte entier de la section avec chaque chunk
-    et l'envoyer au LLM quand elle est courte.
+    Lot 2 (chantier #14) : chaque chunk d'une section de 2 000 caractères au plus porte le
+    texte entier de la section (`section_text`) et le LLM reçoit la section, une fois, au lieu
+    des chunks retrouvés. Passage 2026-10-05_02 : 16/22 questions avec tous leurs faits dans le
+    contexte (14 avant), q07 et q11 corrigées ; de bout en bout (passage 03) q11 correcte.
+    Reste les sections plus longues (q28 : programme d'un Bachelor), voir EC-05.
   links: []
 
 - id: EC-18
