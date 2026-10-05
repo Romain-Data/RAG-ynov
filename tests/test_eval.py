@@ -66,6 +66,14 @@ def test_save_run_adds_schema_and_summary(results_dir: Path):
     assert results.next_run_id("2026-10-03", "suivant") == "2026-10-03_02_suivant"
 
 
+def test_next_run_id_follows_the_highest_sequence(results_dir: Path):
+    """A deleted run file must not make the next run reuse a sequence (seen on 2026-10-04)."""
+    for name in ("2026-10-04_02_a", "2026-10-04_04_b", "2026-10-03_09_other-day"):
+        (results_dir / f"{name}.json").write_text("{}", encoding="utf-8")
+    assert results.next_run_id("2026-10-04", "c") == "2026-10-04_05_c"
+    assert results.next_run_id("2026-10-05", "d") == "2026-10-05_01_d"
+
+
 def test_report_builds_from_runs(results_dir: Path):
     results.save_run(
         {
