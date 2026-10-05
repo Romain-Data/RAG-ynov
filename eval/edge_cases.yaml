@@ -376,3 +376,46 @@
     Prévu dans le chantier #14 (abandonné le 2026-10-04, repris le même jour). Piste : repérer les messages de politesse avant la recherche (règles simples ou appel
     LLM) et répondre en une phrase, en rappelant ce que l'assistant sait faire. À mesurer avec
     les scénarios c07 et c08.
+
+- id: EC-17
+  title: Le fait cherché est dans la section récupérée, mais pas dans les chunks transmis
+  category: retrieval
+  status: open
+  questions: [q07, q11, q28]
+  discovered_in: 2026-10-05_01_contexte-reference
+  symptom: >
+    q11 (« Comment se passe l'entretien d'admission ? ») : réponse sans la durée d'1 h alors
+    que la section « Le rendez-vous d'admission » est récupérée au rang 1. q07 : les « 4
+    échéances » et la remise de 500 € manquent, q28 : aucun des modules attendus.
+  evidence: >
+    Passage 2026-10-05_01 (corpus complet, MiniLM) : q07 0/2 faits dans le contexte, q11 1/2,
+    q28 0/2, alors que le critère « bonne section » les compte réussies. Pour q11 le chunk « Durée :
+    1h » (chunk 0 de la section) est au 21e rang, pour q07 le chunk « 4 échéances » au 16e.
+    Simulation sans LLM : envoyer la section entière (si elle fait au plus 2 000 caractères)
+    au lieu des seuls chunks retrouvés remet ces faits dans le contexte.
+  cause: >
+    Les sections sont coupées en chunks de 300 caractères, le LLM ne reçoit que ceux qui
+    ressemblent à la question, pas le reste de leur section.
+  fix: >
+    À faire (chantier #14, lot 2) : stocker le texte entier de la section avec chaque chunk
+    et l'envoyer au LLM quand elle est courte.
+  links: []
+
+- id: EC-18
+  title: Le critère « bonne section récupérée » surestime la recherche
+  category: eval-tooling
+  status: fixed
+  questions: [q07, q10, q11]
+  discovered_in: 2026-10-05_01_contexte-reference
+  symptom: >
+    La recherche affichait 14/16 (CI) alors que le bout en bout en donnait 11/16 : q07, q10
+    et q11 passaient en recherche et échouaient dans les réponses.
+  evidence: >
+    Passage 2026-10-05_01 : 18/22 sections trouvées, mais 14/22 questions dont tous les faits
+    attendus sont dans le contexte envoyé au LLM.
+  cause: Le contrôle ne regardait que la section d'origine des chunks, pas leur contenu.
+  fix: >
+    eval/retrieval.py lit le contexte construit par graph.nodes.generate.build_context et
+    cherche les faits attendus (`context_must`, sinon `answer_must`) ; la référence de la CI
+    suit aussi `context_ok`. Jeu de questions v8, avec six questions de contrôle (q27 à q32).
+  links: ["feat/eval-context-facts"]

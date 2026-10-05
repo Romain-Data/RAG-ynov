@@ -32,18 +32,11 @@ SYSTEM_PROMPT = (
 )
 
 
-def generate_node(state: GraphState) -> dict:
-    """Generate answer using Mammouth LLM with retrieved context."""
-    # The standalone rewrite of a follow-up is unambiguous; the history lets the model
-    # keep the thread of the conversation.
-    question = state.get("rewritten") or state.get("question", "")
-    history = state.get("history") or []
-    retrieved = state.get("retrieved", [])
+def build_context(retrieved: list[dict]) -> tuple[str, list[dict]]:
+    """The context text sent to the LLM and the matching sources, from retrieved chunks.
 
-    if not retrieved:
-        return {"answer": "", "sources": []}
-
-    # Build context from retrieved chunks
+    Kept apart from generate_node so that eval/ measures exactly what the LLM reads.
+    """
     context_parts = []
     sources = []
     for i, r in enumerate(retrieved):
@@ -64,8 +57,21 @@ def generate_node(state: GraphState) -> dict:
                 "score": score,
             }
         )
+    return "\n\n".join(context_parts), sources
 
-    context = "\n\n".join(context_parts)
+
+def generate_node(state: GraphState) -> dict:
+    """Generate answer using Mammouth LLM with retrieved context."""
+    # The standalone rewrite of a follow-up is unambiguous; the history lets the model
+    # keep the thread of the conversation.
+    question = state.get("rewritten") or state.get("question", "")
+    history = state.get("history") or []
+    retrieved = state.get("retrieved", [])
+
+    if not retrieved:
+        return {"answer": "", "sources": []}
+
+    context, sources = build_context(retrieved)
 
     # Build prompt
     system_prompt = SYSTEM_PROMPT

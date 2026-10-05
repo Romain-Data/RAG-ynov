@@ -50,3 +50,29 @@ def test_the_committed_baseline_covers_the_current_questions() -> None:
     expected = {q["id"] for q in retrieval.load_questions() if q.get("out_of_scope") != "llm"}
     assert set(baseline["passed"]) == expected
     assert baseline["question_set"] == retrieval.QUESTION_SET
+
+
+def test_a_question_that_loses_its_facts_in_the_context_is_a_regression() -> None:
+    baseline = retrieval.make_baseline(
+        [{"question_id": "q01", "passed": True, "context_ok": True}], CONFIG
+    )
+    now = [{"question_id": "q01", "passed": True, "context_ok": False}]
+    problems = retrieval.regressions(now, baseline, CONFIG)
+    assert problems == ["q01: facts were in the context in the baseline, not now"]
+
+
+def test_context_facts_read_the_text_the_llm_gets() -> None:
+    hits = [{"text": "Paiement en 4 échéances", "source": "a.md", "page": 1, "score": 0.5}]
+    question = {"answer_must": ["4 échéances", "500 ?€"], "context_must": ["4 échéances"]}
+    facts = retrieval.context_facts(question, hits)
+    assert facts["facts_in_context"] == "1/1" and facts["context_ok"]
+    facts = retrieval.context_facts({"answer_must": ["4 échéances", "500 ?€"]}, hits)
+    assert facts["facts_in_context"] == "1/2" and not facts["context_ok"]
+
+
+def test_the_index_of_another_data_folder_does_not_overwrite_the_main_one() -> None:
+    from pathlib import Path
+
+    main = retrieval.index_dir("m", 300)
+    assert retrieval.index_dir("m", 300, Path("data")) == main
+    assert retrieval.index_dir("m", 300, Path("eval/ci_corpus")) != main

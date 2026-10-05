@@ -49,6 +49,7 @@ from eval.results import (  # noqa: E402
     save_run,
 )
 from graph.nodes import retrieve  # noqa: E402
+from graph.nodes.generate import build_context  # noqa: E402
 from graph.nodes.grade import GRADE_THRESHOLD  # noqa: E402
 from ingestion.chunking import CHUNK_OVERLAP, CHUNK_SIZE, chunk_documents  # noqa: E402
 from ingestion.embedder import embed_passages, get_embedding_model  # noqa: E402
@@ -96,8 +97,28 @@ def embed_with_checkpoint(
     return state["vectors"], state["seconds"]
 
 
-def index_dir(model: str, chunk_size: int) -> Path:
-    return INDEX_ROOT / f"{re.sub(r'[^a-z0-9]+', '-', model.lower()).strip('-')}-{chunk_size}"
+def index_dir(model: str, chunk_size: int, data_dir: Path = Path("data")) -> Path:
+    """One index per model, chunk size and data folder: the CI corpus must not overwrite the
+    index of the full corpus."""
+    slug = re.sub(r"[^a-z0-9]+", "-", model.lower()).strip("-")
+    suffix = "" if data_dir == Path("data") else f"-{data_dir.name}"
+    return INDEX_ROOT / f"{slug}-{chunk_size}{suffix}"
+
+
+def context_facts(question: dict, hits: list[dict]) -> dict:
+    """Which expected facts (`context_must`, else `answer_must`) are in the text the LLM gets.
+
+    The "right section retrieved" criterion misses a chunk that is in the section but does
+    not hold the fact (q07, q10, q11): this one reads the context the way the LLM does.
+    """
+    patterns = question.get("context_must") or question.get("answer_must") or []
+    context = re.sub(r"[\s\u00a0\u202f]+", " ", build_context(hits)[0])
+    found = [bool(re.search(p, context, re.IGNORECASE)) for p in patterns]
+    return {
+        "facts_in_context": f"{sum(found)}/{len(found)}",
+        "context_ok": bool(found) and all(found),
+        "context_chars": len(context),
+    }
 
 
 def truncation_stats(chunks: list[dict]) -> dict:
@@ -134,7 +155,7 @@ def build_index(
             default=str,
         ).encode()
     ).hexdigest()
-    directory = index_dir(settings.embedding_model, chunk_size)
+    directory = index_dir(settings.embedding_model, chunk_size, data_dir)
     directory.mkdir(parents=True, exist_ok=True)
     fingerprint = directory / "fingerprint"
     info_file = directory / "info.json"
@@ -228,6 +249,7 @@ def evaluate(
                 "min_distinct": q.get("min_distinct", 1),
                 "top_score": round(top_score, 3),
                 "refused_by_threshold": refused,
+                **({} if q.get("out_of_scope") else context_facts(q, hits)),
                 "search_ms": round(search_ms, 1),
                 "retrieved": [
                     {"source": h["source"], "section": h["section"], "score": round(h["score"], 3)}
@@ -245,8 +267,10 @@ def evaluate(
             if in_context
             else "absent"
         )
+        facts = results[-1].get("facts_in_context")
         print(
             f"{'✅' if ok else '❌'} {q['id']} {q['question'][:70]:70s} {rank}"
+            + (f" · faits {facts} {'✅' if results[-1]['context_ok'] else '❌'}" if facts else "")
             + (f", {len(distinct)}/{q['min_distinct']} sections" if q.get("min_distinct") else "")
             + (
                 f"  ⛔ refusée (score {top_score:.3f} < {threshold})"
@@ -267,6 +291,8 @@ def evaluate(
     out_scope = [r for r in results if r["out_of_scope"]]
     print(
         f"\nDans le périmètre : {sum(r['passed'] for r in in_scope)}/{len(in_scope)} réussies, "
+        f"{sum(bool(r.get('context_ok')) for r in in_scope)}/{len(in_scope)} avec tous les "
+        f"faits dans le contexte, "
         f"{sum(r['refused_by_threshold'] for r in in_scope)} refusée(s) à tort par le seuil"
     )
     if out_scope:
@@ -302,6 +328,7 @@ def make_baseline(results: list[dict], config: dict) -> dict:
         "question_set": QUESTION_SET,
         "config": config,
         "passed": {r["question_id"]: r["passed"] for r in results},
+        "context_ok": {r["question_id"]: r["context_ok"] for r in results if "context_ok" in r},
     }
 
 
@@ -326,6 +353,10 @@ def regressions(results: list[dict], baseline: dict, config: dict) -> list[str]:
         elif was_ok and not now[qid]:
             problems.append(f"{qid}: passed in the baseline, fails now")
     problems += [f"{qid}: not in the baseline" for qid in now if qid not in baseline["passed"]]
+    facts_now = {r["question_id"]: r["context_ok"] for r in results if "context_ok" in r}
+    for qid, was_ok in baseline.get("context_ok", {}).items():
+        if was_ok and not facts_now.get(qid, False):
+            problems.append(f"{qid}: facts were in the context in the baseline, not now")
     return problems
 
 
