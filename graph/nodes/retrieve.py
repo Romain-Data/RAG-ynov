@@ -44,6 +44,7 @@ def search(
                 "source": payload.get("source", ""),
                 "page": payload.get("page"),
                 "section": payload.get("section"),
+                "section_text": payload.get("section_text"),
                 "metadata": payload,
             }
         )
