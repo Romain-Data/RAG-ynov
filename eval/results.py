@@ -149,9 +149,15 @@ def summarize(kind: str, results: list[dict]) -> dict:
 
 
 def next_run_id(date: str, label: str) -> str:
-    existing = list(RESULTS_DIR.glob(f"{date}_*.json"))
+    """<date>_<sequence>_<label>: the sequence follows the highest one of the day, not the
+    number of files, which gave a sequence twice after a run file was deleted."""
+    sequences = [
+        int(match.group(1))
+        for path in RESULTS_DIR.glob(f"{date}_*.json")
+        if (match := re.match(rf"{re.escape(date)}_(\d+)_", path.name))
+    ]
     slug = re.sub(r"[^a-z0-9]+", "-", label.lower()).strip("-")
-    return f"{date}_{len(existing) + 1:02d}_{slug}"
+    return f"{date}_{max(sequences, default=0) + 1:02d}_{slug}"
 
 
 def save_run(run: dict) -> Path:

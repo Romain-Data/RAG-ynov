@@ -4,7 +4,7 @@
 
 ## Synthèse
 
-- **Dernier test de bout en bout** (preprod, `2026-10-04_04_preprod-mammouth-recommended`) : 11/16 ✅ · 3 🟡 · 0 ❌ · hors périmètre 10/10 ; 0 refusée(s), 2 sans réponse.
+- **Dernier test de bout en bout** (preprod, `2026-10-04_05_preprod-mammouth-recommended`) : 11/16 ✅ · 3 🟡 · 0 ❌ · hors périmètre 10/10 ; 0 refusée(s), 2 sans réponse.
 - **Dernier test en prod** (`2026-10-02_35_prod-apres-ec14-ec15`) : 12/16 ✅ · 3 🟡 · 0 ❌ · hors périmètre 10/10.
 - **Dernière évaluation de la recherche** (`2026-10-02_37_modele-minilm-300-corpus-corrige`) : 14/16 · hors périmètre 8/8 ⛔.
 - **Dernière passe de conversation** (`2026-10-03_04_local-conversations-jeu-c2`) : 14/17 ✅ · 0 🟡 · 0 ❌ · hors périmètre 1/1.
@@ -60,13 +60,13 @@
 |  | `2026-10-04_02_preprod-mistral-small-2603` | e2e | preprod | v7 | chunks ?, k=? | 11/16 ✅ · 2 🟡 · 1 ❌ · hors périmètre 10/10 |
 |  | `2026-10-04_03_preprod-mistral-medium-3-1` | e2e | preprod | v7 | chunks ?, k=? | 11/16 ✅ · 2 🟡 · 2 ❌ · hors périmètre 10/10 |
 |  | `2026-10-04_04_preprod-gpt-4-1-mini` | e2e | preprod | v7 | chunks ?, k=? | 11/16 ✅ · 3 🟡 · 1 ❌ · hors périmètre 10/10 |
-| ★ | `2026-10-04_04_preprod-mammouth-recommended` | e2e | preprod | v7 | chunks ?, k=? | 11/16 ✅ · 3 🟡 · 0 ❌ · hors périmètre 10/10 |
+| ★ | `2026-10-04_05_preprod-mammouth-recommended` | e2e | preprod | v7 | chunks ?, k=? | 11/16 ✅ · 3 🟡 · 0 ❌ · hors périmètre 10/10 |
 
 ## Matrice par question (étapes clés)
 
 Recherche : ✅ rang de la bonne section · ✅ ctx = fait présent dans le contexte · ❌ absente · (d/m) sections distinctes / requises · ⛔ refusée par le seuil. Bout en bout : ✅ correct · 🟡 partial · ❌ wrong · ⛔ refused · ∅ no_answer · ⚠️ error.
 
-| Question | 10-02_01 e2e | 10-02_02 ret | 10-02_04 ret | 10-02_06 ret | 10-02_10 ret | 10-02_22 ret | 10-02_23 e2e | 10-02_25 e2e | 10-02_27 e2e | 10-02_28 ret | 10-02_29 e2e | 10-02_30 ret | 10-02_31 ret | 10-02_32 ret | 10-02_33 ret | 10-02_34 e2e | 10-02_35 e2e | 10-02_36 ret | 10-02_37 ret | 10-02_38 e2e | 10-03_02 e2e | 10-04_04 e2e |
+| Question | 10-02_01 e2e | 10-02_02 ret | 10-02_04 ret | 10-02_06 ret | 10-02_10 ret | 10-02_22 ret | 10-02_23 e2e | 10-02_25 e2e | 10-02_27 e2e | 10-02_28 ret | 10-02_29 e2e | 10-02_30 ret | 10-02_31 ret | 10-02_32 ret | 10-02_33 ret | 10-02_34 e2e | 10-02_35 e2e | 10-02_36 ret | 10-02_37 ret | 10-02_38 e2e | 10-03_02 e2e | 10-04_05 e2e |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | **q01** Combien coûte le Mastère Expert en intelligence artificielle | ✅ | ✅ 2 | ✅ 2 | ✅ 2 | ✅ 2 | ✅ 2 | ✅ | ✅ | ✅ | ✅ 2 | ✅ | ✅ 2 | ✅ 2 | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ 1 | ✅ 2 | ✅ | ✅ | ✅ |
 | **q02** Dans quelles villes est proposé le Mastère Expert en intelli | ∅ | ❌ | ❌ | ❌ | ❌ | ✅ 1 | ✅ | ✅ | ✅ | ✅ 1 | ✅ | ✅ 1 | ✅ 1 | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ |
@@ -95,7 +95,7 @@ Recherche : ✅ rang de la bonne section · ✅ ctx = fait présent dans le cont
 | **q25** Combien coûte un abonnement Netflix ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ None ⛔ | ✅ | ✅ | ✅ |
 | **q26** Quelles sont les conditions d'admission à Polytechnique ? | · | · | · | · | · | · | · | ✅ | ✅ | · | ✅ | · | · | · | · | ✅ | ✅ | · | · | ✅ | ✅ | ✅ |
 
-Colonnes : `10-02_01` e2e-prod-premier-test · `10-02_02` retrieval-baseline-500-k5 · `10-02_04` retrieval-500-k10-cap2 · `10-02_06` retrieval-prefixe-long-k5 · `10-02_10` retrieval-300-prefixe-court-k5 · `10-02_22` retrieval-final-pr5 · `10-02_23` e2e-prod-apres-pr5-pr6 · `10-02_25` local-avant-prompt-seuil · `10-02_27` local-apres-prompt-v2 · `10-02_28` calibration-seuil-0-45 · `10-02_29` prod-apres-prompt-seuil · `10-02_30` modele-minilm-300 · `10-02_31` modele-mpnet-300 · `10-02_32` modele-e5-large-300 · `10-02_33` modele-e5-large-500 · `10-02_34` local-e5-large-300 · `10-02_35` prod-apres-ec14-ec15 · `10-02_36` modele-e5-large-300-corpus-corrige · `10-02_37` modele-minilm-300-corpus-corrige · `10-02_38` local-e5-large-300-corpus-corrige · `10-03_02` local-apres-graphe-conversation · `10-04_04` preprod-mammouth-recommended
+Colonnes : `10-02_01` e2e-prod-premier-test · `10-02_02` retrieval-baseline-500-k5 · `10-02_04` retrieval-500-k10-cap2 · `10-02_06` retrieval-prefixe-long-k5 · `10-02_10` retrieval-300-prefixe-court-k5 · `10-02_22` retrieval-final-pr5 · `10-02_23` e2e-prod-apres-pr5-pr6 · `10-02_25` local-avant-prompt-seuil · `10-02_27` local-apres-prompt-v2 · `10-02_28` calibration-seuil-0-45 · `10-02_29` prod-apres-prompt-seuil · `10-02_30` modele-minilm-300 · `10-02_31` modele-mpnet-300 · `10-02_32` modele-e5-large-300 · `10-02_33` modele-e5-large-500 · `10-02_34` local-e5-large-300 · `10-02_35` prod-apres-ec14-ec15 · `10-02_36` modele-e5-large-300-corpus-corrige · `10-02_37` modele-minilm-300-corpus-corrige · `10-02_38` local-e5-large-300-corpus-corrige · `10-03_02` local-apres-graphe-conversation · `10-04_05` preprod-mammouth-recommended
 
 ## Détail de la dernière passe de conversation (`2026-10-03_04_local-conversations-jeu-c2`)
 
@@ -120,7 +120,7 @@ Colonnes : `10-02_01` e2e-prod-premier-test · `10-02_02` retrieval-baseline-500
 | **c07.2** | Merci beaucoup ! | Merci beaucoup ! | ⛔ refused | EC-16 | « Merci beaucoup ! » est refusé par le seuil, avec ou sans reformulation (EC-16). |
 | **c08.1** | Bonjour | — | ⛔ refused | EC-16 | « Bonjour » est refusé par le seuil sans appel du LLM (EC-16). |
 
-## Détail du dernier test de bout en bout (`2026-10-04_04_preprod-mammouth-recommended`)
+## Détail du dernier test de bout en bout (`2026-10-04_05_preprod-mammouth-recommended`)
 
 | Question | Verdict | Cas limites | Commentaire |
 |---|---|---|---|
