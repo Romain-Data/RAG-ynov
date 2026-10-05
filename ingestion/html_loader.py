@@ -279,7 +279,9 @@ def _split_programme(title: str, body: str) -> list[tuple[str, str]]:
     programme (EC-05)."""
     parts = re.split(r"^### (.+)$", body, flags=re.MULTILINE)
     sections = [(title, parts[0].strip())] if parts[0].strip() else []
-    sections += [(f"{title} — {h.strip()}", b.strip()) for h, b in zip(parts[1::2], parts[2::2])]
+    sections += [
+        (f"{title} — {h.strip()}", b.strip()) for h, b in zip(parts[1::2], parts[2::2], strict=True)
+    ]
     return sections
 
 
