@@ -34,7 +34,7 @@ class Settings(BaseSettings):
     # CORS — comma-separated origins, or "*" for all (dev only)
     cors_origins: str = "*"
 
-    # Chat interface (Chainlit, mounted on /chat): SQLite file holding the accounts and
+    # Chat interface (Chainlit, mounted on /): SQLite file holding the accounts and
     # the conversations, and the secret signing the session cookies. Without the secret
     # the chat is not mounted (Chainlit refuses to start without it).
     chat_db_path: str = "chat_data/chat.db"
