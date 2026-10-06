@@ -2,11 +2,11 @@
 
 Plan du projet RAG Ynov. Chaque chantier est suivi dans une issue GitHub (label `roadmap`), qui contient le détail des tâches, les critères de fin et les dépendances. Ce fichier donne la vue d'ensemble ; l'avancement se lit dans les issues.
 
-## Où en est le projet (5 octobre 2026)
+## Où en est le projet (6 octobre 2026)
 
-- **Corpus** : 42 formations ynov.com, 7 pages d'information, un document des règles communes et 29 fiches RNCP actives, soit 6 470 chunks.
-- **Qualité en prod** : 11 réponses correctes sur 16 questions de référence, aucune réponse fausse, 10 questions hors sujet sur 10 écartées (`eval/results/2026-10-04_05_preprod-mammouth-recommended.json`, préprod au même code et au même modèle que la prod). C'était 12/16 avec l'ancien modèle (`2026-10-02_35`) : q11 et q07 ont reculé.
-- **LLM** : `mammouth-recommended` en prod et en préprod depuis le 4 octobre 2026 (environ 11 fois moins cher que `mistral-medium-3-5` : 0,5 $ contre 5,6 $ pour 1 000 questions), alias de Mammouth dont le modèle sous-jacent peut changer.
+- **Corpus** : 42 formations ynov.com, 7 pages d'information, un document des règles communes et 29 fiches RNCP actives, soit 6 466 chunks (1 447 sections), index hybride dense (MiniLM) + BM25 dans la collection `ynov_rag_v2`.
+- **Qualité en prod** : **22 réponses correctes sur 22** questions Ynov (16 de référence + 6 de contrôle), aucune réponse fausse, 10 questions hors sujet sur 10 écartées (`eval/results/2026-10-06_07_preprod-lot7.json`, préprod au même code et au même index que la prod, verdicts relus). C'était 11/16 le 4 octobre (chantier #14).
+- **LLM** : `mammouth-recommended` en prod et en préprod depuis le 4 octobre 2026 (environ 0,5 $ pour 1 000 questions ; le contexte plus long du chantier #14 le porte à environ 0,8 $), alias de Mammouth dont le modèle sous-jacent peut changer.
 - **Intégration continue** : en place (#15) ; une préprod protégée par mot de passe, évaluée avant chaque mise en production.
 - **Suivi** : chaque test est enregistré dans `eval/results/`, chaque anomalie documentée dans `eval/edge_cases.yaml` ; synthèse dans `eval/REPORT.md`.
 
@@ -14,10 +14,10 @@ Plan du projet RAG Ynov. Chaque chantier est suivi dans une issue GitHub (label 
 
 | # | Chantier | Domaine | Dépend de |
 |---|---|---|---|
-| [#14](https://github.com/Romain-Data/RAG-ynov/issues/14) | Améliorer la qualité des réponses (dont EC-16, salutations et remerciements ; base de 11/16 depuis le changement de modèle) | qualité | — |
+| [#14](https://github.com/Romain-Data/RAG-ynov/issues/14) | ~~Améliorer la qualité des réponses~~ **fait le 6 octobre 2026** (de 11/16 à 22/22 questions Ynov, 0 fausse, salutations et remerciements, liens vers les sources ; MiniLM conservé) | qualité | — |
 | [#15](https://github.com/Romain-Data/RAG-ynov/issues/15) | ~~Mettre en place l'intégration continue~~ **fait le 4 octobre 2026** (aucun appel au LLM sur les PR ; évaluation sur la préprod avant la mise en production) | infra | — |
 | [#16](https://github.com/Romain-Data/RAG-ynov/issues/16) | Tableau de bord de l'évolution des résultats | produit | #18, #19 (pour les indicateurs d'usage) |
-| [#17](https://github.com/Romain-Data/RAG-ynov/issues/17) | Interface utilisateur de chat (Chainlit, comptes, historique) : **en prod depuis le 3 octobre 2026** ; reste la limite de fréquence du chat, l'essai par un vrai compte, l'accessibilité | produit | #14 (liens vers les sources) |
+| [#17](https://github.com/Romain-Data/RAG-ynov/issues/17) | Interface utilisateur de chat (Chainlit, comptes, historique) : **en prod depuis le 3 octobre 2026** ; reste la limite de fréquence du chat, l'essai par un vrai compte, l'accessibilité | produit | ~~#14 (liens vers les sources)~~ fait |
 | [#18](https://github.com/Romain-Data/RAG-ynov/issues/18) | Journal des réponses pour la revue manuelle | produit | — |
 | [#19](https://github.com/Romain-Data/RAG-ynov/issues/19) | Bouton « réponse satisfaisante ou non » | produit | #17, #18 |
 | [#20](https://github.com/Romain-Data/RAG-ynov/issues/20) | Rapport des questions sans réponse | produit | #18 |
@@ -36,7 +36,7 @@ Plan du projet RAG Ynov. Chaque chantier est suivi dans une issue GitHub (label 
 ## Ordre suggéré
 
 1. ~~**#15 Intégration continue**~~ : **fait**. `main` est protégée : une PR et trois vérifications (`quality`, `tests`, `retrieval`) sont obligatoires.
-2. **#14 Qualité des réponses** et **#21 Rafraîchissement du corpus** : peuvent avancer en parallèle, et se mesurent sur la préprod avant la prod. #21 apporte les versions du corpus, utiles pour comparer les résultats dans le temps.
+2. ~~**#14 Qualité des réponses**~~ : **fait** ; **#21 Rafraîchissement du corpus** se mesure sur la préprod avant la prod. #21 apporte les versions du corpus, utiles pour comparer les résultats dans le temps ; la commande `python -m ingestion.run` (#14) en est la première brique.
 3. **#18 Journal des réponses** : la base de #19, #20 et des indicateurs d'usage de #16.
 4. **#17 Interface utilisateur** (en prod ; reste la limite de fréquence du chat et l'essai par un vrai compte), puis **#19 Bouton d'avis**.
 5. **#20 Rapport des questions sans réponse** et **#16 Tableau de bord**, quand le journal contient assez de données.
@@ -56,3 +56,11 @@ Plan du projet RAG Ynov. Chaque chantier est suivi dans une issue GitHub (label 
 - **Protection de `main`** : PR obligatoire, `quality`, `tests` et `retrieval` obligatoires, pas de contournement, pas de suppression ni de réécriture de l'historique.
 - **Modèle du LLM** : comparaison de six modèles sur la préprod (qwen3.5-9b trop lent, deepseek-v4-flash instable, quatre autres à 21/26) ; `mammouth-recommended` retenu pour son coût, sa vitesse et l'absence de réponse fausse. C'est un alias : si les réponses changent sans modification du code, regarder d'abord le modèle derrière.
 - Détail et pièges dans `documentation/integration-continue.md` et `documentation/preprod.md` (notes locales).
+
+## Qualité des réponses (#14) : décisions du 6 octobre 2026
+
+- **Le goulot n'était pas le LLM** : les 5 échecs de bout en bout du 4 octobre étaient exactement les questions dont les faits attendus manquaient dans le contexte envoyé au LLM. `eval.retrieval` mesure maintenant ces « faits dans le contexte » (jeu de questions v11, 22 questions Ynov dont 6 de contrôle), ce que le critère « bonne section récupérée » ne voyait pas (EC-18).
+- **Six changements, une PR chacun** : section entière envoyée au LLM quand elle fait 2 000 caractères au plus (#43), une section par module de programme et une synthèse des blocs RNCP, seuil 0,45 → 0,47 (#44), recherche hybride dense + BM25 par injection de 2 résultats et commande `python -m ingestion.run` (#45), salutations et remerciements sans recherche ni LLM (#46), règle 4 du prompt « en entier » (#47), liens vers les sources (#48).
+- **Modèle d'embedding : MiniLM conservé.** L'objectif est atteint sans e5-large (2,2 Go de RAM, 38 minutes d'ingestion, seuil fragile). Reranker et filtres déduits de la question : reportés, sans objet tant que l'objectif tient.
+- **Mise en production** : réingestion dans une nouvelle collection (`ynov_rag_v2`, `python -m ingestion.run --collection`) pendant que l'API servait l'ancienne, puis bascule de `QDRANT_COLLECTION_NAME` et redémarrage, sans coupure. L'ancienne collection `ynov_rag` est conservée pour un retour arrière et à supprimer après quelques jours.
+- **Limites restantes** : seuil à marges étroites (0,008 côté hors sujet, 0,022 côté légitime), à recalibrer si le corpus ou le découpage changent ; le LLM recopie parfois l'en-tête du chunk au début de sa réponse ; le lien d'une source renvoie à la page, pas à la section ; le document des règles communes n'a pas d'URL.

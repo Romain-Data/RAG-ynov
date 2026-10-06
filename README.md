@@ -44,7 +44,7 @@ docker compose up -d
 # 3. Verify health endpoint
 curl http://localhost:8000/api/health
 
-# 4. Ingest documents (when implemented)
+# 4. Ingest documents (dense + BM25 index). Same as: python -m ingestion.run [--collection NAME]
 curl -X POST http://localhost:8000/api/ingest \
   -H "X-Ingest-Key: your-key" \
   -H "Content-Type: application/json" \
