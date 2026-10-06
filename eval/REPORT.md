@@ -4,11 +4,11 @@
 
 ## Synthèse
 
-- **Dernier test de bout en bout** (local, `2026-10-06_02_hybride-bm25`) : 20/22 ✅ · 1 🟡 · 1 ❌ · hors périmètre 10/10 ; 0 refusée(s), 0 sans réponse.
+- **Dernier test de bout en bout** (local, `2026-10-06_04_regle-4`) : 22/22 ✅ · 0 🟡 · 0 ❌ · hors périmètre 10/10 ; 0 refusée(s), 0 sans réponse.
 - **Dernier test en prod** (`2026-10-02_35_prod-apres-ec14-ec15`) : 12/16 ✅ · 3 🟡 · 0 ❌ · hors périmètre 10/10.
 - **Dernière évaluation de la recherche** (`2026-10-06_01_hybride-bm25`) : 22/22 · hors périmètre 8/8 ⛔.
 - **Dernière passe de conversation** (`2026-10-06_03_hybride-bm25-c02`) : 3/3 ✅ · 0 🟡 · 0 ❌.
-- **Cas limites** : 18 documentés, dont 5 ouverts ou atténués (EC-06, EC-07, EC-11, EC-16, EC-17).
+- **Cas limites** : 18 documentés, dont 4 ouverts ou atténués (EC-07, EC-11, EC-16, EC-17).
 
 ## Historique des passages
 
@@ -70,47 +70,48 @@
 | ★ | `2026-10-06_01_hybride-bm25` | retrieval | local | v9 | chunks 300, k=10, cand=40, plafond=2 | 22/22 · hors périmètre 8/8 ⛔ |
 | ★ | `2026-10-06_02_hybride-bm25` | e2e | local | v9 | chunks 300, k=10 | 20/22 ✅ · 1 🟡 · 1 ❌ · hors périmètre 10/10 |
 |  | `2026-10-06_03_hybride-bm25-c02` | conversation | local | c2 | chunks 300, k=10 | 3/3 ✅ · 0 🟡 · 0 ❌ |
+| ★ | `2026-10-06_04_regle-4` | e2e | local | v10 | chunks 300, k=10 | 22/22 ✅ · 0 🟡 · 0 ❌ · hors périmètre 10/10 |
 
 ## Matrice par question (étapes clés)
 
 Recherche : ✅ rang de la bonne section · ✅ ctx = fait présent dans le contexte · ❌ absente · (d/m) sections distinctes / requises · ⛔ refusée par le seuil. Bout en bout : ✅ correct · 🟡 partial · ❌ wrong · ⛔ refused · ∅ no_answer · ⚠️ error.
 
-| Question | 10-02_01 e2e | 10-02_02 ret | 10-02_04 ret | 10-02_06 ret | 10-02_10 ret | 10-02_22 ret | 10-02_23 e2e | 10-02_25 e2e | 10-02_27 e2e | 10-02_28 ret | 10-02_29 e2e | 10-02_30 ret | 10-02_31 ret | 10-02_32 ret | 10-02_33 ret | 10-02_34 e2e | 10-02_35 e2e | 10-02_36 ret | 10-02_37 ret | 10-02_38 e2e | 10-03_02 e2e | 10-04_05 e2e | 10-05_01 ret | 10-05_02 ret | 10-05_03 e2e | 10-05_05 ret | 10-05_06 e2e | 10-06_01 ret | 10-06_02 e2e |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| **q01** Combien coûte le Mastère Expert en intelligence artificielle | ✅ | ✅ 2 | ✅ 2 | ✅ 2 | ✅ 2 | ✅ 2 | ✅ | ✅ | ✅ | ✅ 2 | ✅ | ✅ 2 | ✅ 2 | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ 1 | ✅ 2 | ✅ | ✅ | ✅ | ✅ 2 | ✅ 2 | ✅ | ✅ 2 | ✅ | ✅ 2 | ✅ |
-| **q02** Dans quelles villes est proposé le Mastère Expert en intelli | ∅ | ❌ | ❌ | ❌ | ❌ | ✅ 1 | ✅ | ✅ | ✅ | ✅ 1 | ✅ | ✅ 1 | ✅ 1 | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ | ✅ 1 | ✅ 1 | ✅ | ✅ 1 | ✅ | ✅ 1 | ✅ |
-| **q03** Le Mastère Game Programmer est-il proposé à Lyon ? | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ ctx | ❌ | ❌ | ✅ | ✅ ctx | ✅ | ✅ ctx | ✅ 2 | ✅ 2 | ✅ 2 | ✅ | ✅ | ✅ 2 | ✅ ctx | ✅ | ✅ | ✅ | ✅ ctx | ✅ ctx | ✅ | ✅ ctx | ✅ | ✅ 9 | ✅ |
-| **q04** Le Mastère Expert en cybersécurité - Pentester se fait-il en | · | ❌ | ❌ | ❌ | ❌ | ✅ ctx | ✅ | ✅ | ✅ | ✅ ctx | ✅ | ✅ ctx | ✅ ctx | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ 1 | ✅ ctx | ✅ | ✅ | ✅ | ✅ ctx | ✅ ctx | ✅ | ✅ ctx | ✅ | ✅ ctx | ✅ |
-| **q05** Où peut-on suivre le BTS ERA ? | · | ❌ | ✅ 7 | ❌ | ❌ | ✅ 6 | ✅ | ✅ | ✅ | ✅ 6 | ✅ | ✅ 6 | ✅ 8 | ✅ 4 | ✅ 2 | ✅ | ✅ | ✅ 4 | ✅ 6 | ✅ | ✅ | ✅ | ✅ 6 | ✅ 6 | ✅ | ✅ 6 | ✅ | ✅ 6 | ✅ |
-| **q06** Combien de temps dure le Bachelor Informatique ? | · | ❌ | ❌ | ❌ | ❌ | ✅ 1 | ✅ | ✅ | ✅ | ✅ 1 | ✅ | ✅ 1 | ✅ 5 | ✅ 3 | ✅ 1 | ✅ | ✅ | ✅ 3 | ✅ 1 | ✅ | ✅ | ✅ | ✅ 1 | ✅ 1 | ✅ | ✅ 1 | ✅ | ✅ 1 | ✅ |
-| **q07** Peut-on payer les frais de scolarité en plusieurs fois ? | 🟡 | ✅ 3 | ✅ 3 | ✅ 3 | ✅ 4 | ✅ 4 | 🟡 | 🟡 | 🟡 | ✅ 4 | 🟡 | ✅ 4 | ❌ | ✅ 6 | ✅ 2 | 🟡 | 🟡 | ✅ 4 | ✅ 4 | 🟡 | 🟡 | ∅ | ✅ 4 | ✅ 4 | 🟡 | ✅ 4 | 🟡 | ✅ 4 | 🟡 |
-| **q08** Quels sont les blocs de compétences du titre RNCP Expert en  | 🟡 | ❌ (0/3) | ❌ 8 (1/3) | ❌ 3 (1/3) | ❌ (0/3) | ❌ 8 (1/3) | 🟡 | 🟡 | 🟡 | ❌ 8 (1/3) | 🟡 | ❌ 8 (1/3) | ❌ 8 (2/3) | ❌ 3 (1/3) | ❌ 1 (2/3) | 🟡 | 🟡 | ❌ 3 (1/3) | ❌ 8 (1/3) | 🟡 | 🟡 | 🟡 | ❌ 8 (1/3) | ❌ 8 (1/3) | 🟡 | ❌ 9 (1/3) | ✅ | ✅ 1 | ✅ |
-| **q09** Quel est le numéro de téléphone du campus de Bordeaux ? | ✅ | ✅ 1 | ✅ 1 | ✅ 4 | ✅ 5 | ✅ 5 | ✅ | ✅ | ✅ | ✅ 5 | ✅ | ✅ 5 | ✅ 6 | ✅ 1 | ✅ 2 | ✅ | ✅ | ✅ 1 | ✅ 2 | ✅ | ✅ | ✅ | ✅ 2 | ✅ 2 | ✅ | ✅ 2 | ✅ | ✅ 2 | ✅ |
-| **q10** Quels modules sont enseignés en Mastère 2 du Mastère Expert  | · | ✅ 1 | ✅ 1 | ❌ | ✅ 1 | ✅ 1 | 🟡 | 🟡 | 🟡 | ✅ 1 | 🟡 | ✅ 1 | ✅ 1 | ✅ 1 | ✅ 1 | 🟡 | 🟡 | ✅ 1 | ✅ 1 | 🟡 | 🟡 | 🟡 | ✅ 1 | ✅ 1 | 🟡 | ✅ 1 | ✅ | ✅ 1 | ✅ |
-| **q11** Comment se passe l'entretien d'admission chez Ynov ? | · | ✅ 1 | ✅ 1 | ✅ 1 | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ | ✅ 1 | ✅ | ✅ 1 | ✅ 1 | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ 1 | ✅ 1 | ✅ | 🟡 | 🟡 | ✅ 1 | ✅ 1 | ✅ | ✅ 1 | ✅ | ✅ 1 | ✅ |
-| **q12** Combien coûte une VAE chez Ynov ? | · | ✅ 1 | ✅ 1 | ✅ 1 | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ | ✅ 1 | ✅ | ✅ 1 | ✅ 1 | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ | ✅ 1 | ✅ 1 | ✅ | ✅ 1 | ✅ | ✅ 1 | ✅ |
-| **q13** Quelle est l'adresse e-mail du référent handicap de Lyon ? | · | ✅ 1 | ✅ 1 | ✅ 1 | ✅ 2 | ✅ 2 ⛔ | ⛔ | ⛔ | ✅ | ✅ 2 | ✅ | ✅ 2 | ✅ 1 | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ | ✅ 1 | ✅ 1 | ✅ | ✅ 1 | ✅ | ✅ 1 | ✅ |
-| **q14** Quels métiers peut-on exercer après le Mastère Data engineer | · | ✅ 1 | ✅ 1 | ❌ | ✅ 2 | ✅ 2 | ✅ | ✅ | ✅ | ✅ 2 | ✅ | ✅ 2 | ✅ 3 | ✅ 1 | ✅ 2 | ✅ | ✅ | ✅ 1 | ✅ 2 | ✅ | ✅ | ✅ | ✅ 2 | ✅ 2 | ✅ | ✅ 2 | ✅ | ✅ 2 | ✅ |
-| **q15** Quel est le taux de réussite du titre Expert en développemen | · | ✅ 1 | ✅ 1 | ✅ 3 | ❌ | ✅ 6 | ✅ | ✅ | ✅ | ✅ 6 | ✅ | ✅ 6 | ❌ | ✅ 2 | ✅ 1 | ❌ | ✅ | ✅ 1 | ✅ 6 | ✅ | ✅ | ✅ | ✅ 6 | ✅ 6 | ✅ | ✅ 6 | ✅ | ✅ 6 | ✅ |
-| **q16** Quels BTS sont accessibles via Parcoursup ? | · | ❌ | ❌ | ❌ | ❌ | ❌ | ∅ | ∅ | ∅ | ❌ | ∅ | ❌ | ❌ | ✅ 1 | ✅ 1 | ✅ | ∅ | ✅ 1 | ❌ | ✅ | ∅ | ∅ | ❌ | ❌ | ∅ | ❌ | ∅ | ✅ 9 | ✅ |
-| **q17** Quelle est la capitale de l'Australie ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ None ⛔ | ✅ | ✅ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ |
-| **q18** Donne-moi une recette de pâte à crêpes. | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ None ⛔ | ✅ | ✅ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ |
-| **q19** Quels sont les frais de scolarité de HEC Paris ? | · | · | · | · | · | · | · | ✅ | ✅ | · | ✅ | · | · | · | · | ✅ | ✅ | · | · | ✅ | ✅ | ✅ | · | · | ✅ | · | ✅ | · | ✅ |
-| **q20** Quel temps fera-t-il demain à Lyon ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ None ⛔ | ✅ | ✅ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ |
-| **q21** Comment réparer une fuite d'eau sous un évier ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ None ⛔ | ✅ | ✅ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ |
-| **q22** Qui a gagné la Coupe du monde de football 2018 ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ None ⛔ | ✅ | ✅ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ |
-| **q23** Quel est le meilleur langage de programmation pour débuter ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ None ⛔ | ✅ | ✅ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ |
-| **q24** Peux-tu m'écrire un poème sur l'automne ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ None ⛔ | ✅ | ✅ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ |
-| **q25** Combien coûte un abonnement Netflix ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ None ⛔ | ✅ | ✅ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ |
-| **q26** Quelles sont les conditions d'admission à Polytechnique ? | · | · | · | · | · | · | · | ✅ | ✅ | · | ✅ | · | · | · | · | ✅ | ✅ | · | · | ✅ | ✅ | ✅ | · | · | ✅ | · | ✅ | · | ✅ |
-| **q27** Quels sont les blocs de compétences du titre RNCP Expert en  | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | ❌ 3 (2/4) | ❌ 3 (2/4) | 🟡 | ❌ 4 (2/4) | ✅ | ✅ 1 | ✅ |
-| **q28** Quels modules sont enseignés en Bachelor 1 Cybersécurité ? | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | ✅ 1 | ✅ 1 | 🟡 | ✅ 1 | ✅ | ✅ 1 | ✅ |
-| **q29** Combien de temps a-t-on pour valider son inscription après l | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | ✅ 6 | ✅ 6 | ✅ | ✅ 6 | ✅ | ✅ 6 | ✅ |
-| **q30** Quelle remise obtient-on en payant les frais de scolarité co | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | ✅ 2 | ✅ 2 | ✅ | ✅ 2 | ✅ | ✅ 2 | ✅ |
-| **q31** Les Bachelors Ynov passent-ils par Parcoursup ? | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | ✅ 1 | ✅ 1 | ✅ | ✅ 1 | ✅ | ✅ 1 | ✅ |
-| **q32** Quel niveau faut-il pour entrer en BTS ERA ? | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | ❌ | ❌ | ∅ | ❌ | ∅ | ✅ 9 | ✅ |
+| Question | 10-02_01 e2e | 10-02_02 ret | 10-02_04 ret | 10-02_06 ret | 10-02_10 ret | 10-02_22 ret | 10-02_23 e2e | 10-02_25 e2e | 10-02_27 e2e | 10-02_28 ret | 10-02_29 e2e | 10-02_30 ret | 10-02_31 ret | 10-02_32 ret | 10-02_33 ret | 10-02_34 e2e | 10-02_35 e2e | 10-02_36 ret | 10-02_37 ret | 10-02_38 e2e | 10-03_02 e2e | 10-04_05 e2e | 10-05_01 ret | 10-05_02 ret | 10-05_03 e2e | 10-05_05 ret | 10-05_06 e2e | 10-06_01 ret | 10-06_02 e2e | 10-06_04 e2e |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| **q01** Combien coûte le Mastère Expert en intelligence artificielle | ✅ | ✅ 2 | ✅ 2 | ✅ 2 | ✅ 2 | ✅ 2 | ✅ | ✅ | ✅ | ✅ 2 | ✅ | ✅ 2 | ✅ 2 | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ 1 | ✅ 2 | ✅ | ✅ | ✅ | ✅ 2 | ✅ 2 | ✅ | ✅ 2 | ✅ | ✅ 2 | ✅ | ✅ |
+| **q02** Dans quelles villes est proposé le Mastère Expert en intelli | ∅ | ❌ | ❌ | ❌ | ❌ | ✅ 1 | ✅ | ✅ | ✅ | ✅ 1 | ✅ | ✅ 1 | ✅ 1 | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ | ✅ 1 | ✅ 1 | ✅ | ✅ 1 | ✅ | ✅ 1 | ✅ | ✅ |
+| **q03** Le Mastère Game Programmer est-il proposé à Lyon ? | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ ctx | ❌ | ❌ | ✅ | ✅ ctx | ✅ | ✅ ctx | ✅ 2 | ✅ 2 | ✅ 2 | ✅ | ✅ | ✅ 2 | ✅ ctx | ✅ | ✅ | ✅ | ✅ ctx | ✅ ctx | ✅ | ✅ ctx | ✅ | ✅ 9 | ✅ | ✅ |
+| **q04** Le Mastère Expert en cybersécurité - Pentester se fait-il en | · | ❌ | ❌ | ❌ | ❌ | ✅ ctx | ✅ | ✅ | ✅ | ✅ ctx | ✅ | ✅ ctx | ✅ ctx | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ 1 | ✅ ctx | ✅ | ✅ | ✅ | ✅ ctx | ✅ ctx | ✅ | ✅ ctx | ✅ | ✅ ctx | ✅ | ✅ |
+| **q05** Où peut-on suivre le BTS ERA ? | · | ❌ | ✅ 7 | ❌ | ❌ | ✅ 6 | ✅ | ✅ | ✅ | ✅ 6 | ✅ | ✅ 6 | ✅ 8 | ✅ 4 | ✅ 2 | ✅ | ✅ | ✅ 4 | ✅ 6 | ✅ | ✅ | ✅ | ✅ 6 | ✅ 6 | ✅ | ✅ 6 | ✅ | ✅ 6 | ✅ | ✅ |
+| **q06** Combien de temps dure le Bachelor Informatique ? | · | ❌ | ❌ | ❌ | ❌ | ✅ 1 | ✅ | ✅ | ✅ | ✅ 1 | ✅ | ✅ 1 | ✅ 5 | ✅ 3 | ✅ 1 | ✅ | ✅ | ✅ 3 | ✅ 1 | ✅ | ✅ | ✅ | ✅ 1 | ✅ 1 | ✅ | ✅ 1 | ✅ | ✅ 1 | ✅ | ✅ |
+| **q07** Peut-on payer les frais de scolarité en plusieurs fois ? | 🟡 | ✅ 3 | ✅ 3 | ✅ 3 | ✅ 4 | ✅ 4 | 🟡 | 🟡 | 🟡 | ✅ 4 | 🟡 | ✅ 4 | ❌ | ✅ 6 | ✅ 2 | 🟡 | 🟡 | ✅ 4 | ✅ 4 | 🟡 | 🟡 | ∅ | ✅ 4 | ✅ 4 | 🟡 | ✅ 4 | 🟡 | ✅ 4 | 🟡 | ✅ |
+| **q08** Quels sont les blocs de compétences du titre RNCP Expert en  | 🟡 | ❌ (0/3) | ❌ 8 (1/3) | ❌ 3 (1/3) | ❌ (0/3) | ❌ 8 (1/3) | 🟡 | 🟡 | 🟡 | ❌ 8 (1/3) | 🟡 | ❌ 8 (1/3) | ❌ 8 (2/3) | ❌ 3 (1/3) | ❌ 1 (2/3) | 🟡 | 🟡 | ❌ 3 (1/3) | ❌ 8 (1/3) | 🟡 | 🟡 | 🟡 | ❌ 8 (1/3) | ❌ 8 (1/3) | 🟡 | ❌ 9 (1/3) | ✅ | ✅ 1 | ✅ | ✅ |
+| **q09** Quel est le numéro de téléphone du campus de Bordeaux ? | ✅ | ✅ 1 | ✅ 1 | ✅ 4 | ✅ 5 | ✅ 5 | ✅ | ✅ | ✅ | ✅ 5 | ✅ | ✅ 5 | ✅ 6 | ✅ 1 | ✅ 2 | ✅ | ✅ | ✅ 1 | ✅ 2 | ✅ | ✅ | ✅ | ✅ 2 | ✅ 2 | ✅ | ✅ 2 | ✅ | ✅ 2 | ✅ | ✅ |
+| **q10** Quels modules sont enseignés en Mastère 2 du Mastère Expert  | · | ✅ 1 | ✅ 1 | ❌ | ✅ 1 | ✅ 1 | 🟡 | 🟡 | 🟡 | ✅ 1 | 🟡 | ✅ 1 | ✅ 1 | ✅ 1 | ✅ 1 | 🟡 | 🟡 | ✅ 1 | ✅ 1 | 🟡 | 🟡 | 🟡 | ✅ 1 | ✅ 1 | 🟡 | ✅ 1 | ✅ | ✅ 1 | ✅ | ✅ |
+| **q11** Comment se passe l'entretien d'admission chez Ynov ? | · | ✅ 1 | ✅ 1 | ✅ 1 | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ | ✅ 1 | ✅ | ✅ 1 | ✅ 1 | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ 1 | ✅ 1 | ✅ | 🟡 | 🟡 | ✅ 1 | ✅ 1 | ✅ | ✅ 1 | ✅ | ✅ 1 | ✅ | ✅ |
+| **q12** Combien coûte une VAE chez Ynov ? | · | ✅ 1 | ✅ 1 | ✅ 1 | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ | ✅ 1 | ✅ | ✅ 1 | ✅ 1 | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ | ✅ 1 | ✅ 1 | ✅ | ✅ 1 | ✅ | ✅ 1 | ✅ | ✅ |
+| **q13** Quelle est l'adresse e-mail du référent handicap de Lyon ? | · | ✅ 1 | ✅ 1 | ✅ 1 | ✅ 2 | ✅ 2 ⛔ | ⛔ | ⛔ | ✅ | ✅ 2 | ✅ | ✅ 2 | ✅ 1 | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ | ✅ 1 | ✅ 1 | ✅ | ✅ 1 | ✅ | ✅ 1 | ✅ | ✅ |
+| **q14** Quels métiers peut-on exercer après le Mastère Data engineer | · | ✅ 1 | ✅ 1 | ❌ | ✅ 2 | ✅ 2 | ✅ | ✅ | ✅ | ✅ 2 | ✅ | ✅ 2 | ✅ 3 | ✅ 1 | ✅ 2 | ✅ | ✅ | ✅ 1 | ✅ 2 | ✅ | ✅ | ✅ | ✅ 2 | ✅ 2 | ✅ | ✅ 2 | ✅ | ✅ 2 | ✅ | ✅ |
+| **q15** Quel est le taux de réussite du titre Expert en développemen | · | ✅ 1 | ✅ 1 | ✅ 3 | ❌ | ✅ 6 | ✅ | ✅ | ✅ | ✅ 6 | ✅ | ✅ 6 | ❌ | ✅ 2 | ✅ 1 | ❌ | ✅ | ✅ 1 | ✅ 6 | ✅ | ✅ | ✅ | ✅ 6 | ✅ 6 | ✅ | ✅ 6 | ✅ | ✅ 6 | ✅ | ✅ |
+| **q16** Quels BTS sont accessibles via Parcoursup ? | · | ❌ | ❌ | ❌ | ❌ | ❌ | ∅ | ∅ | ∅ | ❌ | ∅ | ❌ | ❌ | ✅ 1 | ✅ 1 | ✅ | ∅ | ✅ 1 | ❌ | ✅ | ∅ | ∅ | ❌ | ❌ | ∅ | ❌ | ∅ | ✅ 9 | ✅ | ✅ |
+| **q17** Quelle est la capitale de l'Australie ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ None ⛔ | ✅ | ✅ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ |
+| **q18** Donne-moi une recette de pâte à crêpes. | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ None ⛔ | ✅ | ✅ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ |
+| **q19** Quels sont les frais de scolarité de HEC Paris ? | · | · | · | · | · | · | · | ✅ | ✅ | · | ✅ | · | · | · | · | ✅ | ✅ | · | · | ✅ | ✅ | ✅ | · | · | ✅ | · | ✅ | · | ✅ | ✅ |
+| **q20** Quel temps fera-t-il demain à Lyon ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ None ⛔ | ✅ | ✅ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ |
+| **q21** Comment réparer une fuite d'eau sous un évier ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ None ⛔ | ✅ | ✅ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ |
+| **q22** Qui a gagné la Coupe du monde de football 2018 ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ None ⛔ | ✅ | ✅ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ |
+| **q23** Quel est le meilleur langage de programmation pour débuter ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ None ⛔ | ✅ | ✅ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ |
+| **q24** Peux-tu m'écrire un poème sur l'automne ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ None ⛔ | ✅ | ✅ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ |
+| **q25** Combien coûte un abonnement Netflix ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ None ⛔ | ✅ | ✅ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ |
+| **q26** Quelles sont les conditions d'admission à Polytechnique ? | · | · | · | · | · | · | · | ✅ | ✅ | · | ✅ | · | · | · | · | ✅ | ✅ | · | · | ✅ | ✅ | ✅ | · | · | ✅ | · | ✅ | · | ✅ | ✅ |
+| **q27** Quels sont les blocs de compétences du titre RNCP Expert en  | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | ❌ 3 (2/4) | ❌ 3 (2/4) | 🟡 | ❌ 4 (2/4) | ✅ | ✅ 1 | ✅ | ✅ |
+| **q28** Quels modules sont enseignés en Bachelor 1 Cybersécurité ? | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | ✅ 1 | ✅ 1 | 🟡 | ✅ 1 | ✅ | ✅ 1 | ✅ | ✅ |
+| **q29** Combien de temps a-t-on pour valider son inscription après l | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | ✅ 6 | ✅ 6 | ✅ | ✅ 6 | ✅ | ✅ 6 | ✅ | ✅ |
+| **q30** Quelle remise obtient-on en payant les frais de scolarité co | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | ✅ 2 | ✅ 2 | ✅ | ✅ 2 | ✅ | ✅ 2 | ✅ | ✅ |
+| **q31** Les Bachelors Ynov passent-ils par Parcoursup ? | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | ✅ 1 | ✅ 1 | ✅ | ✅ 1 | ✅ | ✅ 1 | ✅ | ✅ |
+| **q32** Quel niveau faut-il pour entrer en BTS ERA ? | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | ❌ | ❌ | ∅ | ❌ | ∅ | ✅ 9 | ✅ | ✅ |
 
-Colonnes : `10-02_01` e2e-prod-premier-test · `10-02_02` retrieval-baseline-500-k5 · `10-02_04` retrieval-500-k10-cap2 · `10-02_06` retrieval-prefixe-long-k5 · `10-02_10` retrieval-300-prefixe-court-k5 · `10-02_22` retrieval-final-pr5 · `10-02_23` e2e-prod-apres-pr5-pr6 · `10-02_25` local-avant-prompt-seuil · `10-02_27` local-apres-prompt-v2 · `10-02_28` calibration-seuil-0-45 · `10-02_29` prod-apres-prompt-seuil · `10-02_30` modele-minilm-300 · `10-02_31` modele-mpnet-300 · `10-02_32` modele-e5-large-300 · `10-02_33` modele-e5-large-500 · `10-02_34` local-e5-large-300 · `10-02_35` prod-apres-ec14-ec15 · `10-02_36` modele-e5-large-300-corpus-corrige · `10-02_37` modele-minilm-300-corpus-corrige · `10-02_38` local-e5-large-300-corpus-corrige · `10-03_02` local-apres-graphe-conversation · `10-04_05` preprod-mammouth-recommended · `10-05_01` contexte-reference · `10-05_02` section-entiere · `10-05_03` section-entiere · `10-05_05` programme-et-blocs-seuil-0-47 · `10-05_06` programme-et-blocs · `10-06_01` hybride-bm25 · `10-06_02` hybride-bm25
+Colonnes : `10-02_01` e2e-prod-premier-test · `10-02_02` retrieval-baseline-500-k5 · `10-02_04` retrieval-500-k10-cap2 · `10-02_06` retrieval-prefixe-long-k5 · `10-02_10` retrieval-300-prefixe-court-k5 · `10-02_22` retrieval-final-pr5 · `10-02_23` e2e-prod-apres-pr5-pr6 · `10-02_25` local-avant-prompt-seuil · `10-02_27` local-apres-prompt-v2 · `10-02_28` calibration-seuil-0-45 · `10-02_29` prod-apres-prompt-seuil · `10-02_30` modele-minilm-300 · `10-02_31` modele-mpnet-300 · `10-02_32` modele-e5-large-300 · `10-02_33` modele-e5-large-500 · `10-02_34` local-e5-large-300 · `10-02_35` prod-apres-ec14-ec15 · `10-02_36` modele-e5-large-300-corpus-corrige · `10-02_37` modele-minilm-300-corpus-corrige · `10-02_38` local-e5-large-300-corpus-corrige · `10-03_02` local-apres-graphe-conversation · `10-04_05` preprod-mammouth-recommended · `10-05_01` contexte-reference · `10-05_02` section-entiere · `10-05_03` section-entiere · `10-05_05` programme-et-blocs-seuil-0-47 · `10-05_06` programme-et-blocs · `10-06_01` hybride-bm25 · `10-06_02` hybride-bm25 · `10-06_04` regle-4
 
 ## Détail de la dernière passe de conversation (`2026-10-06_03_hybride-bm25-c02`)
 
@@ -120,7 +121,7 @@ Colonnes : `10-02_01` e2e-prod-premier-test · `10-02_02` retrieval-baseline-500
 | **c02.2** | Et combien de temps dure-t-il ? | Combien de temps dure le BTS ERA ? | ✅ correct |  |  |
 | **c02.3** | Quel niveau faut-il pour y entrer ? | Quel niveau faut-il pour entrer en BTS ERA (Étude et Réalisa | ✅ correct |  |  |
 
-## Détail du dernier test de bout en bout (`2026-10-06_02_hybride-bm25`)
+## Détail du dernier test de bout en bout (`2026-10-06_04_regle-4`)
 
 | Question | Verdict | Cas limites | Commentaire |
 |---|---|---|---|
@@ -130,7 +131,7 @@ Colonnes : `10-02_01` e2e-prod-premier-test · `10-02_02` retrieval-baseline-500
 | **q04** Le Mastère Expert en cybersécurité - Pentester se fait- | ✅ correct |  |  |
 | **q05** Où peut-on suivre le BTS ERA ? | ✅ correct |  |  |
 | **q06** Combien de temps dure le Bachelor Informatique ? | ✅ correct |  |  |
-| **q07** Peut-on payer les frais de scolarité en plusieurs fois  | 🟡 partial | EC-06 | Même omission qu'aux passages 03 et 06 : la remise de 500 € est dans le contexte, pas dans la réponse. |
+| **q07** Peut-on payer les frais de scolarité en plusieurs fois  | ✅ correct | EC-06 | 4 échéances et remise de 500 € au comptant : correcte. Nuance : « sans remise » pour le paiement échelonné est une légère déduction, non écrite dans la source. |
 | **q08** Quels sont les blocs de compétences du titre RNCP Exper | ✅ correct |  |  |
 | **q09** Quel est le numéro de téléphone du campus de Bordeaux ? | ✅ correct |  |  |
 | **q10** Quels modules sont enseignés en Mastère 2 du Mastère Ex | ✅ correct |  |  |
@@ -139,7 +140,7 @@ Colonnes : `10-02_01` e2e-prod-premier-test · `10-02_02` retrieval-baseline-500
 | **q13** Quelle est l'adresse e-mail du référent handicap de Lyo | ✅ correct |  |  |
 | **q14** Quels métiers peut-on exercer après le Mastère Data eng | ✅ correct |  |  |
 | **q15** Quel est le taux de réussite du titre Expert en dévelop | ✅ correct |  |  |
-| **q16** Quels BTS sont accessibles via Parcoursup ? | ✅ correct | EC-07 | Les trois BTS (CIEL, SIO SLAM, SIO SISR), sans en nommer d'autre : la section Parcoursup est récupérée par le BM25. |
+| **q16** Quels BTS sont accessibles via Parcoursup ? | ✅ correct |  |  |
 | **q17** Quelle est la capitale de l'Australie ? | ✅ correct |  |  |
 | **q18** Donne-moi une recette de pâte à crêpes. | ✅ correct |  |  |
 | **q19** Quels sont les frais de scolarité de HEC Paris ? | ✅ correct |  |  |
@@ -155,11 +156,11 @@ Colonnes : `10-02_01` e2e-prod-premier-test · `10-02_02` retrieval-baseline-500
 | **q29** Combien de temps a-t-on pour valider son inscription ap | ✅ correct |  |  |
 | **q30** Quelle remise obtient-on en payant les frais de scolari | ✅ correct |  |  |
 | **q31** Les Bachelors Ynov passent-ils par Parcoursup ? | ✅ correct |  |  |
-| **q32** Quel niveau faut-il pour entrer en BTS ERA ? | ✅ correct | EC-07 | « BAC ou BAC+2 » : fidèle à la fiche (section Infos clés, trouvée grâce au BM25). La regex exigeait « BAC et BAC+2 » (corrigée en v10). |
+| **q32** Quel niveau faut-il pour entrer en BTS ERA ? | ✅ correct |  |  |
 
 ### Fiabilité de la vérification automatique
 
-Sur les réponses revues à la main, le verdict automatique (`answer_must`) concorde dans 435/456 cas. Désaccords :
+Sur les réponses revues à la main, le verdict automatique (`answer_must`) concorde dans 467/488 cas. Désaccords :
 
 - `2026-10-02_01_e2e-prod-premier-test` q07 : revue **partial**, automatique **wrong**
 - `2026-10-02_23_e2e-prod-apres-pr5-pr6` q11 : revue **correct**, automatique **wrong**
@@ -192,7 +193,7 @@ Sur les réponses revues à la main, le verdict automatique (`answer_must`) conc
 | EC-03 | Le LLM préfère une note de bas de page à l'information de lieu | 🟢 corrigé | generation | q03 | `2026-10-02_01_e2e-prod-premier-test` |
 | EC-04 | Les tableaux d'équivalences RNCP saturent les résultats | 🟢 corrigé | retrieval | q08 | `2026-10-02_01_e2e-prod-premier-test` |
 | EC-05 | Le plafond par section coupe les réponses qui s'étalent sur plusieurs chunks | 🟢 corrigé | retrieval | q10 | `2026-10-02_23_e2e-prod-apres-pr5-pr6` |
-| EC-06 | Une question générale se noie dans les cas particuliers | 🟠 atténué | retrieval | q07 | `2026-10-02_01_e2e-prod-premier-test` |
+| EC-06 | Une question générale se noie dans les cas particuliers | 🟢 corrigé | retrieval | q07 | `2026-10-02_01_e2e-prod-premier-test` |
 | EC-07 | Limites du modèle d'embedding | 🟠 atténué | embedding-model | q08, q16, c02.3 | `2026-10-02_22_retrieval-final-pr5` |
 | EC-08 | Un préfixe long dégrade la recherche | 📘 enseignement | chunking | q10, q14 | `2026-10-02_06_retrieval-prefixe-long-k5` |
 | EC-09 | Les fiches « clé : valeur » sont mal appariées aux questions | 🟢 corrigé | embedding-model | q03, q05, q06 | `2026-10-02_13_retrieval-300-prefixe-court-k10-cap1` |
@@ -253,12 +254,12 @@ Sur les réponses revues à la main, le verdict automatique (`answer_must`) conc
 
 ### EC-06 — Une question générale se noie dans les cas particuliers
 
-**Statut** : 🟠 atténué · **Catégorie** : retrieval · **Liens** : fix/prompt-and-threshold
+**Statut** : 🟢 corrigé · **Catégorie** : retrieval · **Liens** : fix/prompt-and-threshold
 
 - **Symptôme** : « Peut-on payer les frais de scolarité en plusieurs fois ? » → « oui », mais la réponse liste des tarifs de BTS et omet les règles générales (4 échéances, remise de 500 € au comptant), et conclut en prod (run 23) que c'est « probablement » possible partout.
 - **Preuve** : Le document commun (Modalités de paiement) est récupéré (rang 3 ou 4), noyé parmi les sections Tarifs de chaque formation. Après la règle 4 du prompt (passages 26-27), la réponse annonce bien la règle commune mais toujours sans détails : le seul chunk récupéré de la section « Modalités de paiement » est le n°3 (formation continue, score 0,510), pas celui qui contient les 4 échéances et la remise de 500 €.
 - **Cause** : D'abord le prompt (pas de priorité à l'information générale), corrigé par la règle 4 ; reste un problème de recherche : le bon chunk de la section commune n'est pas récupéré.
-- **Correction** : Fait : règle 4 du prompt (règle commune d'abord, avec ses détails). À faire : faire remonter le bon chunk (garder les règles de paiement dans un seul chunk, ou meilleur modèle d'embedding, voir EC-07).
+- **Correction** : Fait : règle 4 du prompt (règle commune d'abord, avec ses détails). À faire : faire remonter le bon chunk (garder les règles de paiement dans un seul chunk, ou meilleur modèle d'embedding, voir EC-07). Recherche : section entière envoyée au LLM (lot 2, EC-17), qui contient les 4 échéances et la remise de 500 €. Génération : la règle 4 demande maintenant de reprendre en entier la règle commune (chaque montant, remise, échéance, durée, délai, condition) ; avant, le LLM omettait la remise sur trois passages de suite (2026-10-05_03, 05_06, 10-06_02). Passage 2026-10-06_04 : q07 correcte, 32/32 sur le jeu v10, réponses de même longueur (247 caractères en moyenne, 237 avant).
 
 ### EC-07 — Limites du modèle d'embedding
 

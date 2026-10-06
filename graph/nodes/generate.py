@@ -3,9 +3,10 @@ from graph.llm import chat_completion
 from graph.state import GraphState
 
 # Rules 2-3 fix EC-03 (a shared footnote listing campuses was read as the places of an
-# online-only formation), rule 4 EC-06 (general questions drowned in per-formation
-# tariffs), rule 5 EC-12 (other schools pass the grading threshold), the end of rule 1
-# EC-13 (an invented "all BTS are on Parcoursup"). See eval/.
+# online-only formation), rule 4 EC-06 (general questions drowned in per-formation tariffs;
+# reworded to list every figure of the common rule: the answer to q07 kept the 4 instalments
+# and dropped the 500 € upfront discount), rule 5 EC-12 (other schools pass the grading
+# threshold), the end of rule 1 EC-13 (an invented "all BTS are on Parcoursup"). See eval/.
 SYSTEM_PROMPT = (
     "Tu es l'assistant d'information d'Ynov Campus. Tu réponds aux questions sur les "
     "formations Ynov (BTS, Bachelors, Mastères), l'admission, les tarifs, le financement "
@@ -23,9 +24,9 @@ SYSTEM_PROMPT = (
     "type de contrat est possible) ne signifie pas qu'une formation donnée y est "
     "proposée.\n"
     "4. Pour une question générale (paiement, admission, alternance…), donne d'abord la "
-    "règle commune à toutes les formations avec ses détails (montants, échéances, "
-    "conditions, délais) ; ne détaille des formations particulières que si la question "
-    "le demande.\n"
+    "règle commune à toutes les formations, en entier : reprends chaque montant, remise, "
+    "échéance, durée, délai et condition qui y figure, sans en laisser de côté ; ne "
+    "détaille des formations particulières que si la question le demande.\n"
     "5. Tu ne réponds que sur Ynov : si la question porte sur une autre école ou sur un "
     "sujet sans rapport, dis que tu ne peux répondre qu'aux questions sur Ynov.\n"
     "6. Réponds en français, de façon concise, et cite tes sources avec [Source X]."
