@@ -4,7 +4,7 @@ import os
 import shutil
 from pathlib import Path
 
-from fastembed import TextEmbedding
+from fastembed import SparseTextEmbedding, TextEmbedding
 from fastembed.common.utils import define_cache_dir
 
 from app.core.config import settings
@@ -13,6 +13,13 @@ from app.core.config import settings
 PREFIXES: dict[str, tuple[str, str]] = {  # model -> (query prefix, passage prefix)
     "intfloat/multilingual-e5-large": ("query: ", "passage: "),
 }
+
+# Lexical (BM25) side of the hybrid search: exact terms such as "Parcoursup" or a RNCP number
+# that a small dense model blurs (EC-07). Index-side weights are the term frequencies, the
+# IDF is applied by Qdrant (Modifier.IDF on the sparse vector).
+SPARSE_MODEL = "Qdrant/bm25"
+SPARSE_LANGUAGE = "french"
+_sparse_model: SparseTextEmbedding | None = None
 
 # One instance per model name (lazy): the model is read from settings at call time, so
 # eval/ can compare models in a single process by changing settings.embedding_model.
@@ -87,3 +94,27 @@ def embed_query(text: str) -> list[float]:
     model = get_embedding_model()
     result = list(model.embed([_prefixes()[0] + text]))[0]
     return list(result)
+
+
+def get_sparse_model() -> SparseTextEmbedding:
+    global _sparse_model
+    if _sparse_model is None:
+        cache_dir = getattr(settings, "fast_embed_cache_dir", None)
+        _sparse_model = SparseTextEmbedding(
+            SPARSE_MODEL, cache_dir=cache_dir, language=SPARSE_LANGUAGE
+        )
+    return _sparse_model
+
+
+def embed_sparse_passages(texts: list[str]) -> list[dict]:
+    """BM25 vectors of document chunks, as {"indices": [...], "values": [...]}."""
+    return [
+        {"indices": [int(i) for i in e.indices], "values": [float(v) for v in e.values]}
+        for e in get_sparse_model().embed(texts)
+    ]
+
+
+def embed_sparse_query(text: str) -> dict:
+    """BM25 vector of a user query (query-side weighting differs from the passages')."""
+    e = list(get_sparse_model().query_embed(text))[0]
+    return {"indices": [int(i) for i in e.indices], "values": [float(v) for v in e.values]}

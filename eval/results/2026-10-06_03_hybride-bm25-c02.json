@@ -1,0 +1,275 @@
+{
+  "schema_version": 1,
+  "run_id": "2026-10-06_03_hybride-bm25-c02",
+  "date": "2026-10-06",
+  "kind": "conversation",
+  "environment": "local",
+  "git_commit": "be63044+dirty",
+  "question_set": "c2",
+  "milestone": false,
+  "label": "hybride-bm25-c02",
+  "notes": "Lot 4 de #14 : scénario c02 (BTS ERA), dont le tour 3 était refusé faute de la section Infos clés (EC-07).",
+  "config": {
+    "mode": "local graph",
+    "llm_model": "mistral-medium-3-5",
+    "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "chunk_size": 300,
+    "n_chunks": 6466,
+    "limit": 10,
+    "candidates": 40,
+    "max_per_section": 2,
+    "grade_threshold": 0.47
+  },
+  "results": [
+    {
+      "question_id": "c02.1",
+      "conversation": "c02",
+      "turn": 1,
+      "question": "Où peut-on suivre le BTS ERA ?",
+      "out_of_scope": null,
+      "latency_s": 1.53,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "Strasbourg": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "rewritten": null,
+      "answer": "Le BTS ERA (Étude et Réalisation d'Agencement) est proposé **uniquement sur le campus de Strasbourg** [Source 6].",
+      "sources": [
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements professionnels",
+          "score": 0.6728881594601445
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Présentation",
+          "score": 0.6702134747992803
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Métiers et dynamique du marché",
+          "score": 0.6382695588593623
+        },
+        {
+          "source": "bts-ciel.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements professionnels",
+          "score": 0.63714764676484
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.6360785347668115
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Lieux",
+          "score": 0.623326621561541
+        },
+        {
+          "source": "bts-sio-slam.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements généraux",
+          "score": 0.6198800038764811
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Ce que tu vas apprendre",
+          "score": 0.579723398777153
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Les modalités d’évaluations certificatives",
+          "score": 0.5148126537974058
+        }
+      ],
+      "edge_cases": []
+    },
+    {
+      "question_id": "c02.2",
+      "conversation": "c02",
+      "turn": 2,
+      "question": "Et combien de temps dure-t-il ?",
+      "out_of_scope": null,
+      "latency_s": 2.26,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "2 ans|deux ans": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "rewritten": "Combien de temps dure le BTS ERA ?",
+      "answer": "Le BTS ERA (Étude et Réalisation d'Agencement) dure **2 ans** [Source 1].",
+      "sources": [
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.6592785562103823
+        },
+        {
+          "source": "bts-communication.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements généraux",
+          "score": 0.6568759763084482
+        },
+        {
+          "source": "bts-ndrc.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements généraux",
+          "score": 0.6349932745231761
+        },
+        {
+          "source": "bts-ciel.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements généraux",
+          "score": 0.633579541645424
+        },
+        {
+          "source": "bts-sio-slam.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements généraux",
+          "score": 0.6280567084113763
+        },
+        {
+          "source": "bts-sio-sisr.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements généraux",
+          "score": 0.6235810692954571
+        },
+        {
+          "source": "bts-ciel.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.609844366968382
+        },
+        {
+          "source": "bts-mco.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements généraux",
+          "score": 0.6004855537233806
+        },
+        {
+          "source": "bts-sio-slam.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.5517485431635222
+        },
+        {
+          "source": "bts-sio-sisr.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.5745067282301721
+        }
+      ],
+      "edge_cases": []
+    },
+    {
+      "question_id": "c02.3",
+      "conversation": "c02",
+      "turn": 3,
+      "question": "Quel niveau faut-il pour y entrer ?",
+      "out_of_scope": null,
+      "latency_s": 1.76,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "BAC": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "rewritten": "Quel niveau faut-il pour entrer en BTS ERA (Étude et Réalisation d'Agencement) ?",
+      "answer": "Le niveau requis pour entrer en **BTS ERA (Étude et Réalisation d'Agencement)** est **BAC ou BAC+2** [Source 9].",
+      "sources": [
+        {
+          "source": "bts-communication.html",
+          "page": 1,
+          "section": "Les modalités d’évaluations certificatives",
+          "score": 0.753142512196694
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Les modalités d’évaluations certificatives",
+          "score": 0.7526868290152162
+        },
+        {
+          "source": "bts-sio-slam.html",
+          "page": 1,
+          "section": "Les modalités d’évaluations certificatives",
+          "score": 0.7440990674997694
+        },
+        {
+          "source": "bts-ciel.html",
+          "page": 1,
+          "section": "Les modalités d’évaluations certificatives",
+          "score": 0.7437567356432071
+        },
+        {
+          "source": "bts-sio-sisr.html",
+          "page": 1,
+          "section": "Les modalités d’évaluations certificatives",
+          "score": 0.7388421442047168
+        },
+        {
+          "source": "bts-mec.html",
+          "page": 1,
+          "section": "Les modalités d’évaluations certificatives",
+          "score": 0.7381303775962329
+        },
+        {
+          "source": "bts-metiers-de-l-audiovisuel-option-metiers-du-montage-et-de-la-postproduction.html",
+          "page": 1,
+          "section": "Les modalités d’évaluations certificatives",
+          "score": 0.7313170308919327
+        },
+        {
+          "source": "bts-gpme.html",
+          "page": 1,
+          "section": "Les modalités d’évaluations certificatives",
+          "score": 0.7078084417595294
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.6751666110915261
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Lieux",
+          "score": 0.5914007323748964
+        }
+      ],
+      "edge_cases": []
+    }
+  ],
+  "summary": {
+    "total": 3,
+    "passed": 3,
+    "correct": 3,
+    "partial": 0,
+    "wrong": 0,
+    "refused": 0,
+    "no_answer": 0,
+    "error": 0
+  }
+}

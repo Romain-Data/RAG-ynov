@@ -52,7 +52,13 @@ from graph.nodes import retrieve  # noqa: E402
 from graph.nodes.generate import build_context  # noqa: E402
 from graph.nodes.grade import GRADE_THRESHOLD  # noqa: E402
 from ingestion.chunking import CHUNK_OVERLAP, CHUNK_SIZE, chunk_documents  # noqa: E402
-from ingestion.embedder import embed_passages, get_embedding_model  # noqa: E402
+from ingestion.embedder import (  # noqa: E402
+    SPARSE_LANGUAGE,
+    SPARSE_MODEL,
+    embed_passages,
+    embed_sparse_passages,
+    get_embedding_model,
+)
 from ingestion.indexer import index_chunks  # noqa: E402
 from ingestion.loaders import load_directory  # noqa: E402
 
@@ -150,7 +156,8 @@ def build_index(
     chunks = chunk_documents(docs, chunk_size=chunk_size)
     digest = hashlib.sha256(
         json.dumps(
-            [settings.embedding_model] + [(c["text"], c["metadata"]) for c in chunks],
+            [settings.embedding_model, SPARSE_MODEL, SPARSE_LANGUAGE]
+            + [(c["text"], c["metadata"]) for c in chunks],
             sort_keys=True,
             default=str,
         ).encode()
@@ -178,8 +185,10 @@ def build_index(
     vectors, embed_seconds = embedded
     if client.collection_exists(settings.qdrant_collection_name):
         client.delete_collection(settings.qdrant_collection_name)
-    for chunk, vector in zip(chunks, vectors, strict=True):
+    sparse = embed_sparse_passages([c["text"] for c in chunks])
+    for chunk, vector, bm25 in zip(chunks, vectors, sparse, strict=True):
         chunk["vector"] = vector
+        chunk["sparse"] = bm25
     index_chunks(chunks, client)
     info = {
         "n_chunks": len(chunks),
