@@ -10,6 +10,8 @@ class Source(BaseModel):
     page: int | None = None
     section: str | None = None
     score: float
+    title: str | None = None  # title of the page or document (manifest)
+    url: str | None = None  # the page on ynov.com or francecompetences.fr, when known
 
 
 class QueryResponse(BaseModel):
