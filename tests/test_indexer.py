@@ -71,3 +71,26 @@ def test_vectors_of_another_size_are_refused(client: QdrantClient):
     bigger["vector"] = [0.1] * 1024
     with pytest.raises(ValueError, match="embedding model changed"):
         index_chunks([bigger], client)
+
+
+def test_a_collection_with_the_single_vector_schema_is_refused():
+    """The collection of before the hybrid search must be replaced, not filled."""
+    from qdrant_client.models import Distance, VectorParams
+
+    from app.core.config import settings
+
+    client = QdrantClient(":memory:")
+    client.create_collection(
+        settings.qdrant_collection_name, VectorParams(size=384, distance=Distance.COSINE)
+    )
+    with pytest.raises(ValueError, match="new collection"):
+        index_chunks([_chunk("a.html", "Tarifs", 0)], client)
+
+
+def test_sparse_vectors_are_stored_with_the_dense_ones(client: QdrantClient):
+    from ingestion.indexer import vector_layout
+
+    chunk = _chunk("a.html", "Tarifs", 0)
+    chunk["sparse"] = {"indices": [1, 5], "values": [1.0, 2.0]}
+    index_chunks([chunk], client)
+    assert vector_layout(client) == "hybrid"

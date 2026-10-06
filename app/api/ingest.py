@@ -34,10 +34,7 @@ async def ingest_documents(
     # Import here to avoid circular imports
     from pathlib import Path
 
-    from ingestion.chunking import chunk_documents
-    from ingestion.embedder import embed_passages
-    from ingestion.indexer import index_chunks
-    from ingestion.loaders import load_directory
+    from ingestion.run import ingest_directory
 
     data_dir = Path("data")
     if not data_dir.exists():
@@ -46,29 +43,9 @@ async def ingest_documents(
             detail="Data directory not found",
         )
 
-    # 1. Load
-    docs = load_directory(data_dir, settings.ingest_exclude_doc_type_list())
-    if not docs:
-        return IngestResponse(
-            status="no_documents",
-            indexed_chunks=0,
-            collection=settings.qdrant_collection_name,
-        )
-
-    # 2. Chunk
-    chunks = chunk_documents(docs)
-
-    # 3. Embed
-    texts = [c["text"] for c in chunks]
-    vectors = embed_passages(texts)
-    for chunk, vector in zip(chunks, vectors, strict=True):
-        chunk["vector"] = vector
-
-    # 4. Index
-    count = index_chunks(chunks)
-
+    count = ingest_directory(data_dir)
     return IngestResponse(
-        status="ok",
+        status="ok" if count else "no_documents",
         indexed_chunks=count,
         collection=settings.qdrant_collection_name,
     )

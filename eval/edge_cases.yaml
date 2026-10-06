@@ -153,7 +153,7 @@
 - id: EC-07
   title: Limites du modèle d'embedding
   category: embedding-model
-  status: open
+  status: mitigated
   questions: [q08, q16, c02.3]
   discovered_in: 2026-10-02_22_retrieval-final-pr5
   symptom: >
@@ -186,6 +186,7 @@
     +0,020). Décision à prendre ; q08 (blocs Cybersécurité) reste partielle avec les deux
     modèles.
     Lot 3 : q08 corrigée sans changer de modèle (EC-04). Restent q16 (Parcoursup) et q32 / c02.3 (niveau d'entrée du BTS ERA), visées par la recherche hybride (lot 4).
+    Lot 4 (#14) : recherche hybride (BM25 français de FastEmbed, deux résultats injectés aux dernières places, score = cosinus). Passage 2026-10-06_01 : 22/22 questions avec tous les faits dans le contexte, q16 et q32 au rang 9, sans changer de modèle ; bout en bout local (passage 02) : q16 et q32 correctes ; conversation c02.3 correcte (passage 03). Reste la décision sur e5-large, à clore à la mise en production (lot 7) si la préprod atteint l'objectif avec MiniLM.
   links: ["feat/embedding-model-comparison"]
 
 - id: EC-08

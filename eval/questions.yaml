@@ -30,6 +30,7 @@
 #   v9  q08/q27: the "Blocs de compétences" summary section of the RNCP fiche is expected
 #       instead of three or four separate bloc sections (EC-04); q11 answer check also
 #       accepts "1 heure"
+#   v10 q32 answer check: "BAC ou BAC+2" is as right as "BAC et BAC+2"
 
 - id: q01
   question: Combien coûte le Mastère Expert en intelligence artificielle ?
@@ -221,4 +222,4 @@
   question: Quel niveau faut-il pour entrer en BTS ERA ?
   expect:
     - {source: bts-era.html, section: Infos clés}
-  answer_must: ['BAC et BAC\+2']
+  answer_must: ['BAC ?\+ ?2']
