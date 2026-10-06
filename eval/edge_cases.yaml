@@ -128,7 +128,7 @@
 - id: EC-06
   title: Une question générale se noie dans les cas particuliers
   category: retrieval
-  status: mitigated
+  status: fixed
   questions: [q07]
   discovered_in: 2026-10-02_01_e2e-prod-premier-test
   symptom: >
@@ -148,6 +148,7 @@
     Fait : règle 4 du prompt (règle commune d'abord, avec ses détails). À faire : faire
     remonter le bon chunk (garder les règles de paiement dans un seul chunk, ou meilleur
     modèle d'embedding, voir EC-07).
+    Recherche : section entière envoyée au LLM (lot 2, EC-17), qui contient les 4 échéances et la remise de 500 €. Génération : la règle 4 demande maintenant de reprendre en entier la règle commune (chaque montant, remise, échéance, durée, délai, condition) ; avant, le LLM omettait la remise sur trois passages de suite (2026-10-05_03, 05_06, 10-06_02). Passage 2026-10-06_06 : q07 correcte, 32/32 sur le jeu v10, réponses de même longueur (247 caractères en moyenne, 237 avant).
   links: ["fix/prompt-and-threshold"]
 
 - id: EC-07
