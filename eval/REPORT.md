@@ -4,11 +4,11 @@
 
 ## Synthèse
 
-- **Dernier test de bout en bout** (local, `2026-10-06_04_regle-4`) : 22/22 ✅ · 0 🟡 · 0 ❌ · hors périmètre 10/10 ; 0 refusée(s), 0 sans réponse.
+- **Dernier test de bout en bout** (local, `2026-10-06_06_regle-4`) : 22/22 ✅ · 0 🟡 · 0 ❌ · hors périmètre 10/10 ; 0 refusée(s), 0 sans réponse.
 - **Dernier test en prod** (`2026-10-02_35_prod-apres-ec14-ec15`) : 12/16 ✅ · 3 🟡 · 0 ❌ · hors périmètre 10/10.
 - **Dernière évaluation de la recherche** (`2026-10-06_01_hybride-bm25`) : 22/22 · hors périmètre 8/8 ⛔.
-- **Dernière passe de conversation** (`2026-10-06_03_hybride-bm25-c02`) : 3/3 ✅ · 0 🟡 · 0 ❌.
-- **Cas limites** : 18 documentés, dont 4 ouverts ou atténués (EC-07, EC-11, EC-16, EC-17).
+- **Dernière passe de conversation** (`2026-10-06_05_conversations-lot5`) : 17/17 ✅ · 0 🟡 · 0 ❌ · hors périmètre 1/1.
+- **Cas limites** : 18 documentés, dont 3 ouverts ou atténués (EC-07, EC-11, EC-17).
 
 ## Historique des passages
 
@@ -70,13 +70,15 @@
 | ★ | `2026-10-06_01_hybride-bm25` | retrieval | local | v9 | chunks 300, k=10, cand=40, plafond=2 | 22/22 · hors périmètre 8/8 ⛔ |
 | ★ | `2026-10-06_02_hybride-bm25` | e2e | local | v9 | chunks 300, k=10 | 20/22 ✅ · 1 🟡 · 1 ❌ · hors périmètre 10/10 |
 |  | `2026-10-06_03_hybride-bm25-c02` | conversation | local | c2 | chunks 300, k=10 | 3/3 ✅ · 0 🟡 · 0 ❌ |
-| ★ | `2026-10-06_04_regle-4` | e2e | local | v10 | chunks 300, k=10 | 22/22 ✅ · 0 🟡 · 0 ❌ · hors périmètre 10/10 |
+|  | `2026-10-06_04_smalltalk` | conversation | local | c2 | chunks 300, k=10 | 3/3 ✅ · 0 🟡 · 0 ❌ |
+| ★ | `2026-10-06_05_conversations-lot5` | conversation | local | c2 | chunks 300, k=10 | 17/17 ✅ · 0 🟡 · 0 ❌ · hors périmètre 1/1 |
+| ★ | `2026-10-06_06_regle-4` | e2e | local | v10 | chunks 300, k=10 | 22/22 ✅ · 0 🟡 · 0 ❌ · hors périmètre 10/10 |
 
 ## Matrice par question (étapes clés)
 
 Recherche : ✅ rang de la bonne section · ✅ ctx = fait présent dans le contexte · ❌ absente · (d/m) sections distinctes / requises · ⛔ refusée par le seuil. Bout en bout : ✅ correct · 🟡 partial · ❌ wrong · ⛔ refused · ∅ no_answer · ⚠️ error.
 
-| Question | 10-02_01 e2e | 10-02_02 ret | 10-02_04 ret | 10-02_06 ret | 10-02_10 ret | 10-02_22 ret | 10-02_23 e2e | 10-02_25 e2e | 10-02_27 e2e | 10-02_28 ret | 10-02_29 e2e | 10-02_30 ret | 10-02_31 ret | 10-02_32 ret | 10-02_33 ret | 10-02_34 e2e | 10-02_35 e2e | 10-02_36 ret | 10-02_37 ret | 10-02_38 e2e | 10-03_02 e2e | 10-04_05 e2e | 10-05_01 ret | 10-05_02 ret | 10-05_03 e2e | 10-05_05 ret | 10-05_06 e2e | 10-06_01 ret | 10-06_02 e2e | 10-06_04 e2e |
+| Question | 10-02_01 e2e | 10-02_02 ret | 10-02_04 ret | 10-02_06 ret | 10-02_10 ret | 10-02_22 ret | 10-02_23 e2e | 10-02_25 e2e | 10-02_27 e2e | 10-02_28 ret | 10-02_29 e2e | 10-02_30 ret | 10-02_31 ret | 10-02_32 ret | 10-02_33 ret | 10-02_34 e2e | 10-02_35 e2e | 10-02_36 ret | 10-02_37 ret | 10-02_38 e2e | 10-03_02 e2e | 10-04_05 e2e | 10-05_01 ret | 10-05_02 ret | 10-05_03 e2e | 10-05_05 ret | 10-05_06 e2e | 10-06_01 ret | 10-06_02 e2e | 10-06_06 e2e |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | **q01** Combien coûte le Mastère Expert en intelligence artificielle | ✅ | ✅ 2 | ✅ 2 | ✅ 2 | ✅ 2 | ✅ 2 | ✅ | ✅ | ✅ | ✅ 2 | ✅ | ✅ 2 | ✅ 2 | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ 1 | ✅ 2 | ✅ | ✅ | ✅ | ✅ 2 | ✅ 2 | ✅ | ✅ 2 | ✅ | ✅ 2 | ✅ | ✅ |
 | **q02** Dans quelles villes est proposé le Mastère Expert en intelli | ∅ | ❌ | ❌ | ❌ | ❌ | ✅ 1 | ✅ | ✅ | ✅ | ✅ 1 | ✅ | ✅ 1 | ✅ 1 | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ 1 | ✅ 1 | ✅ | ✅ | ✅ | ✅ 1 | ✅ 1 | ✅ | ✅ 1 | ✅ | ✅ 1 | ✅ | ✅ |
@@ -111,17 +113,32 @@ Recherche : ✅ rang de la bonne section · ✅ ctx = fait présent dans le cont
 | **q31** Les Bachelors Ynov passent-ils par Parcoursup ? | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | ✅ 1 | ✅ 1 | ✅ | ✅ 1 | ✅ | ✅ 1 | ✅ | ✅ |
 | **q32** Quel niveau faut-il pour entrer en BTS ERA ? | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | ❌ | ❌ | ∅ | ❌ | ∅ | ✅ 9 | ✅ | ✅ |
 
-Colonnes : `10-02_01` e2e-prod-premier-test · `10-02_02` retrieval-baseline-500-k5 · `10-02_04` retrieval-500-k10-cap2 · `10-02_06` retrieval-prefixe-long-k5 · `10-02_10` retrieval-300-prefixe-court-k5 · `10-02_22` retrieval-final-pr5 · `10-02_23` e2e-prod-apres-pr5-pr6 · `10-02_25` local-avant-prompt-seuil · `10-02_27` local-apres-prompt-v2 · `10-02_28` calibration-seuil-0-45 · `10-02_29` prod-apres-prompt-seuil · `10-02_30` modele-minilm-300 · `10-02_31` modele-mpnet-300 · `10-02_32` modele-e5-large-300 · `10-02_33` modele-e5-large-500 · `10-02_34` local-e5-large-300 · `10-02_35` prod-apres-ec14-ec15 · `10-02_36` modele-e5-large-300-corpus-corrige · `10-02_37` modele-minilm-300-corpus-corrige · `10-02_38` local-e5-large-300-corpus-corrige · `10-03_02` local-apres-graphe-conversation · `10-04_05` preprod-mammouth-recommended · `10-05_01` contexte-reference · `10-05_02` section-entiere · `10-05_03` section-entiere · `10-05_05` programme-et-blocs-seuil-0-47 · `10-05_06` programme-et-blocs · `10-06_01` hybride-bm25 · `10-06_02` hybride-bm25 · `10-06_04` regle-4
+Colonnes : `10-02_01` e2e-prod-premier-test · `10-02_02` retrieval-baseline-500-k5 · `10-02_04` retrieval-500-k10-cap2 · `10-02_06` retrieval-prefixe-long-k5 · `10-02_10` retrieval-300-prefixe-court-k5 · `10-02_22` retrieval-final-pr5 · `10-02_23` e2e-prod-apres-pr5-pr6 · `10-02_25` local-avant-prompt-seuil · `10-02_27` local-apres-prompt-v2 · `10-02_28` calibration-seuil-0-45 · `10-02_29` prod-apres-prompt-seuil · `10-02_30` modele-minilm-300 · `10-02_31` modele-mpnet-300 · `10-02_32` modele-e5-large-300 · `10-02_33` modele-e5-large-500 · `10-02_34` local-e5-large-300 · `10-02_35` prod-apres-ec14-ec15 · `10-02_36` modele-e5-large-300-corpus-corrige · `10-02_37` modele-minilm-300-corpus-corrige · `10-02_38` local-e5-large-300-corpus-corrige · `10-03_02` local-apres-graphe-conversation · `10-04_05` preprod-mammouth-recommended · `10-05_01` contexte-reference · `10-05_02` section-entiere · `10-05_03` section-entiere · `10-05_05` programme-et-blocs-seuil-0-47 · `10-05_06` programme-et-blocs · `10-06_01` hybride-bm25 · `10-06_02` hybride-bm25 · `10-06_06` regle-4
 
-## Détail de la dernière passe de conversation (`2026-10-06_03_hybride-bm25-c02`)
+## Détail de la dernière passe de conversation (`2026-10-06_05_conversations-lot5`)
 
 | Tour | Question | Reformulée | Verdict | Cas limites | Commentaire |
 |---|---|---|---|---|---|
+| **c01.1** | Combien de temps dure le Bachelor Informatiqu | — | ✅ correct |  |  |
+| **c01.2** | Et dans quelles villes est-il proposé ? | Dans quelles villes le Bachelor Informatique est-il proposé  | ✅ correct |  |  |
+| **c01.3** | Et quand est la prochaine rentrée ? | Quand est la prochaine rentrée du Bachelor Informatique ? | ✅ correct |  |  |
 | **c02.1** | Où peut-on suivre le BTS ERA ? | — | ✅ correct |  |  |
 | **c02.2** | Et combien de temps dure-t-il ? | Combien de temps dure le BTS ERA ? | ✅ correct |  |  |
-| **c02.3** | Quel niveau faut-il pour y entrer ? | Quel niveau faut-il pour entrer en BTS ERA (Étude et Réalisa | ✅ correct |  |  |
+| **c02.3** | Quel niveau faut-il pour y entrer ? | Quel niveau faut-il pour entrer en BTS ERA - Étude et Réalis | ✅ correct | EC-07 | « BAC ou BAC+2 » : la section Infos clés est trouvée grâce au BM25 (EC-07, lot 4). |
+| **c03.1** | Combien de temps dure le Bachelor Informatiqu | — | ✅ correct |  |  |
+| **c03.2** | Et le BTS ERA ? | Combien de temps dure le BTS ERA ? | ✅ correct |  |  |
+| **c04.1** | Combien coûte le Mastère Expert en intelligen | — | ✅ correct |  |  |
+| **c04.2** | Et une VAE chez Ynov, combien ça coûte ? | Quel est le coût d'une VAE chez Ynov ? | ✅ correct |  |  |
+| **c05.1** | Combien de temps dure le Bachelor Informatiqu | — | ✅ correct |  |  |
+| **c05.2** | Et les frais de scolarité de HEC Paris ? | Quels sont les frais de scolarité de HEC Paris ? | ✅ correct |  |  |
+| **c05.3** | Et pour le BTS ERA, combien de temps ? | Combien de temps dure le BTS ERA ? | ✅ correct |  |  |
+| **c06.1** | Le Mastère Expert en cybersécurité - Penteste | — | ✅ correct |  |  |
+| **c06.2** | Et à Lyon ? | Le Mastère Expert en cybersécurité - Pentester est-il dispon | ✅ correct |  |  |
+| **c07.1** | Combien de temps dure le Bachelor Informatiqu | — | ✅ correct |  |  |
+| **c07.2** | Merci beaucoup ! | — | ✅ correct | EC-16 | Réponse fixe sans recherche ni appel au LLM (EC-16, lot 5). |
+| **c08.1** | Bonjour | — | ✅ correct | EC-16 | Réponse fixe sans recherche ni appel au LLM (EC-16, lot 5). |
 
-## Détail du dernier test de bout en bout (`2026-10-06_04_regle-4`)
+## Détail du dernier test de bout en bout (`2026-10-06_06_regle-4`)
 
 | Question | Verdict | Cas limites | Commentaire |
 |---|---|---|---|
@@ -203,7 +220,7 @@ Sur les réponses revues à la main, le verdict automatique (`answer_must`) conc
 | EC-13 | Le LLM invente une règle générale à partir de quelques exemples | 🟢 corrigé | generation | q16 | `2026-10-02_26_local-apres-prompt-seuil` |
 | EC-14 | Un chunk sépare des chiffres du titre auquel ils se rapportent | 🟢 corrigé | chunking | q15 | `2026-10-02_34_local-e5-large-300` |
 | EC-15 | Le fichier d'exemple fictif est indexé en prod | 🟢 corrigé | source-data | q07, q09 | `2026-10-02_34_local-e5-large-300` |
-| EC-16 | Les salutations et les remerciements sont refusés | 🔴 ouvert | grading | c07.2, c08.1 | `2026-10-03_04_local-conversations-jeu-c2` |
+| EC-16 | Les salutations et les remerciements sont refusés | 🟢 corrigé | grading | c07.2, c08.1 | `2026-10-03_04_local-conversations-jeu-c2` |
 | EC-17 | Le fait cherché est dans la section récupérée, mais pas dans les chunks transmis | 🟠 atténué | retrieval | q07, q11, q28 | `2026-10-05_01_contexte-reference` |
 | EC-18 | Le critère « bonne section récupérée » surestime la recherche | 🟢 corrigé | eval-tooling | q07, q10, q11 | `2026-10-05_01_contexte-reference` |
 
@@ -344,12 +361,12 @@ Sur les réponses revues à la main, le verdict automatique (`answer_must`) conc
 
 ### EC-16 — Les salutations et les remerciements sont refusés
 
-**Statut** : 🔴 ouvert · **Catégorie** : grading
+**Statut** : 🟢 corrigé · **Catégorie** : grading
 
 - **Symptôme** : « Bonjour » en début de conversation et « Merci beaucoup ! » après une réponse reçoivent « Je n'ai pas trouvé d'information pertinente dans les documents Ynov pour répondre à votre question. ».
 - **Preuve** : Passage 04 du 2026-10-03 (scénarios c07 et c08) : les deux sont refusés par le seuil. « Bonjour » sans appel du LLM ; « Merci beaucoup ! » reste inchangé après reformulation. Même résultat avec « D'accord, super. » à la main.
 - **Cause** : Le seuil compare la question aux chunks du corpus ; une formule de politesse ne ressemble à aucun chunk. Sans effet dans l'API à une question, gênant dans un chat.
-- **Correction** : Prévu dans le chantier #14 (abandonné le 2026-10-04, repris le même jour). Piste : repérer les messages de politesse avant la recherche (règles simples ou appel LLM) et répondre en une phrase, en rappelant ce que l'assistant sait faire. À mesurer avec les scénarios c07 et c08.
+- **Correction** : Prévu dans le chantier #14 (abandonné le 2026-10-04, repris le même jour). Piste : repérer les messages de politesse avant la recherche (règles simples ou appel LLM) et répondre en une phrase, en rappelant ce que l'assistant sait faire. À mesurer avec les scénarios c07 et c08. Lot 5 (#14) : nœud `graph/nodes/smalltalk.py` en tête des deux graphes. Un message fait uniquement de mots de politesse (bonjour, merci, d'accord, au revoir…, 8 mots au plus) reçoit une réponse fixe, sans recherche ni LLM ; tout autre mot (« Merci, et à Lyon ? ») suit le chemin normal. Sur les 50 messages des jeux d'évaluation, seuls « Bonjour » et « Merci beaucoup ! » sont interceptés. Passages 2026-10-06_04 et 05 : c07.2 et c08.1 correctes, jeu de conversations 18/18.
 
 ### EC-17 — Le fait cherché est dans la section récupérée, mais pas dans les chunks transmis
 

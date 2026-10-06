@@ -5,6 +5,7 @@ from graph.nodes.generate import generate_node
 from graph.nodes.grade import grade_node
 from graph.nodes.refuse import refuse_node
 from graph.nodes.retrieve import retrieve_node
+from graph.nodes.smalltalk import route_after_smalltalk, smalltalk_node
 from graph.state import GraphState
 
 
@@ -18,13 +19,19 @@ def build_graph() -> CompiledStateGraph:
     workflow = StateGraph(GraphState)
 
     # Nodes
+    workflow.add_node("smalltalk", smalltalk_node)
     workflow.add_node("retrieve", retrieve_node)
     workflow.add_node("grade", grade_node)
     workflow.add_node("generate", generate_node)
     workflow.add_node("refuse", refuse_node)
 
     # Edges
-    workflow.set_entry_point("retrieve")
+    workflow.set_entry_point("smalltalk")
+    workflow.add_conditional_edges(
+        "smalltalk",
+        lambda state: route_after_smalltalk(state, "retrieve"),
+        {"retrieve": "retrieve", "end": END},
+    )
     workflow.add_edge("retrieve", "grade")
     workflow.add_conditional_edges(
         "grade",
