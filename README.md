@@ -58,7 +58,7 @@ curl -X POST http://localhost:8000/api/query \
 
 ## Chat interface
 
-A chat for the public, served by the same API on `/chat` ([Chainlit](https://chainlit.io)).
+A chat for the public, served by the same API on `/` ([Chainlit](https://chainlit.io)).
 Users create an account with a **pseudo and a password, nothing else** (no e-mail, no
 name): the sign-up page shows a one-time recovery code, the only way to reset a forgotten
 password. Conversations keep their history, can be reopened later and answer follow-up
@@ -68,7 +68,7 @@ questions ("Et à Lyon ?") through the conversation graph (`graph/chat.py`).
 # Generate the secret signing the session cookies, put it in .env, then start the stack
 uv run chainlit create-secret          # -> CHAINLIT_AUTH_SECRET=...
 docker compose up -d --build
-# Chat:           http://localhost:8000/chat/
+# Chat:           http://localhost:8000/
 # Create account: http://localhost:8000/compte/inscription
 ```
 

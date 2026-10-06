@@ -55,7 +55,7 @@ def _field(
     )
 
 
-LOGIN_LINK = '<div class="links"><a href="/chat/login">Retour à la connexion</a></div>'
+LOGIN_LINK = '<div class="links"><a href="/login">Retour à la connexion</a></div>'
 
 
 def signup_form(error: str | None = None, pseudo: str = "") -> str:
@@ -91,7 +91,7 @@ def code_page(title: str, intro: str, code: str) -> str:
             "affiché.</strong> Sans e-mail, c'est le seul moyen de retrouver votre compte si vous "
             "oubliez votre mot de passe.</p>"
             f'<div class="code">{escape(code)}</div>'
-            '<div class="links"><a href="/chat/login">Se connecter</a></div>'
+            '<div class="links"><a href="/login">Se connecter</a></div>'
         ),
     )
 
@@ -130,7 +130,7 @@ def delete_form(error: str | None = None, pseudo: str = "") -> str:
             + _field("pseudo", "Pseudo", value=pseudo, autocomplete="username")
             + _field("password", "Mot de passe", "password", autocomplete="current-password")
             + '<button class="danger">Supprimer définitivement</button></form>'
-            '<div class="links"><a href="/chat/">Retour au chat</a></div>'
+            '<div class="links"><a href="/">Retour au chat</a></div>'
         ),
     )
 

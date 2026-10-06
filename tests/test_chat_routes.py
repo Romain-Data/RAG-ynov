@@ -120,7 +120,7 @@ class TestMount:
         from app.main import app
 
         assert app.state.chat_enabled is True
-        assert any(getattr(r, "path", "") == "/chat" for r in app.routes)
+        assert getattr(app.routes[-1], "path", None) == ""  # Chainlit, last: it catches the rest
         assert client.get("/api/health").status_code in (200, 429)  # the API is untouched
 
 

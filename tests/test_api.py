@@ -17,7 +17,7 @@ class TestHealthEndpoint:
 
     def test_health_root(self, client):
         """Root endpoint returns API metadata."""
-        resp = client.get("/")
+        resp = client.get("/api")
         assert resp.status_code == 200
         data = resp.json()
         assert data["name"] == "RAG Ynov"
