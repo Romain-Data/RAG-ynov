@@ -1,4 +1,4 @@
-"""Mount the chat (Chainlit on /chat) and the account pages (/compte) on the API."""
+"""Mount the chat (Chainlit on /) and the account pages (/compte) on the API."""
 
 import logging
 import os
@@ -32,5 +32,5 @@ def mount_chat(app: FastAPI) -> bool:
     from chat.routes import router
 
     app.include_router(router)
-    mount_chainlit(app=app, target=str(CHAT_DIR / "app.py"), path="/chat")
+    mount_chainlit(app=app, target=str(CHAT_DIR / "app.py"), path="/")
     return True

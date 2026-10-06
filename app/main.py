@@ -39,6 +39,10 @@ app = FastAPI(
     description="RAG pédagogique sur programmes Ynov + admissions",
     version="0.1.0",
     lifespan=lifespan,
+    docs_url="/api/docs",
+    redoc_url="/api/redoc",
+    openapi_url="/api/openapi.json",
+    swagger_ui_oauth2_redirect_url="/api/docs/oauth2-redirect",
 )
 
 # Security middleware (CORS + rate limiting)
@@ -53,15 +57,17 @@ app.include_router(health.router, prefix="/api")
 app.include_router(query.router, prefix="/api")
 app.include_router(ingest.router, prefix="/api")
 
-# Chat interface (Chainlit on /chat) and account pages, when CHAINLIT_AUTH_SECRET is set
-app.state.chat_enabled = mount_chat(app)
 
-
-@app.get("/", dependencies=[Depends(rate_limit_health)])
+@app.get("/api", dependencies=[Depends(rate_limit_health)])
 async def root() -> dict:
     return {
         "name": "RAG Ynov",
         "version": "0.1.0",
-        "docs": "/docs",
+        "docs": "/api/docs",
         "health": "/api/health",
     }
+
+
+# Chat interface (Chainlit on /) and account pages, when CHAINLIT_AUTH_SECRET is set.
+# Mounted last: Chainlit answers every path the routes above do not.
+app.state.chat_enabled = mount_chat(app)
