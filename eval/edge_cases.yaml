@@ -251,6 +251,7 @@
     enregistrés par eval/retrieval.py ; (c) eval/e2e.py vérifie les réponses du LLM
     (answer_must / answer_must_not) et enregistre un verdict ; (d) answer_must_not sur q16 ;
     (e) formulations de refus élargies. Les verdicts automatiques restent à relire.
+    (f) Faux négatifs du contrôle des réponses sur la préprod (passage 2026-10-06_07) : q19 et q26, refusées avec une apostrophe typographique (« qu’aux ») que la regex de refus ne reconnaissait pas, et q31 (« accessibles hors Parcoursup »). Corrigé : les réponses sont normalisées (’ → ') avant les regex, q31 accepte « hors Parcoursup » (jeu v11) ; rejouées sur les réponses enregistrées, seules ces trois questions changent.
   links: ["PR #5", "feat/eval-reporting"]
 
 - id: EC-11
