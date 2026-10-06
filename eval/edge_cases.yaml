@@ -154,7 +154,7 @@
 - id: EC-07
   title: Limites du modèle d'embedding
   category: embedding-model
-  status: mitigated
+  status: fixed
   questions: [q08, q16, c02.3]
   discovered_in: 2026-10-02_22_retrieval-final-pr5
   symptom: >
@@ -188,6 +188,7 @@
     modèles.
     Lot 3 : q08 corrigée sans changer de modèle (EC-04). Restent q16 (Parcoursup) et q32 / c02.3 (niveau d'entrée du BTS ERA), visées par la recherche hybride (lot 4).
     Lot 4 (#14) : recherche hybride (BM25 français de FastEmbed, deux résultats injectés aux dernières places, score = cosinus). Passage 2026-10-06_01 : 22/22 questions avec tous les faits dans le contexte, q16 et q32 au rang 9, sans changer de modèle ; bout en bout local (passage 02) : q16 et q32 correctes ; conversation c02.3 correcte (passage 03). Reste la décision sur e5-large, à clore à la mise en production (lot 7) si la préprod atteint l'objectif avec MiniLM.
+    Décision du 2026-10-06 : MiniLM conservé. La préprod (passage 2026-10-06_07, même index que la prod) donne 22/22 questions Ynov et 10/10 hors sujet sans e5-large, dont q08, q16 et q32 qui motivaient la comparaison ; e5-large coûterait 2,2 Go de RAM, 38 minutes d'ingestion et un seuil fragile (écart +0,020) pour un gain déjà obtenu.
   links: ["feat/embedding-model-comparison"]
 
 - id: EC-08
@@ -388,7 +389,7 @@
 - id: EC-17
   title: Le fait cherché est dans la section récupérée, mais pas dans les chunks transmis
   category: retrieval
-  status: mitigated
+  status: fixed
   questions: [q07, q11, q28]
   discovered_in: 2026-10-05_01_contexte-reference
   symptom: >
@@ -411,6 +412,7 @@
     contexte (14 avant), q07 et q11 corrigées ; de bout en bout (passage 03) q11 correcte.
     Reste les sections plus longues (q28 : programme d'un Bachelor), voir EC-05.
     Lot 3 : les programmes sont découpés par module, ce qui rend q28 correcte.
+    Préprod (passage 2026-10-06_07, même index que la prod) : q07, q11 et q28 correctes ; la remise de 500 € de q07 passe aussi grâce à la règle 4 du prompt (EC-06).
   links: []
 
 - id: EC-18

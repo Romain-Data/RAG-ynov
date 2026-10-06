@@ -8,7 +8,7 @@
 - **Dernier test en prod** (`2026-10-02_35_prod-apres-ec14-ec15`) : 12/16 ✅ · 3 🟡 · 0 ❌ · hors périmètre 10/10.
 - **Dernière évaluation de la recherche** (`2026-10-06_01_hybride-bm25`) : 22/22 · hors périmètre 8/8 ⛔.
 - **Dernière passe de conversation** (`2026-10-06_05_conversations-lot5`) : 17/17 ✅ · 0 🟡 · 0 ❌ · hors périmètre 1/1.
-- **Cas limites** : 18 documentés, dont 3 ouverts ou atténués (EC-07, EC-11, EC-17).
+- **Cas limites** : 18 documentés, dont 1 ouverts ou atténués (EC-11).
 
 ## Historique des passages
 
@@ -215,7 +215,7 @@ Sur les réponses revues à la main, le verdict automatique (`answer_must`) conc
 | EC-04 | Les tableaux d'équivalences RNCP saturent les résultats | 🟢 corrigé | retrieval | q08 | `2026-10-02_01_e2e-prod-premier-test` |
 | EC-05 | Le plafond par section coupe les réponses qui s'étalent sur plusieurs chunks | 🟢 corrigé | retrieval | q10 | `2026-10-02_23_e2e-prod-apres-pr5-pr6` |
 | EC-06 | Une question générale se noie dans les cas particuliers | 🟢 corrigé | retrieval | q07 | `2026-10-02_01_e2e-prod-premier-test` |
-| EC-07 | Limites du modèle d'embedding | 🟠 atténué | embedding-model | q08, q16, c02.3 | `2026-10-02_22_retrieval-final-pr5` |
+| EC-07 | Limites du modèle d'embedding | 🟢 corrigé | embedding-model | q08, q16, c02.3 | `2026-10-02_22_retrieval-final-pr5` |
 | EC-08 | Un préfixe long dégrade la recherche | 📘 enseignement | chunking | q10, q14 | `2026-10-02_06_retrieval-prefixe-long-k5` |
 | EC-09 | Les fiches « clé : valeur » sont mal appariées aux questions | 🟢 corrigé | embedding-model | q03, q05, q06 | `2026-10-02_13_retrieval-300-prefixe-court-k10-cap1` |
 | EC-10 | Angles morts de l'évaluation | 🟢 corrigé | eval-tooling | q03, q04, q13 | `2026-10-02_22_retrieval-final-pr5` |
@@ -225,7 +225,7 @@ Sur les réponses revues à la main, le verdict automatique (`answer_must`) conc
 | EC-14 | Un chunk sépare des chiffres du titre auquel ils se rapportent | 🟢 corrigé | chunking | q15 | `2026-10-02_34_local-e5-large-300` |
 | EC-15 | Le fichier d'exemple fictif est indexé en prod | 🟢 corrigé | source-data | q07, q09 | `2026-10-02_34_local-e5-large-300` |
 | EC-16 | Les salutations et les remerciements sont refusés | 🟢 corrigé | grading | c07.2, c08.1 | `2026-10-03_04_local-conversations-jeu-c2` |
-| EC-17 | Le fait cherché est dans la section récupérée, mais pas dans les chunks transmis | 🟠 atténué | retrieval | q07, q11, q28 | `2026-10-05_01_contexte-reference` |
+| EC-17 | Le fait cherché est dans la section récupérée, mais pas dans les chunks transmis | 🟢 corrigé | retrieval | q07, q11, q28 | `2026-10-05_01_contexte-reference` |
 | EC-18 | Le critère « bonne section récupérée » surestime la recherche | 🟢 corrigé | eval-tooling | q07, q10, q11 | `2026-10-05_01_contexte-reference` |
 
 ### EC-01 — Les embeddings ne lisent que 128 tokens
@@ -284,12 +284,12 @@ Sur les réponses revues à la main, le verdict automatique (`answer_must`) conc
 
 ### EC-07 — Limites du modèle d'embedding
 
-**Statut** : 🟠 atténué · **Catégorie** : embedding-model · **Liens** : feat/embedding-model-comparison
+**Statut** : 🟢 corrigé · **Catégorie** : embedding-model · **Liens** : feat/embedding-model-comparison
 
 - **Symptôme** : Après PR #5, deux questions échouent encore en recherche : les blocs Cybersécurité (1 section de bloc sur 3 attendues) et « Quels BTS sont accessibles via Parcoursup ? » (la section Parcoursup de la page Admission n'est jamais récupérée, les pages BTS passent devant).
 - **Preuve** : paraphrase-multilingual-MiniLM-L12-v2 est un petit modèle de paraphrase (384 dimensions, 128 tokens). Comparaison du 2026-10-02 (passages 30 à 34, mêmes 24 questions) : MiniLM 14/16 en recherche, écart de seuil +0,060, index en 167 s, recherche 9 ms ; mpnet 12/16, aucun seuil possible (écart -0,018), 593 s ; e5-large (chunks de 300) 15/16, q16 au rang 1, 9 questions sur 16 au rang 1 (5 pour MiniLM), mais écart de seuil de +0,023 seulement (tous les scores entre 0,75 et 0,92), index en 36 min (13 fois plus lent), recherche 69 ms ; e5-large (chunks de 500) 15/16 mais aucun seuil possible (-0,016). De bout en bout avec e5-large 300 (passage 34) : 12/16 correctes comme MiniLM en prod (passage 29), q16 corrigée mais q15 devenue fausse (EC-14). Après les corrections EC-14 et EC-15 (passages 35 à 38, corpus de 6 470 chunks) : recherche MiniLM 14/16 (6 questions au rang 1, écart +0,055, 172 s) contre e5-large 15/16 (11 au rang 1, écart +0,020, 1 905 s) ; de bout en bout, MiniLM 12/16 en prod contre e5-large 13/16 en local (q16 corrigée), aucune réponse fausse pour les deux. Même limite en conversation (passage 2026-10-03_04) : « Quel niveau faut-il pour entrer au BTS ERA ? » ramène « modalités d'évaluations certificatives » au lieu de « Infos clés », avec ou sans historique.
 - **Cause** : Capacité du modèle.
-- **Correction** : e5-large est désormais meilleur de bout en bout (+1 question, q16) mais coûte cher : ingestion d'environ 38 min sur le serveur (4 cœurs), environ 2,5 Go de RAM par processus sur 7,8 Go, recherche 71 ms au lieu de 9 ms, et un seuil fragile (écart +0,020). Décision à prendre ; q08 (blocs Cybersécurité) reste partielle avec les deux modèles. Lot 3 : q08 corrigée sans changer de modèle (EC-04). Restent q16 (Parcoursup) et q32 / c02.3 (niveau d'entrée du BTS ERA), visées par la recherche hybride (lot 4). Lot 4 (#14) : recherche hybride (BM25 français de FastEmbed, deux résultats injectés aux dernières places, score = cosinus). Passage 2026-10-06_01 : 22/22 questions avec tous les faits dans le contexte, q16 et q32 au rang 9, sans changer de modèle ; bout en bout local (passage 02) : q16 et q32 correctes ; conversation c02.3 correcte (passage 03). Reste la décision sur e5-large, à clore à la mise en production (lot 7) si la préprod atteint l'objectif avec MiniLM.
+- **Correction** : e5-large est désormais meilleur de bout en bout (+1 question, q16) mais coûte cher : ingestion d'environ 38 min sur le serveur (4 cœurs), environ 2,5 Go de RAM par processus sur 7,8 Go, recherche 71 ms au lieu de 9 ms, et un seuil fragile (écart +0,020). Décision à prendre ; q08 (blocs Cybersécurité) reste partielle avec les deux modèles. Lot 3 : q08 corrigée sans changer de modèle (EC-04). Restent q16 (Parcoursup) et q32 / c02.3 (niveau d'entrée du BTS ERA), visées par la recherche hybride (lot 4). Lot 4 (#14) : recherche hybride (BM25 français de FastEmbed, deux résultats injectés aux dernières places, score = cosinus). Passage 2026-10-06_01 : 22/22 questions avec tous les faits dans le contexte, q16 et q32 au rang 9, sans changer de modèle ; bout en bout local (passage 02) : q16 et q32 correctes ; conversation c02.3 correcte (passage 03). Reste la décision sur e5-large, à clore à la mise en production (lot 7) si la préprod atteint l'objectif avec MiniLM. Décision du 2026-10-06 : MiniLM conservé. La préprod (passage 2026-10-06_07, même index que la prod) donne 22/22 questions Ynov et 10/10 hors sujet sans e5-large, dont q08, q16 et q32 qui motivaient la comparaison ; e5-large coûterait 2,2 Go de RAM, 38 minutes d'ingestion et un seuil fragile (écart +0,020) pour un gain déjà obtenu.
 
 ### EC-08 — Un préfixe long dégrade la recherche
 
@@ -374,12 +374,12 @@ Sur les réponses revues à la main, le verdict automatique (`answer_must`) conc
 
 ### EC-17 — Le fait cherché est dans la section récupérée, mais pas dans les chunks transmis
 
-**Statut** : 🟠 atténué · **Catégorie** : retrieval
+**Statut** : 🟢 corrigé · **Catégorie** : retrieval
 
 - **Symptôme** : q11 (« Comment se passe l'entretien d'admission ? ») : réponse sans la durée d'1 h alors que la section « Le rendez-vous d'admission » est récupérée au rang 1. q07 : les « 4 échéances » et la remise de 500 € manquent, q28 : aucun des modules attendus.
 - **Preuve** : Passage 2026-10-05_01 (corpus complet, MiniLM) : q07 0/2 faits dans le contexte, q11 1/2, q28 0/2, alors que le critère « bonne section » les compte réussies. Pour q11 le chunk « Durée : 1h » (chunk 0 de la section) est au 21e rang, pour q07 le chunk « 4 échéances » au 16e. Simulation sans LLM : envoyer la section entière (si elle fait au plus 2 000 caractères) au lieu des seuls chunks retrouvés remet ces faits dans le contexte.
 - **Cause** : Les sections sont coupées en chunks de 300 caractères, le LLM ne reçoit que ceux qui ressemblent à la question, pas le reste de leur section.
-- **Correction** : Lot 2 (chantier #14) : chaque chunk d'une section de 2 000 caractères au plus porte le texte entier de la section (`section_text`) et le LLM reçoit la section, une fois, au lieu des chunks retrouvés. Passage 2026-10-05_02 : 16/22 questions avec tous leurs faits dans le contexte (14 avant), q07 et q11 corrigées ; de bout en bout (passage 03) q11 correcte. Reste les sections plus longues (q28 : programme d'un Bachelor), voir EC-05. Lot 3 : les programmes sont découpés par module, ce qui rend q28 correcte.
+- **Correction** : Lot 2 (chantier #14) : chaque chunk d'une section de 2 000 caractères au plus porte le texte entier de la section (`section_text`) et le LLM reçoit la section, une fois, au lieu des chunks retrouvés. Passage 2026-10-05_02 : 16/22 questions avec tous leurs faits dans le contexte (14 avant), q07 et q11 corrigées ; de bout en bout (passage 03) q11 correcte. Reste les sections plus longues (q28 : programme d'un Bachelor), voir EC-05. Lot 3 : les programmes sont découpés par module, ce qui rend q28 correcte. Préprod (passage 2026-10-06_07, même index que la prod) : q07, q11 et q28 correctes ; la remise de 500 € de q07 passe aussi grâce à la règle 4 du prompt (EC-06).
 
 ### EC-18 — Le critère « bonne section récupérée » surestime la recherche
 
