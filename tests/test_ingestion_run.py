@@ -22,3 +22,14 @@ def test_chunks_get_both_vectors_and_are_indexed(tmp_path: Path, monkeypatch) ->
 
 def test_an_empty_folder_indexes_nothing(tmp_path: Path) -> None:
     assert run.ingest_directory(tmp_path) == 0
+
+
+def test_the_collection_option_overrides_the_configured_one(monkeypatch, capsys) -> None:
+    from app.core.config import settings
+
+    monkeypatch.setattr(settings, "qdrant_collection_name", "ynov_rag")
+    monkeypatch.setattr(run, "ingest_directory", lambda _data, _log: 0)
+    monkeypatch.setattr("sys.argv", ["run", "--collection", "ynov_rag_v2"])
+    run.main()
+    assert settings.qdrant_collection_name == "ynov_rag_v2"
+    assert "Collection : ynov_rag_v2" in capsys.readouterr().out

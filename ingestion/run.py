@@ -3,8 +3,12 @@
 Replaces the script pasted in the Coolify terminal, and is what /api/ingest runs. Embedding
 takes a few minutes with MiniLM on the server (about 40 minutes with e5-large).
 
+With --collection, the points go to another collection than QDRANT_COLLECTION_NAME: the new
+index is filled while the API keeps serving the current one, then QDRANT_COLLECTION_NAME is
+switched and the API restarted (the old collection stays there to go back to).
+
 Usage:
-    uv run python -m ingestion.run [--data data]
+    uv run python -m ingestion.run [--data data] [--collection ynov_rag_v2]
 """
 
 import argparse
@@ -46,7 +50,11 @@ def ingest_directory(data_dir: Path, log: Callable[[str], None] = lambda _msg: N
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--data", type=Path, default=Path("data"))
+    parser.add_argument("--collection", help="collection to fill (default: QDRANT_COLLECTION_NAME)")
     args = parser.parse_args()
+    if args.collection:
+        settings.qdrant_collection_name = args.collection
+    print(f"Collection : {settings.qdrant_collection_name}", flush=True)
     ingest_directory(args.data, lambda msg: print(msg, flush=True))
 
 
