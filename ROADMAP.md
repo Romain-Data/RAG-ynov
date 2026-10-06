@@ -25,12 +25,14 @@ Plan du projet RAG Ynov. Chaque chantier est suivi dans une issue GitHub (label 
 
 ## Interface de chat (#17) : décisions du 3 octobre 2026
 
+- **Adresses (6 octobre 2026, PR #52)** : le chat est sur `/` et l'API sous `/api` (infos sur `/api`, Swagger sur `/api/docs`). L'ancien `/chat/` n'est plus l'adresse du chat.
+
 - **Technologie : [Chainlit](https://docs.chainlit.io)**, monté dans l'API FastAPI actuelle. Agent Chat UI a été écarté : il impose un serveur LangGraph (Aegra), PostgreSQL et un front Next.js, soit trois services de plus. Un prototype Chainlit a validé la connexion, l'historique, la reprise d'une conversation et le cloisonnement entre comptes.
 - **Connexion obligatoire, pseudo + mot de passe uniquement** (hachage argon2, ni e-mail ni nom). Code de secours affiché une seule fois à l'inscription, seul moyen de changer un mot de passe oublié.
 - **Stockage** : SQLite au départ (volume persistant), comptes et conversations. C'est la base dont ont besoin le journal (#18) et les avis (#19).
 - **Avancement** : (1) graphe de conversation avec condensation des relances, **fait et fusionné** (PR #25, mesuré : pas de régression, 15 tours sur 18 corrects) ; (2) application Chainlit + comptes + pages d'inscription, de récupération et de suppression, **faite et fusionnée** (PR #28, qui reprend #26 et #27) ; (3) thème Ynov (fond, accent vert/crème, logos clair et sombre, image de connexion, nom « Chatbot Ynov (non officiel) »), **fait et fusionné** (PR #28) ; (4) déploiement Coolify, **fait le 3 octobre** (variable `CHAINLIT_AUTH_SECRET` **créée dans Coolify le 3 octobre**, sauvegarde quotidienne du volume `chat_data` **en place le 4 octobre**).
 - **Vu en prototype, non reproduit dans l'application réelle** : une déconnexion en cliquant sur une conversation de la barre latérale. Les liens d'inscription et de récupération sont ajoutés sous le formulaire de connexion par `chat/public/login-links.js`.
-- **Pièges de Chainlit 2.12.0** : `requests` et `greenlet` non déclarés (ajoutés à `pyproject.toml`), schéma SQL qui change entre versions (figer la version), chemins des fichiers de `public/` à préfixer par le point de montage.
+- **Pièges de Chainlit 2.12.0** : `requests` et `greenlet` non déclarés (ajoutés à `pyproject.toml`), schéma SQL qui change entre versions (figer la version), chemins des fichiers de `public/` à préfixer par le point de montage (plus de préfixe depuis le 6 octobre 2026 : le chat est monté sur `/`).
 - **Constats** : salutations et remerciements refusés (EC-16, **inscrit au chantier #14**) ; `POST /api/query` répond désormais 503 (et non 500) quand le LLM est indisponible, après trois tentatives sur 429 et 5xx (PR #38) ; une question qui échoue laisse une conversation vide dans l'historique du chat ; **les messages du chat n'ont aucune limite de fréquence** (la limite de 30 par minute ne vaut que pour `/api/query`), alors que chaque message appelle le LLM ; budget de la clé à surveiller ; `INGEST_API_KEY` a été remplacée le 4 octobre (elle valait `changeme`).
 
 ## Ordre suggéré
