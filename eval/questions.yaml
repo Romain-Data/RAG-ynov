@@ -27,6 +27,9 @@
 #       sent to the LLM, checked by eval/retrieval.py; q16 only needs the Parcoursup
 #       sentence (the BTS names are on every BTS page); control questions q27-q32, so that
 #       fixes are not tuned to the first 16 questions only
+#   v9  q08/q27: the "Blocs de compétences" summary section of the RNCP fiche is expected
+#       instead of three or four separate bloc sections (EC-04); q11 answer check also
+#       accepts "1 heure"
 
 - id: q01
   question: Combien coûte le Mastère Expert en intelligence artificielle ?
@@ -82,9 +85,8 @@
 
 - id: q08
   question: Quels sont les blocs de compétences du titre RNCP Expert en cybersécurité ?
-  min_distinct: 3
   expect:
-    - {source: rncp-40897.html, section: RNCP40897BC}
+    - {source: rncp-40897.html, section: Blocs de compétences}
   answer_must: ['stratégie de cybersécurité', 'cycle de conception', 'condition de sécurité', 'crise']
 
 - id: q09
@@ -104,7 +106,7 @@
   expect:
     - {source: condition-admission.html, section: Le rendez-vous d'admission}
     - {source: condition-admission.html, section: processus d'admission}
-  answer_must: ['1 ?h\b|une heure', '48 ?h']
+  answer_must: ['1 ?h\b|1 heure|une heure', '48 ?h']
 
 - id: q12
   question: Combien coûte une VAE chez Ynov ?
@@ -187,9 +189,8 @@
 
 - id: q27
   question: Quels sont les blocs de compétences du titre RNCP Expert en développement logiciel ?
-  min_distinct: 4
   expect:
-    - {source: rncp-39583.html, section: RNCP39583BC}
+    - {source: rncp-39583.html, section: Blocs de compétences}
   answer_must: ['Cadrer un projet', 'Concevoir et développer', 'Coordonner et piloter', 'Maintenir l.application']
 
 - id: q28

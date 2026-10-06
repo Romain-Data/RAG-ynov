@@ -116,3 +116,13 @@ def test_cited_rncp_numbers(tmp_path: Path):
         encoding="utf-8",
     )
     assert cited_rncp_numbers(tmp_path) == ["39586", "41123"]
+
+
+def test_a_summary_section_lists_the_blocs_of_the_titre() -> None:
+    sections = parse_rncp_page(_fiche())["sections"]
+    titles = [t for t, _ in sections]
+    assert titles[1] == "Blocs de compétences"
+    summary = dict(sections)["Blocs de compétences"]
+    assert summary.startswith("Quels sont les blocs de compétences du titre RNCP")
+    assert "Le titre compte 1 blocs de compétences" in summary
+    assert "- RNCP39586BC01 - Collecter des données" in summary

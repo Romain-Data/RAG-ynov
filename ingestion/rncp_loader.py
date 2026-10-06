@@ -132,6 +132,20 @@ def parse_rncp_page(html: str) -> dict:
             if text and text != "-":
                 sections.append((section_title, text))
 
+    blocs = [t for t, _ in sections if _BLOC_TITLE.match(t)]
+    if blocs:
+        # The blocs sit in as many sections, none of which lists the others: a question on
+        # "the blocs of the titre" matched one of them (EC-04). One short list answers it.
+        sections.insert(
+            1,
+            (
+                "Blocs de compétences",
+                f"Quels sont les blocs de compétences du titre {rncp} {title} ? "
+                f"Le titre compte {len(blocs)} blocs de compétences :\n"
+                + "\n".join(f"- {b}" for b in blocs),
+            ),
+        )
+
     attested = dict(sections).get("Compétences attestées", "")
     if attested and _restates_blocs(attested, sections):
         sections = [(t, b) for t, b in sections if t != "Compétences attestées"]

@@ -132,7 +132,8 @@ class TestFormationPage:
             "Infos clés",
             "Lieux",
             "Présentation",
-            "Programme du Mastère",
+            "Programme du Mastère — Mastère 1 — Module 1",
+            "Programme du Mastère — Mastère 2 — Module 1",
             "Tarifs",
             "Ce titre en quelques chiffres",
         ]
@@ -199,10 +200,11 @@ class TestFormationPage:
         html = FORMATION_HTML.replace("Méthodes mobilisées", "Les méthodes mobilisées")
         assert "Moodle" not in "\n".join(b for _, b in parse_formation_page(html)["sections"])
 
-    def test_modules_are_prefixed_with_their_year(self):
-        programme = dict(parse_formation_page(FORMATION_HTML)["sections"])["Programme du Mastère"]
-        assert "### Mastère 1 — Module 1\n- Fondamentaux du ML" in programme
-        assert "### Mastère 2 — Module 1\n- Systèmes RAG avancés" in programme
+    def test_one_programme_section_per_module_named_with_its_year(self):
+        sections = dict(parse_formation_page(FORMATION_HTML)["sections"])
+        assert sections["Programme du Mastère — Mastère 1 — Module 1"] == "- Fondamentaux du ML"
+        assert sections["Programme du Mastère — Mastère 2 — Module 1"] == "- Systèmes RAG avancés"
+        assert "Programme du Mastère" not in sections
 
     def test_tarifs_keep_prices_but_not_shared_payment_terms(self):
         tarifs = dict(parse_formation_page(FORMATION_HTML)["sections"])["Tarifs"]
@@ -222,7 +224,7 @@ class TestFormationPage:
 class TestLoadHtml:
     def test_one_document_per_section_with_metadata(self, tmp_path: Path):
         docs = load_file(_write_page(tmp_path))
-        assert len(docs) == 6
+        assert len(docs) == 7
         meta = docs[0]["metadata"]
         assert meta["section"] == "Infos clés"
         assert meta["formation"] == "Mastère Expert en intelligence artificielle"
@@ -231,13 +233,14 @@ class TestLoadHtml:
 
     def test_every_chunk_carries_formation_and_section(self, tmp_path: Path):
         chunks = chunk_documents(load_file(_write_page(tmp_path)), chunk_size=60, chunk_overlap=0)
-        programme = [c for c in chunks if c["metadata"]["section"] == "Programme du Mastère"]
+        programme = [c for c in chunks if c["metadata"]["section"].startswith("Programme du")]
         assert len(programme) > 1
-        prefix = (
-            "Mastère Expert en intelligence artificielle (3 campus et en ligne) — "
-            "Programme du Mastère\n"
-        )
-        assert all(c["text"].startswith(prefix) for c in programme)
+        for c in programme:
+            prefix = (
+                "Mastère Expert en intelligence artificielle (3 campus et en ligne) — "
+                f"{c['metadata']['section']}\n"
+            )
+            assert c["text"].startswith(prefix)
 
     def test_generic_html_fallback(self, tmp_path: Path):
         page = _write_page(
@@ -251,7 +254,7 @@ class TestLoadHtml:
 
     def test_load_directory_picks_up_html(self, tmp_path: Path):
         _write_page(tmp_path)
-        assert len(load_directory(tmp_path)) == 6
+        assert len(load_directory(tmp_path)) == 7
 
 
 INFO_HTML = """<!doctype html><html><body><main>
