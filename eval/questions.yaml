@@ -31,6 +31,7 @@
 #       instead of three or four separate bloc sections (EC-04); q11 answer check also
 #       accepts "1 heure"
 #   v10 q32 answer check: "BAC ou BAC+2" is as right as "BAC et BAC+2"
+#   v11 q31 answer check also accepts "hors Parcoursup"
 
 - id: q01
   question: Combien coûte le Mastère Expert en intelligence artificielle ?
@@ -216,7 +217,7 @@
   question: Les Bachelors Ynov passent-ils par Parcoursup ?
   expect:
     - {source: condition-admission.html, section: Parcoursup}
-  answer_must: ['sans passer par Parcoursup|accessibles directement']
+  answer_must: ['sans passer par Parcoursup|accessibles directement|hors Parcoursup']
 
 - id: q32
   question: Quel niveau faut-il pour entrer en BTS ERA ?

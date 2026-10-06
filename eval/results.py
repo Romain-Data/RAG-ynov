@@ -35,7 +35,7 @@ import yaml
 EVAL_DIR = Path(__file__).parent
 RESULTS_DIR = EVAL_DIR / "results"
 QUESTIONS = EVAL_DIR / "questions.yaml"
-QUESTION_SET = "v10"
+QUESTION_SET = "v11"
 CONVERSATIONS = EVAL_DIR / "conversations.yaml"
 CONVERSATION_SET = "c2"
 SCHEMA_VERSION = 1
@@ -85,7 +85,8 @@ def check_answer(question: dict, answer: str, refused: bool = False) -> dict:
 
     Returns {"must": {regex: bool}, "must_not_hits": [regex], "verdict": str}.
     """
-    text = re.sub(r"[\s  ]+", " ", answer.replace("**", ""))
+    # The LLM writes "qu’aux" as often as "qu'aux": the regexes of the questions use the latter
+    text = re.sub(r"[\s  ]+", " ", answer.replace("**", "").replace("’", "'"))
     must = {p: bool(re.search(p, text, re.IGNORECASE)) for p in question.get("answer_must", [])}
     must_not_hits = [
         p for p in question.get("answer_must_not", []) if re.search(p, text, re.IGNORECASE)

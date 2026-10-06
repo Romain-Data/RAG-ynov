@@ -189,3 +189,12 @@ class TestOutOfScope:
         )
         assert summary["in_scope_correct"] == 1 and summary["in_scope_total"] == 2
         assert summary["out_of_scope_correct"] == 1
+
+
+def test_a_typographic_apostrophe_does_not_hide_a_refusal() -> None:
+    """The preprod answered "qu’aux" (U+2019) and q19, q26 were judged wrong."""
+    from eval.results import check_answer
+
+    answer = "Je ne peux répondre qu’aux questions sur Ynov Campus."
+    assert check_answer({"out_of_scope": "llm"}, answer)["verdict"] == "correct"
+    assert check_answer({"answer_must": ["qu'aux"]}, answer)["must"] == {"qu'aux": True}
