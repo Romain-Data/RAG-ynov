@@ -17,6 +17,20 @@ def cited_numbers(answer: str) -> list[int]:
     return sorted({int(n) for n in re.findall(r"Source (\d+)", answer)})
 
 
+def _escape(text: str) -> str:
+    """Section titles hold "[RNCP39583]" or "*BTS…": keep them from breaking a Markdown link."""
+    return re.sub(r"([\\\[\]*_`])", r"\\\1", text)
+
+
+def _label(src: dict) -> str:
+    label: str = src.get("title") or src["source"]
+    if src.get("section") and src["section"] != label:
+        label += f" — {src['section']}"
+    if src.get("page") and src["source"].endswith(".pdf"):  # only a PDF has real pages
+        label += f" (p. {src['page']})"
+    return label
+
+
 def with_sources(answer: str, sources: list[dict]) -> str:
     """The answer followed by the list of the sources it cites, numbered like in the text."""
     lines = []
@@ -24,12 +38,11 @@ def with_sources(answer: str, sources: list[dict]) -> str:
         if not 1 <= number <= len(sources):
             continue
         src = sources[number - 1]
-        label = src["source"]
-        if src.get("section"):
-            label += f" — {src['section']}"
-        if src.get("page") and not src["source"].endswith(".html"):  # HTML pages have no pages
-            label += f" (p. {src['page']})"
-        lines.append(f"{number}. {label}")
+        url = src.get("url") or ""
+        if url.startswith(("https://", "http://")):
+            lines.append(f"{number}. [{_escape(_label(src))}]({url.replace(')', '%29')})")
+        else:
+            lines.append(f"{number}. {_label(src)}")
     if not lines:
         return answer
     return answer + _SOURCES_SEPARATOR + "\n".join(lines)

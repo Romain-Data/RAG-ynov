@@ -58,12 +58,15 @@ def build_context(retrieved: list[dict]) -> tuple[str, list[dict]]:
             break
         total += len(text)
         context_parts.append(f"{label}\n{text}")
+        metadata = hits[0].get("metadata") or {}
         sources.append(
             {
                 "source": source,
                 "page": page,
                 "section": section,
                 "score": max(h.get("score", 0.0) for h in hits),
+                "title": metadata.get("title"),
+                "url": metadata.get("url"),
             }
         )
     return "\n\n".join(context_parts), sources

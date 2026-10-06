@@ -21,7 +21,17 @@ def test_a_short_section_is_sent_whole_once() -> None:
     hits = [_hit("line one.", "S", 0.8, whole), _hit("line three.", "S", 0.6, whole)]
     context, sources = build_context(hits)
     assert context == f"[Source 1: a.html, p.1]\n{whole}"
-    assert sources == [{"source": "a.html", "page": 1, "section": "S", "score": 0.8}]
+    assert sources == [
+        {"source": "a.html", "page": 1, "section": "S", "score": 0.8, "title": None, "url": None}
+    ]
+
+
+def test_the_source_carries_the_title_and_url_of_its_page() -> None:
+    hit = _hit("x", "S", 0.8)
+    hit["metadata"] = {"title": "BTS ERA", "url": "https://www.ynov.com/formations/bts-era"}
+    _, sources = build_context([hit])
+    assert sources[0]["title"] == "BTS ERA"
+    assert sources[0]["url"] == "https://www.ynov.com/formations/bts-era"
 
 
 def test_without_section_text_the_retrieved_chunks_are_joined() -> None:

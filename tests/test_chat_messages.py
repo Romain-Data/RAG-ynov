@@ -27,6 +27,49 @@ class TestSources:
         assert "1. bachelor-informatique.html — Infos clés\n" in text + "\n"  # page 1: no "(p. 1)"
         assert "(p. 1)" not in text and "(p. 4)" in text
 
+    def test_a_markdown_document_has_no_page_number(self):
+        sources = [
+            {"source": "informations-communes-formations.md", "section": "Paiement", "page": 1}
+        ]
+        assert with_sources("A [Source 1]", sources).endswith(
+            "1. informations-communes-formations.md — Paiement"
+        )
+
+    def test_a_source_with_a_url_is_a_link_named_after_the_page(self):
+        sources = [
+            {
+                "source": "bts-era.html",
+                "title": "BTS ERA - Étude et Réalisation d'Agencement",
+                "section": "Infos clés",
+                "url": "https://www.ynov.com/formations/architecture-d-interieur/bts-era",
+            }
+        ]
+        assert with_sources("Niveau [Source 1]", sources).endswith(
+            "1. [BTS ERA - Étude et Réalisation d'Agencement — Infos clés]"
+            "(https://www.ynov.com/formations/architecture-d-interieur/bts-era)"
+        )
+
+    def test_markdown_characters_of_a_title_cannot_break_the_link(self):
+        sources = [
+            {
+                "source": "rncp-39583.html",
+                "title": "RNCP39583 — Expert",
+                "section": "Statistiques [RNCP39583] *x*",
+                "url": "https://www.francecompetences.fr/recherche/rncp/39583/",
+            }
+        ]
+        text = with_sources("A [Source 1]", sources)
+        assert r"\[RNCP39583\] \*x\*](https://" in text
+
+    def test_a_url_that_is_not_http_is_not_linked(self):
+        sources = [{"source": "a.html", "section": "S", "url": "javascript:alert(1)"}]
+        text = with_sources("A [Source 1]", sources)
+        assert "](" not in text and text.endswith("1. a.html — S")
+
+    def test_a_closing_parenthesis_in_the_url_is_encoded(self):
+        sources = [{"source": "a.html", "url": "https://example.com/a_(b)"}]
+        assert with_sources("A [Source 1]", sources).endswith("(https://example.com/a_(b%29)")
+
     def test_unknown_numbers_are_ignored(self):
         assert with_sources("Réponse [Source 9]", SOURCES) == "Réponse [Source 9]"
 
