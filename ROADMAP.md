@@ -17,9 +17,9 @@ Plan du projet RAG Ynov. Chaque chantier est suivi dans une issue GitHub (label 
 | [#14](https://github.com/Romain-Data/RAG-ynov/issues/14) | ~~Améliorer la qualité des réponses~~ **fait le 6 octobre 2026** (de 11/16 à 22/22 questions Ynov, 0 fausse, salutations et remerciements, liens vers les sources ; MiniLM conservé) | qualité | — |
 | [#15](https://github.com/Romain-Data/RAG-ynov/issues/15) | ~~Mettre en place l'intégration continue~~ **fait le 4 octobre 2026** (aucun appel au LLM sur les PR ; évaluation sur la préprod avant la mise en production) | infra | — |
 | [#16](https://github.com/Romain-Data/RAG-ynov/issues/16) | Tableau de bord de l'évolution des résultats | produit | #18, #19 (pour les indicateurs d'usage) |
-| [#17](https://github.com/Romain-Data/RAG-ynov/issues/17) | Interface utilisateur de chat (Chainlit, comptes, historique) : **en prod depuis le 3 octobre 2026** ; reste la limite de fréquence du chat, l'essai par un vrai compte, l'accessibilité | produit | ~~#14 (liens vers les sources)~~ fait |
+| [#17](https://github.com/Romain-Data/RAG-ynov/issues/17) | ~~Interface utilisateur de chat (Chainlit, comptes, historique)~~ **clos** (en prod depuis le 3 octobre 2026, chat sur `/` depuis le 6) ; non traités à la clôture : limite de fréquence du chat, essai par un vrai compte, accessibilité | produit | ~~#14 (liens vers les sources)~~ fait |
 | [#18](https://github.com/Romain-Data/RAG-ynov/issues/18) | Journal des réponses pour la revue manuelle | produit | — |
-| [#19](https://github.com/Romain-Data/RAG-ynov/issues/19) | Bouton « réponse satisfaisante ou non » | produit | #17, #18 |
+| [#19](https://github.com/Romain-Data/RAG-ynov/issues/19) | Bouton « réponse satisfaisante ou non » ; inclut aussi : déplacer le bouton de suppression de compte, de la conversation au menu en haut à droite (si possible, sinon en bas de la colonne de gauche) | produit | #17, #18 |
 | [#20](https://github.com/Romain-Data/RAG-ynov/issues/20) | Rapport des questions sans réponse | produit | #18 |
 | [#21](https://github.com/Romain-Data/RAG-ynov/issues/21) | Rafraîchissement automatique du corpus et suivi des versions | données | — |
 
@@ -40,7 +40,7 @@ Plan du projet RAG Ynov. Chaque chantier est suivi dans une issue GitHub (label 
 1. ~~**#15 Intégration continue**~~ : **fait**. `main` est protégée : une PR et trois vérifications (`quality`, `tests`, `retrieval`) sont obligatoires.
 2. ~~**#14 Qualité des réponses**~~ : **fait** ; **#21 Rafraîchissement du corpus** se mesure sur la préprod avant la prod. #21 apporte les versions du corpus, utiles pour comparer les résultats dans le temps ; la commande `python -m ingestion.run` (#14) en est la première brique.
 3. **#18 Journal des réponses** : la base de #19, #20 et des indicateurs d'usage de #16.
-4. **#17 Interface utilisateur** (en prod ; reste la limite de fréquence du chat et l'essai par un vrai compte), puis **#19 Bouton d'avis**.
+4. ~~**#17 Interface utilisateur**~~ : **clos** (en prod) ; puis **#19 Bouton d'avis**, avec le déplacement du bouton de suppression de compte.
 5. **#20 Rapport des questions sans réponse** et **#16 Tableau de bord**, quand le journal contient assez de données.
 
 ## Comment avancer sur un chantier
