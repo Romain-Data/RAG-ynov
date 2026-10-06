@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "run_id": "2026-10-06_04_smalltalk",
+  "date": "2026-10-06",
+  "kind": "conversation",
+  "environment": "local",
+  "git_commit": "8d20e18+dirty",
+  "question_set": "c2",
+  "milestone": false,
+  "label": "smalltalk",
+  "notes": "Lot 5 de #14 (EC-16) : salutations et remerciements répondus sans recherche ni LLM.",
+  "config": {
+    "mode": "local graph",
+    "llm_model": "mistral-medium-3-5",
+    "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "chunk_size": 300,
+    "n_chunks": 6466,
+    "limit": 10,
+    "candidates": 40,
+    "max_per_section": 2,
+    "grade_threshold": 0.47
+  },
+  "results": [
+    {
+      "question_id": "c07.1",
+      "conversation": "c07",
+      "turn": 1,
+      "question": "Combien de temps dure le Bachelor Informatique ?",
+      "out_of_scope": null,
+      "latency_s": 1.84,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "3 ans|trois ans": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "rewritten": null,
+      "answer": "Le Bachelor Informatique dure **3 ans** [Source 1].",
+      "sources": [
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.7848898307714155
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 3 : Informatique - Développement — Spécialise-toi : deviens un développeur opérationnel en entreprise",
+          "score": 0.7805719842095971
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 2 : Informatique — > Génie logiciel et qualité web",
+          "score": 0.7669969328214488
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Voie d'accès et prérequis à la formation",
+          "score": 0.7565868791765096
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 1 : Informatique — Marqueurs Ynov",
+          "score": 0.7521140151577481
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 1 : Informatique — Couverte de la programmation",
+          "score": 0.723916054106716
+        },
+        {
+          "source": "bachelor-cybersecurite.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelors 3 — Bachelor 3 : Infrastructure & Réseau",
+          "score": 0.720034944562508
+        },
+        {
+          "source": "mastere-expert-en-developpement-informatique-specialise-banque-assurance.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.36873457532017256
+        },
+        {
+          "source": "bachelor-architecture-d-interieur.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.5641651233526939
+        }
+      ],
+      "edge_cases": []
+    },
+    {
+      "question_id": "c07.2",
+      "conversation": "c07",
+      "turn": 2,
+      "question": "Merci beaucoup !",
+      "out_of_scope": null,
+      "latency_s": 0.0,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "de rien|avec plaisir|n.hésitez pas|bonne (journée|continuation)": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "rewritten": null,
+      "answer": "Avec plaisir ! N'hésitez pas si vous avez d'autres questions sur les formations Ynov, l'admission ou les tarifs.",
+      "sources": [],
+      "edge_cases": []
+    },
+    {
+      "question_id": "c08.1",
+      "conversation": "c08",
+      "turn": 1,
+      "question": "Bonjour",
+      "out_of_scope": null,
+      "latency_s": 0.0,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "bonjour|bienvenue|puis-je vous aider|comment puis-je": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "rewritten": null,
+      "answer": "Bonjour ! Je suis l'assistant d'information d'Ynov Campus. Je peux répondre à vos questions sur les formations (BTS, Bachelors, Mastères), l'admission, les tarifs et le financement. Que souhaitez-vous savoir ?",
+      "sources": [],
+      "edge_cases": []
+    }
+  ],
+  "summary": {
+    "total": 3,
+    "passed": 3,
+    "correct": 3,
+    "partial": 0,
+    "wrong": 0,
+    "refused": 0,
+    "no_answer": 0,
+    "error": 0
+  }
+}
