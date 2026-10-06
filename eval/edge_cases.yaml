@@ -363,7 +363,7 @@
 - id: EC-16
   title: Les salutations et les remerciements sont refusés
   category: grading
-  status: open
+  status: fixed
   questions: [c07.2, c08.1]
   discovered_in: 2026-10-03_04_local-conversations-jeu-c2
   symptom: >
@@ -381,6 +381,7 @@
     Prévu dans le chantier #14 (abandonné le 2026-10-04, repris le même jour). Piste : repérer les messages de politesse avant la recherche (règles simples ou appel
     LLM) et répondre en une phrase, en rappelant ce que l'assistant sait faire. À mesurer avec
     les scénarios c07 et c08.
+    Lot 5 (#14) : nœud `graph/nodes/smalltalk.py` en tête des deux graphes. Un message fait uniquement de mots de politesse (bonjour, merci, d'accord, au revoir…, 8 mots au plus) reçoit une réponse fixe, sans recherche ni LLM ; tout autre mot (« Merci, et à Lyon ? ») suit le chemin normal. Sur les 50 messages des jeux d'évaluation, seuls « Bonjour » et « Merci beaucoup ! » sont interceptés. Passages 2026-10-06_04 et 05 : c07.2 et c08.1 correctes, jeu de conversations 18/18.
 
 - id: EC-17
   title: Le fait cherché est dans la section récupérée, mais pas dans les chunks transmis

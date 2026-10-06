@@ -108,6 +108,7 @@ def local_asker(
                 {
                     "answer": state.get("answer", ""),
                     "sources": state.get("sources", []),
+                    "grade": state.get("grade"),
                     "rewritten": state.get("rewritten"),
                 },
                 time.time() - start,
@@ -130,6 +131,12 @@ def local_asker(
     return ask_local, config
 
 
+def _refused(data: dict) -> bool:
+    """The grading refused the question. The API sends `grade`; without it, no source means
+    refused. A greeting is answered with no source and is not a refusal (EC-16)."""
+    return bool(data.get("grade", "ok" if data["sources"] else "refuse") == "refuse")
+
+
 def run(ask_fn: Callable[[str], Answer], ids: set[str] | None, pause: float) -> list[dict]:
     results = []
     for q in load_questions():
@@ -148,7 +155,7 @@ def run(ask_fn: Callable[[str], Answer], ids: set[str] | None, pause: float) -> 
         else:
             # The API answers with no source when the grading threshold refuses the
             # question: the LLM is not called.
-            refused = not data["sources"]
+            refused = _refused(data)
             check = check_answer(q, data["answer"], refused=refused)
             result = {
                 "question_id": q["id"],
@@ -192,7 +199,7 @@ def run_conversations(
             if data is None:
                 result = {**base, "passed": False, "verdict": "error", "error": error}
             else:
-                check = check_answer(turn, data["answer"], refused=not data["sources"])
+                check = check_answer(turn, data["answer"], refused=_refused(data))
                 result = {
                     **base,
                     "passed": check["verdict"] == "correct",

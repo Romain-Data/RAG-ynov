@@ -1,0 +1,1319 @@
+{
+  "schema_version": 1,
+  "run_id": "2026-10-06_05_conversations-lot5",
+  "date": "2026-10-06",
+  "kind": "conversation",
+  "environment": "local",
+  "git_commit": "8d20e18+dirty",
+  "question_set": "c2",
+  "milestone": true,
+  "label": "conversations-lot5",
+  "notes": "Lot 5 de #14 : jeu c2 complet (8 scénarios, 18 tours) avec recherche hybride, sections entières et smalltalk. Verdicts automatiques, à relire.",
+  "config": {
+    "mode": "local graph",
+    "llm_model": "mistral-medium-3-5",
+    "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "chunk_size": 300,
+    "n_chunks": 6466,
+    "limit": 10,
+    "candidates": 40,
+    "max_per_section": 2,
+    "grade_threshold": 0.47
+  },
+  "results": [
+    {
+      "question_id": "c01.1",
+      "conversation": "c01",
+      "turn": 1,
+      "question": "Combien de temps dure le Bachelor Informatique ?",
+      "out_of_scope": null,
+      "latency_s": 1.51,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "3 ans|trois ans": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "rewritten": null,
+      "answer": "Le Bachelor Informatique dure **3 ans** [Source 1].",
+      "sources": [
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.7848898307714155
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 3 : Informatique - Développement — Spécialise-toi : deviens un développeur opérationnel en entreprise",
+          "score": 0.7805719842095971
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 2 : Informatique — > Génie logiciel et qualité web",
+          "score": 0.7669969328214488
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Voie d'accès et prérequis à la formation",
+          "score": 0.7565868791765096
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 1 : Informatique — Marqueurs Ynov",
+          "score": 0.7521140151577481
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 1 : Informatique — Couverte de la programmation",
+          "score": 0.723916054106716
+        },
+        {
+          "source": "bachelor-cybersecurite.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelors 3 — Bachelor 3 : Infrastructure & Réseau",
+          "score": 0.720034944562508
+        },
+        {
+          "source": "mastere-expert-en-developpement-informatique-specialise-banque-assurance.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.36873457532017256
+        },
+        {
+          "source": "bachelor-architecture-d-interieur.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.5641651233526939
+        }
+      ],
+      "edge_cases": []
+    },
+    {
+      "question_id": "c01.2",
+      "conversation": "c01",
+      "turn": 2,
+      "question": "Et dans quelles villes est-il proposé ?",
+      "out_of_scope": null,
+      "latency_s": 2.27,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "Lyon": true,
+          "Bordeaux": true,
+          "Strasbourg": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "rewritten": "Dans quelles villes le Bachelor Informatique est-il proposé ?",
+      "answer": "Le Bachelor Informatique est proposé dans **13 villes (campus Ynov)** :\n- Aix-en-Provence\n- Bordeaux\n- Lyon\n- Nantes\n- Paris\n- Toulouse\n- Sophia\n- Montpellier\n- Lille\n- Rennes\n- Val d'Europe\n- Rouen\n- Strasbourg\n\n[Source 2]",
+      "sources": [
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Métiers et dynamique du marché",
+          "score": 0.7027421048454132
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Lieux",
+          "score": 0.695946075495133
+        },
+        {
+          "source": "bachelor-batiment-numerique.html",
+          "page": 1,
+          "section": "Présentation",
+          "score": 0.6679037648268233
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Équivalences",
+          "score": 0.661407832641314
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Compétences et objectifs de la formation",
+          "score": 0.6575014544319056
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 2 : Informatique — > Génie logiciel et qualité web",
+          "score": 0.6511526939085284
+        },
+        {
+          "source": "bts-ciel.html",
+          "page": 1,
+          "section": "Lieux",
+          "score": 0.5984609584198162
+        },
+        {
+          "source": "bachelor-batiment-numerique.html",
+          "page": 1,
+          "section": "Lieux",
+          "score": 0.5822829580133182
+        }
+      ],
+      "edge_cases": []
+    },
+    {
+      "question_id": "c01.3",
+      "conversation": "c01",
+      "turn": 3,
+      "question": "Et quand est la prochaine rentrée ?",
+      "out_of_scope": null,
+      "latency_s": 1.59,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "septembre 2027": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "rewritten": "Quand est la prochaine rentrée du Bachelor Informatique ?",
+      "answer": "La prochaine rentrée du Bachelor Informatique est en **septembre 2027** [Source 1].",
+      "sources": [
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.7907611945847167
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Voie d'accès et prérequis à la formation",
+          "score": 0.7532949633775303
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 2 : Informatique — La deuxième année : du code qui fonctionne au code qui tourne en production",
+          "score": 0.7432510547127646
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.7238253551145581
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 2 : Informatique — > Génie logiciel et qualité web",
+          "score": 0.7192414171745489
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 3 : Informatique - Développement — Spécialise-toi : deviens un développeur opérationnel en entreprise",
+          "score": 0.7160278408244255
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Ce titre en quelques chiffres",
+          "score": 0.7115719152498661
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Présentation",
+          "score": 0.7113098097611952
+        },
+        {
+          "source": "mastere-expert-en-developpement-informatique-specialise-banque-assurance.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.38099689810427645
+        },
+        {
+          "source": "bachelor-architecture-d-interieur.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.5729090702230455
+        }
+      ],
+      "edge_cases": []
+    },
+    {
+      "question_id": "c02.1",
+      "conversation": "c02",
+      "turn": 1,
+      "question": "Où peut-on suivre le BTS ERA ?",
+      "out_of_scope": null,
+      "latency_s": 0.7,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "Strasbourg": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "rewritten": null,
+      "answer": "Le BTS ERA - Étude et Réalisation d'Agencement est proposé **uniquement sur le campus de Strasbourg** [Source 6].",
+      "sources": [
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements professionnels",
+          "score": 0.6728881594601445
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Présentation",
+          "score": 0.6702134747992803
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Métiers et dynamique du marché",
+          "score": 0.6382695588593623
+        },
+        {
+          "source": "bts-ciel.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements professionnels",
+          "score": 0.63714764676484
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.6360785347668115
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Lieux",
+          "score": 0.623326621561541
+        },
+        {
+          "source": "bts-sio-slam.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements généraux",
+          "score": 0.6198800038764812
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Ce que tu vas apprendre",
+          "score": 0.5797233987771528
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Les modalités d’évaluations certificatives",
+          "score": 0.5148126537974058
+        }
+      ],
+      "edge_cases": []
+    },
+    {
+      "question_id": "c02.2",
+      "conversation": "c02",
+      "turn": 2,
+      "question": "Et combien de temps dure-t-il ?",
+      "out_of_scope": null,
+      "latency_s": 1.51,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "2 ans|deux ans": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "rewritten": "Combien de temps dure le BTS ERA ?",
+      "answer": "Le BTS ERA - Étude et Réalisation d'Agencement dure **2 ans** [Source 1].",
+      "sources": [
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.6592785562103823
+        },
+        {
+          "source": "bts-communication.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements généraux",
+          "score": 0.6568759763084482
+        },
+        {
+          "source": "bts-ndrc.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements généraux",
+          "score": 0.6349932745231761
+        },
+        {
+          "source": "bts-ciel.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements généraux",
+          "score": 0.633579541645424
+        },
+        {
+          "source": "bts-sio-slam.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements généraux",
+          "score": 0.6280567084113763
+        },
+        {
+          "source": "bts-sio-sisr.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements généraux",
+          "score": 0.6235810692954571
+        },
+        {
+          "source": "bts-ciel.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.609844366968382
+        },
+        {
+          "source": "bts-mco.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements généraux",
+          "score": 0.6004855537233806
+        },
+        {
+          "source": "bts-sio-slam.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.5517485431635222
+        },
+        {
+          "source": "bts-sio-sisr.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.5745067282301721
+        }
+      ],
+      "edge_cases": []
+    },
+    {
+      "question_id": "c02.3",
+      "conversation": "c02",
+      "turn": 3,
+      "question": "Quel niveau faut-il pour y entrer ?",
+      "out_of_scope": null,
+      "latency_s": 2.66,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "BAC": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "rewritten": "Quel niveau faut-il pour entrer en BTS ERA - Étude et Réalisation d'Agencement ?",
+      "answer": "Le niveau requis pour entrer en BTS ERA - Étude et Réalisation d'Agencement est **BAC ou BAC+2** [Source 9].",
+      "sources": [
+        {
+          "source": "bts-communication.html",
+          "page": 1,
+          "section": "Les modalités d’évaluations certificatives",
+          "score": 0.7738440646309972
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Les modalités d’évaluations certificatives",
+          "score": 0.7686199764898652
+        },
+        {
+          "source": "bts-ciel.html",
+          "page": 1,
+          "section": "Les modalités d’évaluations certificatives",
+          "score": 0.7636583912165229
+        },
+        {
+          "source": "bts-mec.html",
+          "page": 1,
+          "section": "Les modalités d’évaluations certificatives",
+          "score": 0.7615011743578337
+        },
+        {
+          "source": "bts-metiers-de-l-audiovisuel-option-metiers-du-montage-et-de-la-postproduction.html",
+          "page": 1,
+          "section": "Les modalités d’évaluations certificatives",
+          "score": 0.7562792843130843
+        },
+        {
+          "source": "bts-sio-slam.html",
+          "page": 1,
+          "section": "Les modalités d’évaluations certificatives",
+          "score": 0.755803085682355
+        },
+        {
+          "source": "bts-sio-sisr.html",
+          "page": 1,
+          "section": "Les modalités d’évaluations certificatives",
+          "score": 0.7508716891730117
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Équivalences",
+          "score": 0.7400360125218879
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.7103326082434552
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Lieux",
+          "score": 0.6283487432813564
+        }
+      ],
+      "edge_cases": [
+        "EC-07"
+      ],
+      "review_note": "« BAC ou BAC+2 » : la section Infos clés est trouvée grâce au BM25 (EC-07, lot 4)."
+    },
+    {
+      "question_id": "c03.1",
+      "conversation": "c03",
+      "turn": 1,
+      "question": "Combien de temps dure le Bachelor Informatique ?",
+      "out_of_scope": null,
+      "latency_s": 3.93,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "3 ans|trois ans": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "rewritten": null,
+      "answer": "Le Bachelor Informatique dure **3 ans** [Source 1].",
+      "sources": [
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.7848898307714155
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 3 : Informatique - Développement — Spécialise-toi : deviens un développeur opérationnel en entreprise",
+          "score": 0.7805719842095971
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 2 : Informatique — > Génie logiciel et qualité web",
+          "score": 0.766996932821449
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Voie d'accès et prérequis à la formation",
+          "score": 0.7565868791765097
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 1 : Informatique — Marqueurs Ynov",
+          "score": 0.7521140151577481
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 1 : Informatique — Couverte de la programmation",
+          "score": 0.7239160541067161
+        },
+        {
+          "source": "bachelor-cybersecurite.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelors 3 — Bachelor 3 : Infrastructure & Réseau",
+          "score": 0.720034944562508
+        },
+        {
+          "source": "mastere-expert-en-developpement-informatique-specialise-banque-assurance.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.36873457532017256
+        },
+        {
+          "source": "bachelor-architecture-d-interieur.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.5641651233526939
+        }
+      ],
+      "edge_cases": []
+    },
+    {
+      "question_id": "c03.2",
+      "conversation": "c03",
+      "turn": 2,
+      "question": "Et le BTS ERA ?",
+      "out_of_scope": null,
+      "latency_s": 1.62,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "2 ans|deux ans": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "rewritten": "Combien de temps dure le BTS ERA ?",
+      "answer": "Le BTS ERA - Étude et Réalisation d'Agencement dure **2 ans** [Source 1].",
+      "sources": [
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.6592785562103823
+        },
+        {
+          "source": "bts-communication.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements généraux",
+          "score": 0.6568759763084482
+        },
+        {
+          "source": "bts-ndrc.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements généraux",
+          "score": 0.6349932745231761
+        },
+        {
+          "source": "bts-ciel.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements généraux",
+          "score": 0.633579541645424
+        },
+        {
+          "source": "bts-sio-slam.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements généraux",
+          "score": 0.6280567084113763
+        },
+        {
+          "source": "bts-sio-sisr.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements généraux",
+          "score": 0.6235810692954571
+        },
+        {
+          "source": "bts-ciel.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.609844366968382
+        },
+        {
+          "source": "bts-mco.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements généraux",
+          "score": 0.6004855537233806
+        },
+        {
+          "source": "bts-sio-slam.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.5517485431635222
+        },
+        {
+          "source": "bts-sio-sisr.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.5745067282301721
+        }
+      ],
+      "edge_cases": []
+    },
+    {
+      "question_id": "c04.1",
+      "conversation": "c04",
+      "turn": 1,
+      "question": "Combien coûte le Mastère Expert en intelligence artificielle ?",
+      "out_of_scope": null,
+      "latency_s": 2.07,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "9[  ]?000|9[  ]?500": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "rewritten": null,
+      "answer": "Le Mastère Expert en intelligence artificielle coûte :\n- **9 000 € par année** (Mastère 1 et Mastère 2) en règlement au comptant.\n- **9 500 € par année** (Mastère 1 et Mastère 2) en règlement échelonné.\n\nCes tarifs sont valables pour l’année 2027/2028 sous statut étudiant (disponible sur l'ensemble des campus sauf Ynov Connect).\n[Source 2]",
+      "sources": [
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Programme du Mastère — Mastère 1 — Module 2",
+          "score": 0.7577292532302364
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.7142730882625594
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Programme du Mastère — Mastère 2 — Module 1",
+          "score": 0.7097898241531826
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Programme du Mastère — Mastère 2 — Module 2",
+          "score": 0.694714713627087
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Métiers et dynamique du marché",
+          "score": 0.6678275488354466
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Présentation",
+          "score": 0.6631617181348874
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.6252428311617676
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Nos méthodes pédagogiques",
+          "score": 0.6552210442523275
+        }
+      ],
+      "edge_cases": []
+    },
+    {
+      "question_id": "c04.2",
+      "conversation": "c04",
+      "turn": 2,
+      "question": "Et une VAE chez Ynov, combien ça coûte ?",
+      "out_of_scope": null,
+      "latency_s": 3.08,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "500": true,
+          "2[  ]?000": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "rewritten": "Quel est le coût d'une VAE chez Ynov ?",
+      "answer": "Le coût d'une VAE chez Ynov est le suivant :\n- **Frais de Jury du dossier de recevabilité** : 500 € TTC\n- **Frais de Jury VAE** : 2 000 € TTC\n\n*Tarifs TTC calculés selon le taux de TVA en vigueur (20%).*\n[Source 1]",
+      "sources": [
+        {
+          "source": "vae-ynov.html",
+          "page": 1,
+          "section": "Coût de la VAE Ynov :",
+          "score": 0.6935803416481231
+        },
+        {
+          "source": "vae-ynov.html",
+          "page": 1,
+          "section": "Profils",
+          "score": 0.6448267321831531
+        },
+        {
+          "source": "vae-ynov.html",
+          "page": 1,
+          "section": "Lancez-vous dans une démarche de VAE Ynov",
+          "score": 0.622991670137977
+        },
+        {
+          "source": "vae-ynov.html",
+          "page": 1,
+          "section": "Démarche VAE",
+          "score": 0.6119451546471772
+        },
+        {
+          "source": "vae-ynov.html",
+          "page": 1,
+          "section": "Témoignage",
+          "score": 0.5940419018495766
+        },
+        {
+          "source": "vae-ynov.html",
+          "page": 1,
+          "section": "Titres RNCP proposés à la VAE",
+          "score": 0.5830363942068086
+        },
+        {
+          "source": "vae-ynov.html",
+          "page": 1,
+          "section": "Capitalisez sur votre expérience, valorisez vos compétences professionnelles et validez un titre enregistré au RNCP.",
+          "score": 0.5795515866940999
+        },
+        {
+          "source": "vae-ynov.html",
+          "page": 1,
+          "section": "Les résultats avec la VAE chez Ynov",
+          "score": 0.5747318738236918
+        }
+      ],
+      "edge_cases": []
+    },
+    {
+      "question_id": "c05.1",
+      "conversation": "c05",
+      "turn": 1,
+      "question": "Combien de temps dure le Bachelor Informatique ?",
+      "out_of_scope": null,
+      "latency_s": 0.7,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "3 ans|trois ans": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "rewritten": null,
+      "answer": "Le Bachelor Informatique dure **3 ans** [Source 1].",
+      "sources": [
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.7848898307714155
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 3 : Informatique - Développement — Spécialise-toi : deviens un développeur opérationnel en entreprise",
+          "score": 0.7805719842095971
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 2 : Informatique — > Génie logiciel et qualité web",
+          "score": 0.766996932821449
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Voie d'accès et prérequis à la formation",
+          "score": 0.7565868791765097
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 1 : Informatique — Marqueurs Ynov",
+          "score": 0.7521140151577481
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 1 : Informatique — Couverte de la programmation",
+          "score": 0.7239160541067161
+        },
+        {
+          "source": "bachelor-cybersecurite.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelors 3 — Bachelor 3 : Infrastructure & Réseau",
+          "score": 0.720034944562508
+        },
+        {
+          "source": "mastere-expert-en-developpement-informatique-specialise-banque-assurance.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.36873457532017256
+        },
+        {
+          "source": "bachelor-architecture-d-interieur.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.5641651233526939
+        }
+      ],
+      "edge_cases": []
+    },
+    {
+      "question_id": "c05.2",
+      "conversation": "c05",
+      "turn": 2,
+      "question": "Et les frais de scolarité de HEC Paris ?",
+      "out_of_scope": "llm",
+      "latency_s": 1.25,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {},
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "rewritten": "Quels sont les frais de scolarité de HEC Paris ?",
+      "answer": "Je ne peux répondre qu'aux questions sur Ynov.",
+      "sources": [
+        {
+          "source": "mastere-expert-en-developpement-informatique-specialise-banque-assurance.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.609161535013913
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.5966891469022018
+        },
+        {
+          "source": "bts-mec.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.5757451593163696
+        },
+        {
+          "source": "armee-de-terre.html",
+          "page": 1,
+          "section": "Rémunération",
+          "score": 0.5334422712912248
+        },
+        {
+          "source": "mastere-expert-en-jumeaux-numeriques-du-batiment-de-la-ville-et-des-territoires.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.5074960518402004
+        },
+        {
+          "source": "armee-de-terre.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.5042596199460025
+        },
+        {
+          "source": "bts-ciel.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.5034337521930126
+        },
+        {
+          "source": "armee-de-terre.html",
+          "page": 1,
+          "section": "Logement et alimentation pendant la formation",
+          "score": 0.5021613621984695
+        },
+        {
+          "source": "condition-admission.html",
+          "page": 1,
+          "section": "FAQ — Quels sont les frais de scolarité pour un Bachelor ou un Mastère ?",
+          "score": 0.3911785609607767
+        }
+      ],
+      "edge_cases": []
+    },
+    {
+      "question_id": "c05.3",
+      "conversation": "c05",
+      "turn": 3,
+      "question": "Et pour le BTS ERA, combien de temps ?",
+      "out_of_scope": null,
+      "latency_s": 1.64,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "2 ans|deux ans": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "rewritten": "Combien de temps dure le BTS ERA ?",
+      "answer": "Le BTS ERA - Étude et Réalisation d'Agencement dure **2 ans** [Source 1].",
+      "sources": [
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.6592785562103823
+        },
+        {
+          "source": "bts-communication.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements généraux",
+          "score": 0.6568759763084482
+        },
+        {
+          "source": "bts-ndrc.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements généraux",
+          "score": 0.6349932745231761
+        },
+        {
+          "source": "bts-ciel.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements généraux",
+          "score": 0.633579541645424
+        },
+        {
+          "source": "bts-sio-slam.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements généraux",
+          "score": 0.6280567084113763
+        },
+        {
+          "source": "bts-sio-sisr.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements généraux",
+          "score": 0.6235810692954571
+        },
+        {
+          "source": "bts-ciel.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.609844366968382
+        },
+        {
+          "source": "bts-mco.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements généraux",
+          "score": 0.6004855537233806
+        },
+        {
+          "source": "bts-sio-slam.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.5517485431635222
+        },
+        {
+          "source": "bts-sio-sisr.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.5745067282301721
+        }
+      ],
+      "edge_cases": []
+    },
+    {
+      "question_id": "c06.1",
+      "conversation": "c06",
+      "turn": 1,
+      "question": "Le Mastère Expert en cybersécurité - Pentester se fait-il en présentiel ?",
+      "out_of_scope": null,
+      "latency_s": 1.6,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "en ligne": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "rewritten": null,
+      "answer": "Non, le **Mastère Expert en cybersécurité - Pentester** est **100 % en ligne et asynchrone**, avec **aucun campus** associé [Source 1, Source 4].\n\nCependant, une passerelle vers un format présentiel (via les campus Ynov proposant le même titre RNCP 40897) peut être étudiée au cas par cas [Source 8].",
+      "sources": [
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "page": 1,
+          "section": "Programme du Mastère — Mastère 1 — Tests d'intrusion : attaques avancées et reporting",
+          "score": 0.878455772153022
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "page": 1,
+          "section": "Métiers et dynamique du marché",
+          "score": 0.8647517732390758
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "page": 1,
+          "section": "Objectifs de la formation",
+          "score": 0.8605714274844342
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "page": 1,
+          "section": "Présentation",
+          "score": 0.8565554652934614
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "page": 1,
+          "section": "Programme du Mastère — Mastère 1 — Analyse SOC : détection et réponse aux incidents",
+          "score": 0.8548091302686702
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "page": 1,
+          "section": "Programme du Mastère — Mastère 2 — Recherche de vulnérabilités",
+          "score": 0.8543482656160953
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "page": 1,
+          "section": "* Titre d'Expert en cybersécurité - Niveau 7",
+          "score": 0.8541830601131878
+        },
+        {
+          "source": "informations-communes-formations.md",
+          "page": 1,
+          "section": "Passerelles — particularité : Mastère Expert en cybersécurité - Pentester",
+          "score": 0.6530341855910666
+        }
+      ],
+      "edge_cases": []
+    },
+    {
+      "question_id": "c06.2",
+      "conversation": "c06",
+      "turn": 2,
+      "question": "Et à Lyon ?",
+      "out_of_scope": null,
+      "latency_s": 2.61,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "en ligne": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "rewritten": "Le Mastère Expert en cybersécurité - Pentester est-il disponible en présentiel à Lyon ?",
+      "answer": "Non, le **Mastère Expert en cybersécurité - Pentester** est **100 % en ligne et asynchrone**, avec **aucun campus** associé [Source 1, Source 4].\n\nCependant, une passerelle vers le **Mastère Expert en cybersécurité** (qui lui est disponible en présentiel à Lyon) peut être étudiée, car les deux formations préparent le même titre RNCP 40897 [Source 9].",
+      "sources": [
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "page": 1,
+          "section": "Voies d’accès et prérequis à la formation",
+          "score": 0.8208714640178703
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "page": 1,
+          "section": "* Titre d'Expert en cybersécurité - Niveau 7",
+          "score": 0.8182670915135082
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite.html",
+          "page": 1,
+          "section": "Voies d’accès et prérequis à la formation",
+          "score": 0.780679101762328
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite.html",
+          "page": 1,
+          "section": "* Titre d'Expert en cybersécurité - Niveau 7",
+          "score": 0.7761865781059308
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite.html",
+          "page": 1,
+          "section": "Présentation",
+          "score": 0.7755613000483595
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite.html",
+          "page": 1,
+          "section": "Lieux",
+          "score": 0.7671513262991845
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "page": 1,
+          "section": "Programme du Mastère — Mastère 2 — Recherche de vulnérabilités",
+          "score": 0.7662269919088692
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "page": 1,
+          "section": "Programme du Mastère — Mastère 1 — Tests d'intrusion : attaques avancées et reporting",
+          "score": 0.7647261146035662
+        },
+        {
+          "source": "informations-communes-formations.md",
+          "page": 1,
+          "section": "Passerelles — particularité : Mastère Expert en cybersécurité - Pentester",
+          "score": 0.6058974261871991
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.5305293817517509
+        }
+      ],
+      "edge_cases": []
+    },
+    {
+      "question_id": "c07.1",
+      "conversation": "c07",
+      "turn": 1,
+      "question": "Combien de temps dure le Bachelor Informatique ?",
+      "out_of_scope": null,
+      "latency_s": 0.68,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "3 ans|trois ans": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "rewritten": null,
+      "answer": "Le Bachelor Informatique dure **3 ans** [Source 1].",
+      "sources": [
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.7848898307714155
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 3 : Informatique - Développement — Spécialise-toi : deviens un développeur opérationnel en entreprise",
+          "score": 0.7805719842095971
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 2 : Informatique — > Génie logiciel et qualité web",
+          "score": 0.766996932821449
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Voie d'accès et prérequis à la formation",
+          "score": 0.7565868791765097
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 1 : Informatique — Marqueurs Ynov",
+          "score": 0.7521140151577481
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 1 : Informatique — Couverte de la programmation",
+          "score": 0.7239160541067161
+        },
+        {
+          "source": "bachelor-cybersecurite.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelors 3 — Bachelor 3 : Infrastructure & Réseau",
+          "score": 0.720034944562508
+        },
+        {
+          "source": "mastere-expert-en-developpement-informatique-specialise-banque-assurance.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.36873457532017256
+        },
+        {
+          "source": "bachelor-architecture-d-interieur.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.5641651233526939
+        }
+      ],
+      "edge_cases": []
+    },
+    {
+      "question_id": "c07.2",
+      "conversation": "c07",
+      "turn": 2,
+      "question": "Merci beaucoup !",
+      "out_of_scope": null,
+      "latency_s": 0.0,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "de rien|avec plaisir|n.hésitez pas|bonne (journée|continuation)": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "rewritten": null,
+      "answer": "Avec plaisir ! N'hésitez pas si vous avez d'autres questions sur les formations Ynov, l'admission ou les tarifs.",
+      "sources": [],
+      "edge_cases": [
+        "EC-16"
+      ],
+      "review_note": "Réponse fixe sans recherche ni appel au LLM (EC-16, lot 5)."
+    },
+    {
+      "question_id": "c08.1",
+      "conversation": "c08",
+      "turn": 1,
+      "question": "Bonjour",
+      "out_of_scope": null,
+      "latency_s": 0.0,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "bonjour|bienvenue|puis-je vous aider|comment puis-je": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "rewritten": null,
+      "answer": "Bonjour ! Je suis l'assistant d'information d'Ynov Campus. Je peux répondre à vos questions sur les formations (BTS, Bachelors, Mastères), l'admission, les tarifs et le financement. Que souhaitez-vous savoir ?",
+      "sources": [],
+      "edge_cases": [
+        "EC-16"
+      ],
+      "review_note": "Réponse fixe sans recherche ni appel au LLM (EC-16, lot 5)."
+    }
+  ],
+  "summary": {
+    "total": 18,
+    "passed": 18,
+    "correct": 18,
+    "partial": 0,
+    "wrong": 0,
+    "refused": 0,
+    "no_answer": 0,
+    "error": 0,
+    "in_scope_total": 17,
+    "in_scope_correct": 17,
+    "out_of_scope_total": 1,
+    "out_of_scope_correct": 1
+  }
+}
