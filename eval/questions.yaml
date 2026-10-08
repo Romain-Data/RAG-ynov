@@ -32,6 +32,8 @@
 #       accepts "1 heure"
 #   v10 q32 answer check: "BAC ou BAC+2" is as right as "BAC et BAC+2"
 #   v11 q31 answer check also accepts "hors Parcoursup"
+#   v12 q33: general question on the list of campuses (the answer is on the /campus page,
+#       not on the formation pages)
 
 - id: q01
   question: Combien coûte le Mastère Expert en intelligence artificielle ?
@@ -224,3 +226,10 @@
   expect:
     - {source: bts-era.html, section: Infos clés}
   answer_must: ['BAC ?\+ ?2']
+
+- id: q33
+  question: Où sont les campus d'Ynov ?
+  expect:
+    - {source: informations-communes-formations.md, section: Où sont les campus}
+  context_must: [Aix-en-Provence, Bordeaux, Lille, Lyon, Montpellier, Nantes, Nice, Paris, Rennes, Rouen, Strasbourg, Toulouse, Connect]
+  answer_must: [Bordeaux, Lyon, Toulouse, Strasbourg, Connect]
