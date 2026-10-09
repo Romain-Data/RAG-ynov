@@ -39,7 +39,8 @@
     "q30": true,
     "q31": true,
     "q32": true,
-    "q33": true
+    "q33": true,
+    "q34": true
   },
   "context_ok": {
     "q01": true,
@@ -64,6 +65,7 @@
     "q30": true,
     "q31": true,
     "q32": true,
-    "q33": true
+    "q33": true,
+    "q34": true
   }
 }

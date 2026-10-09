@@ -4,7 +4,7 @@
 
 ## Synthèse
 
-- **Dernier test de bout en bout** (preprod, `2026-10-09_01_liste-des-campus-q33`) : 23/23 ✅ · 0 🟡 · 0 ❌ · hors périmètre 10/10 ; 0 refusée(s), 0 sans réponse.
+- **Dernier test de bout en bout** (preprod, `2026-10-09_02_liste-des-campus-formulations-courtes-q34`) : 24/24 ✅ · 0 🟡 · 0 ❌ · hors périmètre 10/10 ; 0 refusée(s), 0 sans réponse.
 - **Dernier test en prod** (`2026-10-02_35_prod-apres-ec14-ec15`) : 12/16 ✅ · 3 🟡 · 0 ❌ · hors périmètre 10/10.
 - **Dernière évaluation de la recherche** (`2026-10-06_01_hybride-bm25`) : 22/22 · hors périmètre 8/8 ⛔.
 - **Dernière passe de conversation** (`2026-10-06_05_conversations-lot5`) : 17/17 ✅ · 0 🟡 · 0 ❌ · hors périmètre 1/1.
@@ -75,6 +75,7 @@
 | ★ | `2026-10-06_06_regle-4` | e2e | local | v10 | chunks 300, k=10 | 22/22 ✅ · 0 🟡 · 0 ❌ · hors périmètre 10/10 |
 | ★ | `2026-10-06_07_preprod-lot7` | e2e | preprod | v10 | chunks ?, k=? | 22/22 ✅ · 0 🟡 · 0 ❌ · hors périmètre 10/10 |
 |  | `2026-10-09_01_liste-des-campus-q33` | e2e | preprod | v11 | chunks ?, k=? | 23/23 ✅ · 0 🟡 · 0 ❌ · hors périmètre 10/10 |
+|  | `2026-10-09_02_liste-des-campus-formulations-courtes-q34` | e2e | preprod | v11 | chunks ?, k=? | 24/24 ✅ · 0 🟡 · 0 ❌ · hors périmètre 10/10 |
 
 ## Matrice par question (étapes clés)
 
@@ -115,6 +116,7 @@ Recherche : ✅ rang de la bonne section · ✅ ctx = fait présent dans le cont
 | **q31** Les Bachelors Ynov passent-ils par Parcoursup ? | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | ✅ 1 | ✅ 1 | ✅ | ✅ 1 | ✅ | ✅ 1 | ✅ | ✅ | ✅ |
 | **q32** Quel niveau faut-il pour entrer en BTS ERA ? | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | ❌ | ❌ | ∅ | ❌ | ∅ | ✅ 9 | ✅ | ✅ | ✅ |
 | **q33** Où sont les campus d'Ynov ? | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · |
+| **q34** Où sont les campus ? | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · |
 
 Colonnes : `10-02_01` e2e-prod-premier-test · `10-02_02` retrieval-baseline-500-k5 · `10-02_04` retrieval-500-k10-cap2 · `10-02_06` retrieval-prefixe-long-k5 · `10-02_10` retrieval-300-prefixe-court-k5 · `10-02_22` retrieval-final-pr5 · `10-02_23` e2e-prod-apres-pr5-pr6 · `10-02_25` local-avant-prompt-seuil · `10-02_27` local-apres-prompt-v2 · `10-02_28` calibration-seuil-0-45 · `10-02_29` prod-apres-prompt-seuil · `10-02_30` modele-minilm-300 · `10-02_31` modele-mpnet-300 · `10-02_32` modele-e5-large-300 · `10-02_33` modele-e5-large-500 · `10-02_34` local-e5-large-300 · `10-02_35` prod-apres-ec14-ec15 · `10-02_36` modele-e5-large-300-corpus-corrige · `10-02_37` modele-minilm-300-corpus-corrige · `10-02_38` local-e5-large-300-corpus-corrige · `10-03_02` local-apres-graphe-conversation · `10-04_05` preprod-mammouth-recommended · `10-05_01` contexte-reference · `10-05_02` section-entiere · `10-05_03` section-entiere · `10-05_05` programme-et-blocs-seuil-0-47 · `10-05_06` programme-et-blocs · `10-06_01` hybride-bm25 · `10-06_02` hybride-bm25 · `10-06_06` regle-4 · `10-06_07` preprod-lot7
 
@@ -141,7 +143,7 @@ Colonnes : `10-02_01` e2e-prod-premier-test · `10-02_02` retrieval-baseline-500
 | **c07.2** | Merci beaucoup ! | — | ✅ correct | EC-16 | Réponse fixe sans recherche ni appel au LLM (EC-16, lot 5). |
 | **c08.1** | Bonjour | — | ✅ correct | EC-16 | Réponse fixe sans recherche ni appel au LLM (EC-16, lot 5). |
 
-## Détail du dernier test de bout en bout (`2026-10-09_01_liste-des-campus-q33`)
+## Détail du dernier test de bout en bout (`2026-10-09_02_liste-des-campus-formulations-courtes-q34`)
 
 | Question | Verdict | Cas limites | Commentaire |
 |---|---|---|---|
@@ -177,11 +179,12 @@ Colonnes : `10-02_01` e2e-prod-premier-test · `10-02_02` retrieval-baseline-500
 | **q30** Quelle remise obtient-on en payant les frais de scolari | ✅ correct |  |  |
 | **q31** Les Bachelors Ynov passent-ils par Parcoursup ? | ✅ correct |  |  |
 | **q32** Quel niveau faut-il pour entrer en BTS ERA ? | ✅ correct |  |  |
-| **q33** Où sont les campus d'Ynov ? | ✅ correct |  | Relu le 9 octobre 2026 : les 13 campus et Ynov Connect, sans invention ; la liste vient de la nouvelle section du document commun (sources 1 et 2). |
+| **q33** Où sont les campus d'Ynov ? | ✅ correct |  | Relu le 9 octobre 2026 : les 13 campus et Ynov Connect, sans invention, y compris pour la formulation courte (q34). |
+| **q34** Où sont les campus ? | ✅ correct |  | Relu le 9 octobre 2026 : les 13 campus et Ynov Connect, sans invention, y compris pour la formulation courte (q34). |
 
 ### Fiabilité de la vérification automatique
 
-Sur les réponses revues à la main, le verdict automatique (`answer_must`) concorde dans 529/553 cas. Désaccords :
+Sur les réponses revues à la main, le verdict automatique (`answer_must`) concorde dans 563/587 cas. Désaccords :
 
 - `2026-10-02_01_e2e-prod-premier-test` q07 : revue **partial**, automatique **wrong**
 - `2026-10-02_23_e2e-prod-apres-pr5-pr6` q11 : revue **correct**, automatique **wrong**

@@ -82,8 +82,9 @@ def _campus_section(campus_html: str) -> list[str]:
         return []
     return [
         "",
-        "## Où sont les campus d'Ynov ? Liste des villes",
-        f"Ynov compte {len(cities)} campus en France, situés à : {', '.join(cities)}. "
+        "## Liste des campus Ynov : où sont les campus, dans quelles villes",
+        f"Où sont les campus Ynov ? Ynov compte {len(cities)} campus en France, situés "
+        f"dans les villes suivantes : {', '.join(cities)}. "
         "Ynov Connect est le campus 100 % en ligne et en alternance.",
     ]
 

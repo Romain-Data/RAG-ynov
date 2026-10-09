@@ -34,6 +34,7 @@
 #   v11 q31 answer check also accepts "hors Parcoursup"
 #   v12 q33: general question on the list of campuses (the answer is on the /campus page,
 #       not on the formation pages)
+#   v13 q34: the same question without "d'Ynov" (the first fix missed it in production)
 
 - id: q01
   question: Combien coûte le Mastère Expert en intelligence artificielle ?
@@ -231,5 +232,12 @@
   question: Où sont les campus d'Ynov ?
   expect:
     - {source: informations-communes-formations.md, section: Où sont les campus}
+  context_must: [Aix-en-Provence, Bordeaux, Lille, Lyon, Montpellier, Nantes, Nice, Paris, Rennes, Rouen, Strasbourg, Toulouse, Connect]
+  answer_must: [Bordeaux, Lyon, Toulouse, Strasbourg, Connect]
+
+- id: q34
+  question: Où sont les campus ?
+  expect:
+    - {source: informations-communes-formations.md, section: où sont les campus}
   context_must: [Aix-en-Provence, Bordeaux, Lille, Lyon, Montpellier, Nantes, Nice, Paris, Rennes, Rouen, Strasbourg, Toulouse, Connect]
   answer_must: [Bordeaux, Lyon, Toulouse, Strasbourg, Connect]
