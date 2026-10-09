@@ -18,7 +18,7 @@ Plan du projet RAG Ynov. Chaque chantier est suivi dans une issue GitHub (label 
 | [#15](https://github.com/Romain-Data/RAG-ynov/issues/15) | ~~Mettre en place l'intégration continue~~ **fait le 4 octobre 2026** (aucun appel au LLM sur les PR ; évaluation sur la préprod avant la mise en production) | infra | — |
 | [#16](https://github.com/Romain-Data/RAG-ynov/issues/16) | Tableau de bord de l'évolution des résultats | produit | #18, #19 (pour les indicateurs d'usage) |
 | [#17](https://github.com/Romain-Data/RAG-ynov/issues/17) | ~~Interface utilisateur de chat (Chainlit, comptes, historique)~~ **clos** (en prod depuis le 3 octobre 2026, chat sur `/` depuis le 6) ; non traités à la clôture : limite de fréquence du chat, essai par un vrai compte, accessibilité | produit | ~~#14 (liens vers les sources)~~ fait |
-| [#18](https://github.com/Romain-Data/RAG-ynov/issues/18) | Journal des réponses pour la revue manuelle | produit | — |
+| [#18](https://github.com/Romain-Data/RAG-ynov/issues/18) | Journal des réponses pour la revue manuelle : **code fait le 9 octobre 2026** (PR enregistrement + PR interface `/admin`), reste la mise en service (voir ci-dessous) | produit | — |
 | [#19](https://github.com/Romain-Data/RAG-ynov/issues/19) | Bouton « réponse satisfaisante ou non » ; inclut aussi : déplacer le bouton de suppression de compte, de la conversation au menu en haut à droite (si possible, sinon en bas de la colonne de gauche) | produit | #17, #18 |
 | [#20](https://github.com/Romain-Data/RAG-ynov/issues/20) | Rapport des questions sans réponse | produit | #18 |
 | [#21](https://github.com/Romain-Data/RAG-ynov/issues/21) | Rafraîchissement automatique du corpus et suivi des versions | données | — |
@@ -39,7 +39,7 @@ Plan du projet RAG Ynov. Chaque chantier est suivi dans une issue GitHub (label 
 
 1. ~~**#15 Intégration continue**~~ : **fait**. `main` est protégée : une PR et trois vérifications (`quality`, `tests`, `retrieval`) sont obligatoires.
 2. ~~**#14 Qualité des réponses**~~ : **fait** ; **#21 Rafraîchissement du corpus** se mesure sur la préprod avant la prod. #21 apporte les versions du corpus, utiles pour comparer les résultats dans le temps ; la commande `python -m ingestion.run` (#14) en est la première brique.
-3. **#18 Journal des réponses** : la base de #19, #20 et des indicateurs d'usage de #16.
+3. **#18 Journal des réponses** : la base de #19, #20 et des indicateurs d'usage de #16. Code fait ; mise en service : `ADMIN_PASSWORD` dans Coolify (préprod puis prod), tâche planifiée `python -m journal.purge` chaque jour, essai de 2 ou 3 questions sur la préprod.
 4. ~~**#17 Interface utilisateur**~~ : **clos** (en prod) ; puis **#19 Bouton d'avis**, avec le déplacement du bouton de suppression de compte.
 5. **#20 Rapport des questions sans réponse** et **#16 Tableau de bord**, quand le journal contient assez de données.
 
@@ -66,3 +66,10 @@ Plan du projet RAG Ynov. Chaque chantier est suivi dans une issue GitHub (label 
 - **Modèle d'embedding : MiniLM conservé.** L'objectif est atteint sans e5-large (2,2 Go de RAM, 38 minutes d'ingestion, seuil fragile). Reranker et filtres déduits de la question : reportés, sans objet tant que l'objectif tient.
 - **Mise en production** : réingestion dans une nouvelle collection (`ynov_rag_v2`, `python -m ingestion.run --collection`) pendant que l'API servait l'ancienne, puis bascule de `QDRANT_COLLECTION_NAME` et redémarrage, sans coupure. L'ancienne collection `ynov_rag` est conservée pour un retour arrière et à supprimer après quelques jours.
 - **Limites restantes** : seuil à marges étroites (0,008 côté hors sujet, 0,022 côté légitime), à recalibrer si le corpus ou le découpage changent ; le LLM recopie parfois l'en-tête du chunk au début de sa réponse ; le lien d'une source renvoie à la page, pas à la section ; le document des règles communes n'a pas d'URL.
+
+## Journal des réponses (#18) : décisions du 9 octobre 2026
+
+- **Stockage** : table `answer_log` dans la base SQLite du chat (déjà sauvegardée chaque jour), pas de Postgres ni de fichiers : le volume est faible et les avis de #19 se joindront par `thread_id`/`message_id`. Une entrée par question, chat et `POST /api/query` (canal `api`), erreurs du LLM comprises ; le journal n'empêche jamais une réponse.
+- **Contenu** : question (e-mails et téléphones masqués), reformulation, réponse, issue (`generate`, `refuse`, `smalltalk`, `error`), meilleur score, sources, 10 résultats sans leur texte, modèle réel renvoyé par Mammouth et alias, jetons, latence, collection, modèle d'embedding, seuil, commit déployé.
+- **RGPD** : ni pseudo ni IP ; suppression d'un compte = les entrées restent mais perdent leur lien avec la conversation ; conservation 180 jours (`ANSWER_LOG_RETENTION_DAYS`, `python -m journal.purge`) ; `ANSWER_LOG_ENABLED=false` coupe l'écriture ; phrase d'information sur la page d'inscription.
+- **Interface `/admin`** : formulaire de connexion (pas de HTTP Basic, la préprod en a déjà un), mot de passe `ADMIN_PASSWORD` (sans lui, `/admin` n'est pas monté), cookie signé de 8 h, limite de tentatives, contrôle de l'en-tête `Origin` sur les POST, CSP sans script, tout contenu échappé. Liste filtrable, fiche de revue (bonne, partielle, fausse, hors sujet), extrait YAML à coller dans `eval/questions.yaml`.
