@@ -53,7 +53,7 @@ def test_campus_section_lists_the_map_pins():
         '<a class="Other" aria-label="Ignoré"></a>'
     )
     text = "\n".join(_campus_section(html))
-    assert "## Où sont les campus d'Ynov ?" in text
-    assert "2 campus en France, situés à : Lille, Nice - Sophia." in text
+    assert "## Liste des campus Ynov : où sont les campus" in text
+    assert "2 campus en France, situés dans les villes suivantes : Lille, Nice - Sophia." in text
     assert "Ynov Connect" in text
     assert _campus_section("<p>aucune carte</p>") == []
