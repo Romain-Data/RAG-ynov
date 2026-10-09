@@ -1,0 +1,2413 @@
+{
+  "schema_version": 1,
+  "run_id": "2026-10-09_02_liste-des-campus-formulations-courtes-q34",
+  "date": "2026-10-09",
+  "kind": "e2e",
+  "environment": "preprod",
+  "git_commit": "1ce288d",
+  "question_set": "v11",
+  "milestone": false,
+  "label": "liste des campus, formulations courtes (q34)",
+  "notes": " Préprod réingérée avec la section reformulée (PR #56) ; verdicts relus, 34/34 corrects.",
+  "config": {
+    "url": "https://rag-preprod.romaincollery.com"
+  },
+  "results": [
+    {
+      "question_id": "q01",
+      "question": "Combien coûte le Mastère Expert en intelligence artificielle ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "9[  ]?000": true,
+          "9[  ]?500": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Pour l’année **2027/2028**, sous **statut étudiant** :\n\n- **Règlement au comptant** : 9 000 € en Mastère 1 et 9 000 € en Mastère 2.\n- **Règlement échelonné** : 9 500 € en Mastère 1 et 9 500 € en Mastère 2.\n\nLe statut étudiant est disponible sur tous les campus sauf Ynov Connect. [Source 2]",
+      "sources": [
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Programme du Mastère — Mastère 1 — Module 2",
+          "score": 0.7577148,
+          "title": "Mastère Expert en intelligence artificielle",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-expert-en-intelligence-artificielle"
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.7143314,
+          "title": "Mastère Expert en intelligence artificielle",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-expert-en-intelligence-artificielle"
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Programme du Mastère — Mastère 2 — Module 1",
+          "score": 0.70979416,
+          "title": "Mastère Expert en intelligence artificielle",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-expert-en-intelligence-artificielle"
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Programme du Mastère — Mastère 2 — Module 2",
+          "score": 0.6947206,
+          "title": "Mastère Expert en intelligence artificielle",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-expert-en-intelligence-artificielle"
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Métiers et dynamique du marché",
+          "score": 0.6678078,
+          "title": "Mastère Expert en intelligence artificielle",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-expert-en-intelligence-artificielle"
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Présentation",
+          "score": 0.6631743,
+          "title": "Mastère Expert en intelligence artificielle",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-expert-en-intelligence-artificielle"
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.6252786940890512,
+          "title": "Mastère Expert en intelligence artificielle",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-expert-en-intelligence-artificielle"
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Nos méthodes pédagogiques",
+          "score": 0.655211313545318,
+          "title": "Mastère Expert en intelligence artificielle",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-expert-en-intelligence-artificielle"
+        }
+      ],
+      "latency_s": 0.77,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q02",
+      "question": "Dans quelles villes est proposé le Mastère Expert en intelligence artificielle ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "Aix-en-Provence": true,
+          "Strasbourg": true,
+          "en ligne": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Le Mastère Expert en intelligence artificielle est proposé sur les campus de Aix-en-Provence, Bordeaux, Lyon, Paris, Toulouse, Sophia, Montpellier, Lille, Rennes, Val d’Europe et Strasbourg. Il est aussi disponible 100 % en ligne via Ynov Connect. [Source 1]",
+      "sources": [
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Lieux",
+          "score": 0.74726665,
+          "title": "Mastère Expert en intelligence artificielle",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-expert-en-intelligence-artificielle"
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Métiers et dynamique du marché",
+          "score": 0.72120816,
+          "title": "Mastère Expert en intelligence artificielle",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-expert-en-intelligence-artificielle"
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Programme du Mastère — Mastère 2 — Module 1",
+          "score": 0.7132975,
+          "title": "Mastère Expert en intelligence artificielle",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-expert-en-intelligence-artificielle"
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Programme du Mastère — Mastère 2 — Module 2",
+          "score": 0.7084936,
+          "title": "Mastère Expert en intelligence artificielle",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-expert-en-intelligence-artificielle"
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Objectifs de la formation",
+          "score": 0.69326663,
+          "title": "Mastère Expert en intelligence artificielle",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-expert-en-intelligence-artificielle"
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Programme du Mastère — Mastère 1 — Module 2",
+          "score": 0.684497,
+          "title": "Mastère Expert en intelligence artificielle",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-expert-en-intelligence-artificielle"
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.5968234888703,
+          "title": "Mastère Expert en intelligence artificielle",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-expert-en-intelligence-artificielle"
+        },
+        {
+          "source": "mastere-expert-en-mecatronique.html",
+          "page": 1,
+          "section": "Lieux",
+          "score": 0.48102653682935687,
+          "title": "Mastère Expert en mécatronique",
+          "url": "https://www.ynov.com/formations/informatique/mastere-expert-en-mecatronique"
+        }
+      ],
+      "latency_s": 0.44,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q03",
+      "question": "Le Mastère Game Programmer est-il proposé à Lyon ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "en ligne": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Non. Le Mastère Game Programmer est proposé uniquement à 100 % en ligne via Ynov Connect, sur aucun campus physique, donc pas à Lyon. [Source 8]",
+      "sources": [
+        {
+          "source": "mastere-game-programmer.html",
+          "page": 1,
+          "section": "Voies d’accès et prérequis de la formation",
+          "score": 0.66982853,
+          "title": "Mastère Game Programmer",
+          "url": "https://www.ynov.com/formations/informatique/mastere-game-programmer"
+        },
+        {
+          "source": "mastere-game-programmer.html",
+          "page": 1,
+          "section": "Programme du Mastère — Mastère 1 — Production studio et communication",
+          "score": 0.6257996,
+          "title": "Mastère Game Programmer",
+          "url": "https://www.ynov.com/formations/informatique/mastere-game-programmer"
+        },
+        {
+          "source": "mastere-game-programmer.html",
+          "page": 1,
+          "section": "Programme du Mastère — Mastère 1 — Game design, conception et architecture",
+          "score": 0.6195734,
+          "title": "Mastère Game Programmer",
+          "url": "https://www.ynov.com/formations/informatique/mastere-game-programmer"
+        },
+        {
+          "source": "mastere-game-programmer.html",
+          "page": 1,
+          "section": "* Titre d’Expert en développement logiciel – Niveau 7",
+          "score": 0.6193019,
+          "title": "Mastère Game Programmer",
+          "url": "https://www.ynov.com/formations/informatique/mastere-game-programmer"
+        },
+        {
+          "source": "mastere-game-programmer.html",
+          "page": 1,
+          "section": "Equivalences",
+          "score": 0.60980606,
+          "title": "Mastère Game Programmer",
+          "url": "https://www.ynov.com/formations/informatique/mastere-game-programmer"
+        },
+        {
+          "source": "mastere-game-programmer.html",
+          "page": 1,
+          "section": "Nos méthodes pédagogiques",
+          "score": 0.60975075,
+          "title": "Mastère Game Programmer",
+          "url": "https://www.ynov.com/formations/informatique/mastere-game-programmer"
+        },
+        {
+          "source": "mastere-game-programmer.html",
+          "page": 1,
+          "section": "Objectifs de la formation",
+          "score": 0.6097219,
+          "title": "Mastère Game Programmer",
+          "url": "https://www.ynov.com/formations/informatique/mastere-game-programmer"
+        },
+        {
+          "source": "mastere-game-programmer.html",
+          "page": 1,
+          "section": "Lieux",
+          "score": 0.5463071693999894,
+          "title": "Mastère Game Programmer",
+          "url": "https://www.ynov.com/formations/informatique/mastere-game-programmer"
+        },
+        {
+          "source": "mastere-game-programmer.html",
+          "page": 1,
+          "section": "Modalités d’évaluations certificatives",
+          "score": 0.47229623463173676,
+          "title": "Mastère Game Programmer",
+          "url": "https://www.ynov.com/formations/informatique/mastere-game-programmer"
+        }
+      ],
+      "latency_s": 0.4,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q04",
+      "question": "Le Mastère Expert en cybersécurité - Pentester se fait-il en présentiel ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "en ligne": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Non. Le Mastère Expert en cybersécurité - Pentester est proposé à 100 % en ligne, sans campus. Une passerelle vers le format présentiel peut toutefois être étudiée ; elle n’est pas présentée comme automatique. [Sources 4, 8]",
+      "sources": [
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "page": 1,
+          "section": "Programme du Mastère — Mastère 1 — Tests d'intrusion : attaques avancées et reporting",
+          "score": 0.8784735,
+          "title": "Mastère Expert en cybersécurité - Pentester",
+          "url": "https://www.ynov.com/formations/cybersecurite/mastere-expert-en-cybersecurite-pentester"
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "page": 1,
+          "section": "Métiers et dynamique du marché",
+          "score": 0.86476535,
+          "title": "Mastère Expert en cybersécurité - Pentester",
+          "url": "https://www.ynov.com/formations/cybersecurite/mastere-expert-en-cybersecurite-pentester"
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "page": 1,
+          "section": "Objectifs de la formation",
+          "score": 0.860597,
+          "title": "Mastère Expert en cybersécurité - Pentester",
+          "url": "https://www.ynov.com/formations/cybersecurite/mastere-expert-en-cybersecurite-pentester"
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "page": 1,
+          "section": "Présentation",
+          "score": 0.8566234,
+          "title": "Mastère Expert en cybersécurité - Pentester",
+          "url": "https://www.ynov.com/formations/cybersecurite/mastere-expert-en-cybersecurite-pentester"
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "page": 1,
+          "section": "Programme du Mastère — Mastère 1 — Analyse SOC : détection et réponse aux incidents",
+          "score": 0.8547838,
+          "title": "Mastère Expert en cybersécurité - Pentester",
+          "url": "https://www.ynov.com/formations/cybersecurite/mastere-expert-en-cybersecurite-pentester"
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "page": 1,
+          "section": "Programme du Mastère — Mastère 2 — Recherche de vulnérabilités",
+          "score": 0.8543602,
+          "title": "Mastère Expert en cybersécurité - Pentester",
+          "url": "https://www.ynov.com/formations/cybersecurite/mastere-expert-en-cybersecurite-pentester"
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite-pentester.html",
+          "page": 1,
+          "section": "* Titre d'Expert en cybersécurité - Niveau 7",
+          "score": 0.8542034,
+          "title": "Mastère Expert en cybersécurité - Pentester",
+          "url": "https://www.ynov.com/formations/cybersecurite/mastere-expert-en-cybersecurite-pentester"
+        },
+        {
+          "source": "informations-communes-formations.md",
+          "page": 1,
+          "section": "Passerelles — particularité : Mastère Expert en cybersécurité - Pentester",
+          "score": 0.6530272081100145,
+          "title": "Informations communes à toutes les formations Ynov",
+          "url": null
+        }
+      ],
+      "latency_s": 0.43,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q05",
+      "question": "Où peut-on suivre le BTS ERA ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "Strasbourg": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Le BTS ERA est proposé uniquement sur le campus de Strasbourg. [Source 6]",
+      "sources": [
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements professionnels",
+          "score": 0.67297465,
+          "title": "BTS ERA - Étude et Réalisation d'Agencement",
+          "url": "https://www.ynov.com/formations/architecture-d-interieur/bts-era"
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Présentation",
+          "score": 0.67023283,
+          "title": "BTS ERA - Étude et Réalisation d'Agencement",
+          "url": "https://www.ynov.com/formations/architecture-d-interieur/bts-era"
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Métiers et dynamique du marché",
+          "score": 0.63840586,
+          "title": "BTS ERA - Étude et Réalisation d'Agencement",
+          "url": "https://www.ynov.com/formations/architecture-d-interieur/bts-era"
+        },
+        {
+          "source": "bts-ciel.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements professionnels",
+          "score": 0.6371025,
+          "title": "BTS CIEL option A - Informatique et réseaux",
+          "url": "https://www.ynov.com/formations/cybersecurite/bts-ciel"
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.6360069,
+          "title": "BTS ERA - Étude et Réalisation d'Agencement",
+          "url": "https://www.ynov.com/formations/architecture-d-interieur/bts-era"
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Lieux",
+          "score": 0.62329507,
+          "title": "BTS ERA - Étude et Réalisation d'Agencement",
+          "url": "https://www.ynov.com/formations/architecture-d-interieur/bts-era"
+        },
+        {
+          "source": "bts-sio-slam.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements généraux",
+          "score": 0.6198727,
+          "title": "BTS SIO SLAM",
+          "url": "https://www.ynov.com/formations/informatique/bts-sio-slam"
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Ce que tu vas apprendre",
+          "score": 0.5796941319024173,
+          "title": "BTS ERA - Étude et Réalisation d'Agencement",
+          "url": "https://www.ynov.com/formations/architecture-d-interieur/bts-era"
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Les modalités d’évaluations certificatives",
+          "score": 0.5147288696544291,
+          "title": "BTS ERA - Étude et Réalisation d'Agencement",
+          "url": "https://www.ynov.com/formations/architecture-d-interieur/bts-era"
+        }
+      ],
+      "latency_s": 0.56,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q06",
+      "question": "Combien de temps dure le Bachelor Informatique ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "3 ans|trois ans": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Le Bachelor Informatique dure 3 ans. [Source 1]",
+      "sources": [
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.78489155,
+          "title": "Bachelor Informatique",
+          "url": "https://www.ynov.com/formations/informatique/bachelor-informatique"
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 3 : Informatique - Développement — Spécialise-toi : deviens un développeur opérationnel en entreprise",
+          "score": 0.7805922,
+          "title": "Bachelor Informatique",
+          "url": "https://www.ynov.com/formations/informatique/bachelor-informatique"
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 2 : Informatique — > Génie logiciel et qualité web",
+          "score": 0.76697373,
+          "title": "Bachelor Informatique",
+          "url": "https://www.ynov.com/formations/informatique/bachelor-informatique"
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Voie d'accès et prérequis à la formation",
+          "score": 0.7566056,
+          "title": "Bachelor Informatique",
+          "url": "https://www.ynov.com/formations/informatique/bachelor-informatique"
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 1 : Informatique — Marqueurs Ynov",
+          "score": 0.752092,
+          "title": "Bachelor Informatique",
+          "url": "https://www.ynov.com/formations/informatique/bachelor-informatique"
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 1 : Informatique — Couverte de la programmation",
+          "score": 0.72391796,
+          "title": "Bachelor Informatique",
+          "url": "https://www.ynov.com/formations/informatique/bachelor-informatique"
+        },
+        {
+          "source": "bachelor-cybersecurite.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelors 3 — Bachelor 3 : Infrastructure & Réseau",
+          "score": 0.72002685,
+          "title": "Bachelor Cybersécurité",
+          "url": "https://www.ynov.com/formations/cybersecurite/bachelor-cybersecurite"
+        },
+        {
+          "source": "mastere-expert-en-developpement-informatique-specialise-banque-assurance.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.3687423233303628,
+          "title": "Mastère Expert en développement informatique spécialisé banque & assurance",
+          "url": "https://www.ynov.com/formations/informatique/mastere-expert-en-developpement-informatique-specialise-banque-assurance"
+        },
+        {
+          "source": "bachelor-architecture-d-interieur.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.564215712163381,
+          "title": "Bachelor Architecture d'intérieur",
+          "url": "https://www.ynov.com/formations/architecture-d-interieur/bachelor-architecture-d-interieur"
+        }
+      ],
+      "latency_s": 0.52,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q07",
+      "question": "Peut-on payer les frais de scolarité en plusieurs fois ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "4 échéances|quatre échéances|4 fois": true,
+          "(?<![0-9][  ])(?<![0-9])500 ?(€|euros)": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Oui. Le paiement échelonné se fait en **4 échéances**. Vous pouvez aussi régler la totalité avant le début de la formation : le paiement comptant comprend une **remise de 500 €**. [Source 4]",
+      "sources": [
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.56656075,
+          "title": "Bachelor Informatique",
+          "url": "https://www.ynov.com/formations/informatique/bachelor-informatique"
+        },
+        {
+          "source": "bachelor-developpement-ia-data-engineering.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.52447987,
+          "title": "Bachelor Développement IA & data engineering",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/bachelor-developpement-ia-data-engineering"
+        },
+        {
+          "source": "bts-mec.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.5200838,
+          "title": "BTS MEC - Management économique de la construction",
+          "url": "https://www.ynov.com/formations/batiment-numerique/bts-mec"
+        },
+        {
+          "source": "informations-communes-formations.md",
+          "page": 1,
+          "section": "Modalités de paiement et prise en charge des frais",
+          "score": 0.509958,
+          "title": "Informations communes à toutes les formations Ynov",
+          "url": null
+        },
+        {
+          "source": "bachelor-audiovisuel.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.5019799,
+          "title": "Bachelor Création de contenus et audiovisuel",
+          "url": "https://www.ynov.com/formations/audiovisuel/bachelor-audiovisuel"
+        },
+        {
+          "source": "bachelor-architecture-d-interieur.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.49944612,
+          "title": "Bachelor Architecture d'intérieur",
+          "url": "https://www.ynov.com/formations/architecture-d-interieur/bachelor-architecture-d-interieur"
+        },
+        {
+          "source": "mastere-expert-en-jumeaux-numeriques-du-batiment-de-la-ville-et-des-territoires.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.49301183,
+          "title": "Mastère Expert en Jumeaux numériques du bâtiment, de la ville et des territoires",
+          "url": "https://www.ynov.com/formations/batiment-numerique/mastere-expert-en-jumeaux-numeriques-du-batiment-de-la-ville-et-des-territoires"
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.4836827,
+          "title": "BTS ERA - Étude et Réalisation d'Agencement",
+          "url": "https://www.ynov.com/formations/architecture-d-interieur/bts-era"
+        },
+        {
+          "source": "condition-admission.html",
+          "page": 1,
+          "section": "FAQ — Quels sont les frais de scolarité pour un Bachelor ou un Mastère ?",
+          "score": 0.4255001272742056,
+          "title": "Admission - Comment rejoindre Ynov",
+          "url": "https://www.ynov.com/experience-ynov/condition-admission"
+        }
+      ],
+      "latency_s": 0.48,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q08",
+      "question": "Quels sont les blocs de compétences du titre RNCP Expert en cybersécurité ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "stratégie de cybersécurité": true,
+          "cycle de conception": true,
+          "condition de sécurité": true,
+          "crise": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "**Titre RNCP Expert en cybersécurité — Blocs de compétences** [Source 1]\n\nLe titre comporte 4 blocs :\n- **RNCP40897BC01** — Élaborer la stratégie de cybersécurité d’une organisation.\n- **RNCP40897BC02** — Piloter le cycle de conception, d’intégration et d’évaluation de solutions de sécurité du système d’information.\n- **RNCP40897BC03** — Maintenir en condition de sécurité le système d’information d’une organisation.\n- **RNCP40897BC04** — Gérer stratégiquement et opérationnellement une crise cyber.",
+      "sources": [
+        {
+          "source": "rncp-40897.html",
+          "page": 1,
+          "section": "Blocs de compétences",
+          "score": 0.8837642,
+          "title": "RNCP40897 — Expert en cybersécurité",
+          "url": "https://www.francecompetences.fr/recherche/rncp/40897/"
+        },
+        {
+          "source": "rncp-40897.html",
+          "page": 1,
+          "section": "Compétences attestées",
+          "score": 0.8694059,
+          "title": "RNCP40897 — Expert en cybersécurité",
+          "url": "https://www.francecompetences.fr/recherche/rncp/40897/"
+        },
+        {
+          "source": "rncp-40897.html",
+          "page": 1,
+          "section": "Objectifs et contexte de la certification",
+          "score": 0.8560021,
+          "title": "RNCP40897 — Expert en cybersécurité",
+          "url": "https://www.francecompetences.fr/recherche/rncp/40897/"
+        },
+        {
+          "source": "rncp-40897.html",
+          "page": 1,
+          "section": "Type d'emplois accessibles",
+          "score": 0.8483844,
+          "title": "RNCP40897 — Expert en cybersécurité",
+          "url": "https://www.francecompetences.fr/recherche/rncp/40897/"
+        },
+        {
+          "source": "rncp-40897.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.8457159,
+          "title": "RNCP40897 — Expert en cybersécurité",
+          "url": "https://www.francecompetences.fr/recherche/rncp/40897/"
+        },
+        {
+          "source": "rncp-40897.html",
+          "page": 1,
+          "section": "Pré-requis disctincts pour les blocs de compétences",
+          "score": 0.83960044,
+          "title": "RNCP40897 — Expert en cybersécurité",
+          "url": "https://www.francecompetences.fr/recherche/rncp/40897/"
+        },
+        {
+          "source": "rncp-37391.html",
+          "page": 1,
+          "section": "Blocs de compétences",
+          "score": 0.7251617108202911,
+          "title": "RNCP37391 — BTS - Cybersécurité, Informatique et réseaux, Électronique - Option A : « Informatique et réseaux », Option B : « Électronique et réseaux »",
+          "url": "https://www.francecompetences.fr/recherche/rncp/37391/"
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite.html",
+          "page": 1,
+          "section": "* Titre d'Expert en cybersécurité - Niveau 7",
+          "score": 0.797142734736333,
+          "title": "Mastère Expert en cybersécurité",
+          "url": "https://www.ynov.com/formations/cybersecurite/mastere-expert-en-cybersecurite"
+        }
+      ],
+      "latency_s": 0.38,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q09",
+      "question": "Quel est le numéro de téléphone du campus de Bordeaux ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "05 56 90 00 10": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Le numéro de téléphone du campus de Bordeaux est le **05 56 90 00 10**. [Source 2]",
+      "sources": [
+        {
+          "source": "armee-de-terre.html",
+          "page": 1,
+          "section": "Lieux sur l'année d'études",
+          "score": 0.5454056,
+          "title": "Formation métier Armée de Terre",
+          "url": "https://www.ynov.com/formations/informatique/armee-de-terre"
+        },
+        {
+          "source": "condition-admission.html",
+          "page": 1,
+          "section": "Coordonnées de tous nos campus — Contact Ynov Bordeaux",
+          "score": 0.5431365,
+          "title": "Admission - Comment rejoindre Ynov",
+          "url": "https://www.ynov.com/experience-ynov/condition-admission"
+        },
+        {
+          "source": "armee-de-terre.html",
+          "page": 1,
+          "section": "Nos partenaires académiques",
+          "score": 0.5412704,
+          "title": "Formation métier Armée de Terre",
+          "url": "https://www.ynov.com/formations/informatique/armee-de-terre"
+        },
+        {
+          "source": "armee-de-terre.html",
+          "page": 1,
+          "section": "Programme du Bachelor",
+          "score": 0.53708124,
+          "title": "Formation métier Armée de Terre",
+          "url": "https://www.ynov.com/formations/informatique/armee-de-terre"
+        },
+        {
+          "source": "mastere-manager-de-projet-bim-smart-building.html",
+          "page": 1,
+          "section": "Voies d’accès",
+          "score": 0.50841707,
+          "title": "Mastère Manager de projet BIM & Smart Building",
+          "url": "https://www.ynov.com/formations/batiment-numerique/mastere-manager-de-projet-bim-smart-building"
+        },
+        {
+          "source": "alternance.html",
+          "page": 1,
+          "section": "Contactez le Service Relations Entreprises du Campus de votre choix",
+          "score": 0.4990874,
+          "title": "L'Alternance chez Ynov",
+          "url": "https://www.ynov.com/alternance"
+        },
+        {
+          "source": "armee-de-terre.html",
+          "page": 1,
+          "section": "Lieux",
+          "score": 0.4471883367651023,
+          "title": "Formation métier Armée de Terre",
+          "url": "https://www.ynov.com/formations/informatique/armee-de-terre"
+        },
+        {
+          "source": "mastere-expert-en-developpement-informatique-specialise-banque-assurance.html",
+          "page": 1,
+          "section": "Lieux",
+          "score": 0.3988466716506479,
+          "title": "Mastère Expert en développement informatique spécialisé banque & assurance",
+          "url": "https://www.ynov.com/formations/informatique/mastere-expert-en-developpement-informatique-specialise-banque-assurance"
+        }
+      ],
+      "latency_s": 0.54,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q10",
+      "question": "Quels modules sont enseignés en Mastère 2 du Mastère Expert en intelligence artificielle ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "intelligence artificielle avancée": true,
+          "gouvernance des données": true,
+          "transformation IA": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "**Mastère Expert en intelligence artificielle (2 ans, 11 campus et en ligne) — Programme du Mastère, Mastère 2**\n\n- **Module 1 — L’année de l’expertise : les systèmes qui font l’IA d’aujourd’hui**\n  - **Intelligence artificielle avancée** : architecture LLM et mécanismes d’attention, scaling LLM et fine-tuning distribué, vision par ordinateur, systèmes RAG avancés, agents intelligents et multimodalité, explicabilité et interprétabilité, production, déploiement et observabilité.\n  - **Architecture et gouvernance des données** : architecture de données avancée, sécurisation et conformité RGPD, gouvernance et qualité des données. [Source 1]\n\n- **Module 2**\n  - **Stratégie et transformation IA** : leadership et management d’équipe data, conformité réglementaire et IA responsable, stratégie IA et conduite du changement.\n  - **Fil rouge : un système d’IA complet** : fine-tuning d’un LLM, RAG sur un corpus métier, déploiement et tableau de bord d’évaluation et d’explicabilité. [Source 2]",
+      "sources": [
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Programme du Mastère — Mastère 2 — Module 1",
+          "score": 0.82001734,
+          "title": "Mastère Expert en intelligence artificielle",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-expert-en-intelligence-artificielle"
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Programme du Mastère — Mastère 2 — Module 2",
+          "score": 0.8061291,
+          "title": "Mastère Expert en intelligence artificielle",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-expert-en-intelligence-artificielle"
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Programme du Mastère — Mastère 1 — Module 1",
+          "score": 0.77384615,
+          "title": "Mastère Expert en intelligence artificielle",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-expert-en-intelligence-artificielle"
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Programme du Mastère — Mastère 1 — Module 2",
+          "score": 0.76085174,
+          "title": "Mastère Expert en intelligence artificielle",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-expert-en-intelligence-artificielle"
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Présentation",
+          "score": 0.75840616,
+          "title": "Mastère Expert en intelligence artificielle",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-expert-en-intelligence-artificielle"
+        },
+        {
+          "source": "mastere-expert-en-systemes-embarques.html",
+          "page": 1,
+          "section": "Programme du Mastère — Mastère 2 — Chiffrage et décision de projet",
+          "score": 0.73518777,
+          "title": "Mastère Expert en systèmes embarqués",
+          "url": "https://www.ynov.com/formations/informatique/mastere-expert-en-systemes-embarques"
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.6667857535843805,
+          "title": "Mastère Expert en intelligence artificielle",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-expert-en-intelligence-artificielle"
+        },
+        {
+          "source": "mastere-expert-en-intelligence-artificielle.html",
+          "page": 1,
+          "section": "Lieux",
+          "score": 0.6150474182983422,
+          "title": "Mastère Expert en intelligence artificielle",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-expert-en-intelligence-artificielle"
+        }
+      ],
+      "latency_s": 0.54,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q11",
+      "question": "Comment se passe l'entretien d'admission chez Ynov ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "1 ?h\\b|1 heure|une heure": true,
+          "48 ?h": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "L’entretien d’admission se déroule sur le campus et dure environ **1 heure**. C’est un échange avec un chargé d’admission autour de ton profil, de ton parcours et de tes motivations. Tu peux venir seul ou accompagné de tes parents ; si tu viens seul, Ynov les contactera ensuite pour leur expliquer le processus d’inscription. [Source 1] [Source 5]\n\nLe rendez-vous comprend aussi une visite du campus et une présentation de l’école, de sa pédagogie et de son environnement. Après l’entretien, tu reçois généralement un retour sous **48 heures** ; si tu es admis, tu as **10 jours** pour valider ton inscription. [Source 5]",
+      "sources": [
+        {
+          "source": "condition-admission.html",
+          "page": 1,
+          "section": "Un processus d'admission, clair et rapide",
+          "score": 0.81659776,
+          "title": "Admission - Comment rejoindre Ynov",
+          "url": "https://www.ynov.com/experience-ynov/condition-admission"
+        },
+        {
+          "source": "condition-admission.html",
+          "page": 1,
+          "section": "Accompagnement vers l’alternance",
+          "score": 0.7828352,
+          "title": "Admission - Comment rejoindre Ynov",
+          "url": "https://www.ynov.com/experience-ynov/condition-admission"
+        },
+        {
+          "source": "alternance.html",
+          "page": 1,
+          "section": "Pour en savoir plus — L'alternance chez Ynov",
+          "score": 0.7711691,
+          "title": "L'Alternance chez Ynov",
+          "url": "https://www.ynov.com/alternance"
+        },
+        {
+          "source": "condition-admission.html",
+          "page": 1,
+          "section": "Calendrier et infos clés",
+          "score": 0.7644272,
+          "title": "Admission - Comment rejoindre Ynov",
+          "url": "https://www.ynov.com/experience-ynov/condition-admission"
+        },
+        {
+          "source": "condition-admission.html",
+          "page": 1,
+          "section": "Le rendez-vous d'admission",
+          "score": 0.76130825,
+          "title": "Admission - Comment rejoindre Ynov",
+          "url": "https://www.ynov.com/experience-ynov/condition-admission"
+        },
+        {
+          "source": "condition-admission.html",
+          "page": 1,
+          "section": "Financement des études",
+          "score": 0.7520787,
+          "title": "Admission - Comment rejoindre Ynov",
+          "url": "https://www.ynov.com/experience-ynov/condition-admission"
+        },
+        {
+          "source": "handicap.html",
+          "page": 1,
+          "section": "Ynov Hand You en action : — Comment se passe mon admission ?",
+          "score": 0.661836659744736,
+          "title": "Handicap",
+          "url": "https://www.ynov.com/handicap"
+        }
+      ],
+      "latency_s": 0.62,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q12",
+      "question": "Combien coûte une VAE chez Ynov ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "500": true,
+          "2[  ]?000": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "**VAE (6 à 12 mois, lieux non précisés) — Coût :** les frais indiqués pour 2025 sont de **500 € TTC** pour le jury du dossier de recevabilité et de **2 000 € TTC** pour le jury VAE. Les tarifs sont calculés avec une TVA de 20 %. [Sources 1, 4]",
+      "sources": [
+        {
+          "source": "vae-ynov.html",
+          "page": 1,
+          "section": "Coût de la VAE Ynov :",
+          "score": 0.692271,
+          "title": "Votre certification professionnelle grâce à la VAE avec Ynov",
+          "url": "https://www.ynov.com/experience-ynov/vae-ynov"
+        },
+        {
+          "source": "vae-ynov.html",
+          "page": 1,
+          "section": "Profils",
+          "score": 0.65638745,
+          "title": "Votre certification professionnelle grâce à la VAE avec Ynov",
+          "url": "https://www.ynov.com/experience-ynov/vae-ynov"
+        },
+        {
+          "source": "vae-ynov.html",
+          "page": 1,
+          "section": "Lancez-vous dans une démarche de VAE Ynov",
+          "score": 0.62941,
+          "title": "Votre certification professionnelle grâce à la VAE avec Ynov",
+          "url": "https://www.ynov.com/experience-ynov/vae-ynov"
+        },
+        {
+          "source": "vae-ynov.html",
+          "page": 1,
+          "section": "Démarche VAE",
+          "score": 0.62736857,
+          "title": "Votre certification professionnelle grâce à la VAE avec Ynov",
+          "url": "https://www.ynov.com/experience-ynov/vae-ynov"
+        },
+        {
+          "source": "vae-ynov.html",
+          "page": 1,
+          "section": "Témoignage",
+          "score": 0.5982648,
+          "title": "Votre certification professionnelle grâce à la VAE avec Ynov",
+          "url": "https://www.ynov.com/experience-ynov/vae-ynov"
+        },
+        {
+          "source": "vae-ynov.html",
+          "page": 1,
+          "section": "Titres RNCP proposés à la VAE",
+          "score": 0.5942906,
+          "title": "Votre certification professionnelle grâce à la VAE avec Ynov",
+          "url": "https://www.ynov.com/experience-ynov/vae-ynov"
+        },
+        {
+          "source": "vae-ynov.html",
+          "page": 1,
+          "section": "Capitalisez sur votre expérience, valorisez vos compétences professionnelles et validez un titre enregistré au RNCP.",
+          "score": 0.58657014,
+          "title": "Votre certification professionnelle grâce à la VAE avec Ynov",
+          "url": "https://www.ynov.com/experience-ynov/vae-ynov"
+        },
+        {
+          "source": "vae-ynov.html",
+          "page": 1,
+          "section": "Les résultats avec la VAE chez Ynov",
+          "score": 0.5777697266910805,
+          "title": "Votre certification professionnelle grâce à la VAE avec Ynov",
+          "url": "https://www.ynov.com/experience-ynov/vae-ynov"
+        }
+      ],
+      "latency_s": 1.06,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q13",
+      "question": "Quelle est l'adresse e-mail du référent handicap de Lyon ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "handicap-lyon@ynov\\.com": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "L’adresse e-mail du référent handicap de Lyon est **handicap-lyon@ynov.com**. [Source 1]",
+      "sources": [
+        {
+          "source": "handicap.html",
+          "page": 1,
+          "section": "Contact :",
+          "score": 0.491999,
+          "title": "Handicap",
+          "url": "https://www.ynov.com/handicap"
+        },
+        {
+          "source": "condition-admission.html",
+          "page": 1,
+          "section": "Coordonnées de tous nos campus — Contact Ynov Lyon",
+          "score": 0.4866587,
+          "title": "Admission - Comment rejoindre Ynov",
+          "url": "https://www.ynov.com/experience-ynov/condition-admission"
+        },
+        {
+          "source": "handicap.html",
+          "page": 1,
+          "section": "Autres ressources et contacts :",
+          "score": 0.46995294,
+          "title": "Handicap",
+          "url": "https://www.ynov.com/handicap"
+        },
+        {
+          "source": "mastere-expert-en-mecatronique.html",
+          "page": 1,
+          "section": "Voies d’accès et prérequis de la formation",
+          "score": 0.4628983,
+          "title": "Mastère Expert en mécatronique",
+          "url": "https://www.ynov.com/formations/informatique/mastere-expert-en-mecatronique"
+        },
+        {
+          "source": "mastere-expert-en-systemes-embarques.html",
+          "page": 1,
+          "section": "Voies d’accès et prérequis de la formation",
+          "score": 0.44765115,
+          "title": "Mastère Expert en systèmes embarqués",
+          "url": "https://www.ynov.com/formations/informatique/mastere-expert-en-systemes-embarques"
+        },
+        {
+          "source": "handicap.html",
+          "page": 1,
+          "section": "Emploi :",
+          "score": 0.44435215,
+          "title": "Handicap",
+          "url": "https://www.ynov.com/handicap"
+        },
+        {
+          "source": "condition-admission.html",
+          "page": 1,
+          "section": "Un processus d'admission, clair et rapide",
+          "score": 0.14289745158332096,
+          "title": "Admission - Comment rejoindre Ynov",
+          "url": "https://www.ynov.com/experience-ynov/condition-admission"
+        },
+        {
+          "source": "handicap.html",
+          "page": 1,
+          "section": "Ynov Hand You en action : — À quel moment me signaler ?",
+          "score": 0.4299431264418618,
+          "title": "Handicap",
+          "url": "https://www.ynov.com/handicap"
+        }
+      ],
+      "latency_s": 0.94,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q14",
+      "question": "Quels métiers peut-on exercer après le Mastère Data engineer ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "Data Engineer": true,
+          "Analytics Engineer": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Après le Mastère Data Engineer, tu peux exercer comme **Data Engineer, Analytics Engineer, ingénieur plateforme data, ingénieur DataOps ou ingénieur cloud data**. Avec de l’expérience, tu peux évoluer vers des postes de **Lead Data Engineer, architecte data ou Head of Data**. [Source 2]",
+      "sources": [
+        {
+          "source": "mastere-data-engineer.html",
+          "page": 1,
+          "section": "Présentation",
+          "score": 0.7985511,
+          "title": "Mastère Data engineer",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-data-engineer"
+        },
+        {
+          "source": "mastere-data-engineer.html",
+          "page": 1,
+          "section": "Métiers et dynamique du marché",
+          "score": 0.7903159,
+          "title": "Mastère Data engineer",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-data-engineer"
+        },
+        {
+          "source": "mastere-data-engineer.html",
+          "page": 1,
+          "section": "Objectifs de la formation",
+          "score": 0.77011806,
+          "title": "Mastère Data engineer",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-data-engineer"
+        },
+        {
+          "source": "mastere-data-engineer.html",
+          "page": 1,
+          "section": "Ce que tu vas apprendre",
+          "score": 0.7517604,
+          "title": "Mastère Data engineer",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-data-engineer"
+        },
+        {
+          "source": "bachelor-developpement-ia-data-engineering.html",
+          "page": 1,
+          "section": "Métiers et dynamique du marché",
+          "score": 0.7509126,
+          "title": "Bachelor Développement IA & data engineering",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/bachelor-developpement-ia-data-engineering"
+        },
+        {
+          "source": "mastere-data-engineer.html",
+          "page": 1,
+          "section": "Voies d’accès et prérequis de la formation",
+          "score": 0.74774915,
+          "title": "Mastère Data engineer",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-data-engineer"
+        },
+        {
+          "source": "mastere-data-engineer.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.6260763349041664,
+          "title": "Mastère Data engineer",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-data-engineer"
+        },
+        {
+          "source": "mastere-data-engineer.html",
+          "page": 1,
+          "section": "Lieux",
+          "score": 0.5441784513570033,
+          "title": "Mastère Data engineer",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-data-engineer"
+        }
+      ],
+      "latency_s": 0.58,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q15",
+      "question": "Quel est le taux de réussite du titre Expert en développement logiciel ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "76 ?%": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Le taux de réussite au titre Expert en développement logiciel est de **76 %** pour l’année académique 2024/2025 (310 certifiés sur 408 candidats). [Source 5]",
+      "sources": [
+        {
+          "source": "mastere-expert-developpement-full-stack.html",
+          "page": 1,
+          "section": "Objectifs de la formation",
+          "score": 0.7318152,
+          "title": "Mastère Expert développement full stack",
+          "url": "https://www.ynov.com/formations/informatique/mastere-expert-developpement-full-stack"
+        },
+        {
+          "source": "rncp-39583.html",
+          "page": 1,
+          "section": "Objectifs et contexte de la certification",
+          "score": 0.7259151,
+          "title": "RNCP39583 — Expert en développement logiciel",
+          "url": "https://www.francecompetences.fr/recherche/rncp/39583/"
+        },
+        {
+          "source": "rncp-39583.html",
+          "page": 1,
+          "section": "Le cas échant, prérequis à l’entrée en formation",
+          "score": 0.7176124,
+          "title": "RNCP39583 — Expert en développement logiciel",
+          "url": "https://www.francecompetences.fr/recherche/rncp/39583/"
+        },
+        {
+          "source": "mastere-expert-developpement-full-stack.html",
+          "page": 1,
+          "section": "Equivalences",
+          "score": 0.716771,
+          "title": "Mastère Expert développement full stack",
+          "url": "https://www.ynov.com/formations/informatique/mastere-expert-developpement-full-stack"
+        },
+        {
+          "source": "mastere-expert-developpement-full-stack.html",
+          "page": 1,
+          "section": "Ce titre en quelques chiffres",
+          "score": 0.70776665,
+          "title": "Mastère Expert développement full stack",
+          "url": "https://www.ynov.com/formations/informatique/mastere-expert-developpement-full-stack"
+        },
+        {
+          "source": "mastere-expert-developpement-full-stack.html",
+          "page": 1,
+          "section": "Programme du Mastère — Mastère 2 — Développement professionnel et certification",
+          "score": 0.707044,
+          "title": "Mastère Expert développement full stack",
+          "url": "https://www.ynov.com/formations/informatique/mastere-expert-developpement-full-stack"
+        },
+        {
+          "source": "rncp-39583.html",
+          "page": 1,
+          "section": "Statistiques",
+          "score": 0.7027707,
+          "title": "RNCP39583 — Expert en développement logiciel",
+          "url": "https://www.francecompetences.fr/recherche/rncp/39583/"
+        },
+        {
+          "source": "centre-de-formation-des-apprentis.html",
+          "page": 1,
+          "section": "Taux de réussite apprentis — Expert en Développement Logiciel – [RNCP39583] – Niveau 7",
+          "score": 0.6747492275773121,
+          "title": "Ynov, Centre de formation des apprentis (CFA)",
+          "url": "https://www.ynov.com/experience-ynov/centre-de-formation-des-apprentis"
+        }
+      ],
+      "latency_s": 0.64,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q16",
+      "question": "Quels BTS sont accessibles via Parcoursup ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "CIEL": true,
+          "SLAM": true,
+          "SISR": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Pour la rentrée 2026-2027, trois BTS sont accessibles via Parcoursup : le BTS CIEL option A, le BTS SIO SLAM et le BTS SIO SISR. Ils sont tous proposés en alternance via Parcoursup. [Source 8]",
+      "sources": [
+        {
+          "source": "bts-sio-sisr.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements professionnels",
+          "score": 0.6297718,
+          "title": "BTS SIO SISR",
+          "url": "https://www.ynov.com/formations/informatique/bts-sio-sisr"
+        },
+        {
+          "source": "bts-sio-sisr.html",
+          "page": 1,
+          "section": "Les + de notre BTS",
+          "score": 0.6110386,
+          "title": "BTS SIO SISR",
+          "url": "https://www.ynov.com/formations/informatique/bts-sio-sisr"
+        },
+        {
+          "source": "bts-ndrc.html",
+          "page": 1,
+          "section": "Présentation",
+          "score": 0.60416305,
+          "title": "BTS NDRC Négociation et Digitalisation de la Relation Client",
+          "url": "https://www.ynov.com/formations/marketing-communication-digital/bts-ndrc"
+        },
+        {
+          "source": "bts-communication.html",
+          "page": 1,
+          "section": "*BTS de Communication BTS",
+          "score": 0.6008893,
+          "title": "BTS Communication",
+          "url": "https://www.ynov.com/formations/marketing-communication-digital/bts-communication"
+        },
+        {
+          "source": "bts-communication.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements professionnels",
+          "score": 0.6000015,
+          "title": "BTS Communication",
+          "url": "https://www.ynov.com/formations/marketing-communication-digital/bts-communication"
+        },
+        {
+          "source": "bts-sio-slam.html",
+          "page": 1,
+          "section": "Programme du BTS — BTS 1ère & 2ème année — Enseignements professionnels",
+          "score": 0.5884659,
+          "title": "BTS SIO SLAM",
+          "url": "https://www.ynov.com/formations/informatique/bts-sio-slam"
+        },
+        {
+          "source": "bts-ndrc.html",
+          "page": 1,
+          "section": "Objectifs de la formation",
+          "score": 0.5860121,
+          "title": "BTS NDRC Négociation et Digitalisation de la Relation Client",
+          "url": "https://www.ynov.com/formations/marketing-communication-digital/bts-ndrc"
+        },
+        {
+          "source": "condition-admission.html",
+          "page": 1,
+          "section": "Tout savoir sur Parcoursup",
+          "score": 0.49964148871440717,
+          "title": "Admission - Comment rejoindre Ynov",
+          "url": "https://www.ynov.com/experience-ynov/condition-admission"
+        },
+        {
+          "source": "guide-parents-scolarite-enfant.html",
+          "page": 1,
+          "section": "FAQ : les questions que se posent les parents — Quelle école choisir après le bac ?",
+          "score": 0.15117631170028503,
+          "title": "Parents, guide dans la scolarité de votre enfant",
+          "url": "https://www.ynov.com/guide-parents-scolarite-enfant"
+        }
+      ],
+      "latency_s": 0.64,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q17",
+      "question": "Quelle est la capitale de l'Australie ?",
+      "out_of_scope": "threshold",
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {},
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Je n'ai pas trouvé d'information pertinente dans les documents Ynov pour répondre à votre question.",
+      "sources": [],
+      "latency_s": 0.42,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q18",
+      "question": "Donne-moi une recette de pâte à crêpes.",
+      "out_of_scope": "threshold",
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {},
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Je n'ai pas trouvé d'information pertinente dans les documents Ynov pour répondre à votre question.",
+      "sources": [],
+      "latency_s": 0.34,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q19",
+      "question": "Quels sont les frais de scolarité de HEC Paris ?",
+      "out_of_scope": "llm",
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {},
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Je ne peux répondre qu’aux questions sur Ynov Campus. [Source 9]",
+      "sources": [
+        {
+          "source": "mastere-expert-en-developpement-informatique-specialise-banque-assurance.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.6091832,
+          "title": "Mastère Expert en développement informatique spécialisé banque & assurance",
+          "url": "https://www.ynov.com/formations/informatique/mastere-expert-en-developpement-informatique-specialise-banque-assurance"
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.5966567,
+          "title": "BTS ERA - Étude et Réalisation d'Agencement",
+          "url": "https://www.ynov.com/formations/architecture-d-interieur/bts-era"
+        },
+        {
+          "source": "bts-mec.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.57577866,
+          "title": "BTS MEC - Management économique de la construction",
+          "url": "https://www.ynov.com/formations/batiment-numerique/bts-mec"
+        },
+        {
+          "source": "armee-de-terre.html",
+          "page": 1,
+          "section": "Rémunération",
+          "score": 0.53346765,
+          "title": "Formation métier Armée de Terre",
+          "url": "https://www.ynov.com/formations/informatique/armee-de-terre"
+        },
+        {
+          "source": "mastere-expert-en-jumeaux-numeriques-du-batiment-de-la-ville-et-des-territoires.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.50751007,
+          "title": "Mastère Expert en Jumeaux numériques du bâtiment, de la ville et des territoires",
+          "url": "https://www.ynov.com/formations/batiment-numerique/mastere-expert-en-jumeaux-numeriques-du-batiment-de-la-ville-et-des-territoires"
+        },
+        {
+          "source": "armee-de-terre.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.5042746,
+          "title": "Formation métier Armée de Terre",
+          "url": "https://www.ynov.com/formations/informatique/armee-de-terre"
+        },
+        {
+          "source": "bts-ciel.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.50346965,
+          "title": "BTS CIEL option A - Informatique et réseaux",
+          "url": "https://www.ynov.com/formations/cybersecurite/bts-ciel"
+        },
+        {
+          "source": "armee-de-terre.html",
+          "page": 1,
+          "section": "Logement et alimentation pendant la formation",
+          "score": 0.50217634,
+          "title": "Formation métier Armée de Terre",
+          "url": "https://www.ynov.com/formations/informatique/armee-de-terre"
+        },
+        {
+          "source": "condition-admission.html",
+          "page": 1,
+          "section": "FAQ — Quels sont les frais de scolarité pour un Bachelor ou un Mastère ?",
+          "score": 0.3911700795634392,
+          "title": "Admission - Comment rejoindre Ynov",
+          "url": "https://www.ynov.com/experience-ynov/condition-admission"
+        }
+      ],
+      "latency_s": 0.53,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q20",
+      "question": "Quel temps fera-t-il demain à Lyon ?",
+      "out_of_scope": "threshold",
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {},
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Je n'ai pas trouvé d'information pertinente dans les documents Ynov pour répondre à votre question.",
+      "sources": [],
+      "latency_s": 0.27,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q21",
+      "question": "Comment réparer une fuite d'eau sous un évier ?",
+      "out_of_scope": "threshold",
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {},
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Je n'ai pas trouvé d'information pertinente dans les documents Ynov pour répondre à votre question.",
+      "sources": [],
+      "latency_s": 0.37,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q22",
+      "question": "Qui a gagné la Coupe du monde de football 2018 ?",
+      "out_of_scope": "threshold",
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {},
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Je n'ai pas trouvé d'information pertinente dans les documents Ynov pour répondre à votre question.",
+      "sources": [],
+      "latency_s": 0.34,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q23",
+      "question": "Quel est le meilleur langage de programmation pour débuter ?",
+      "out_of_scope": "threshold",
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {},
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Je n'ai pas trouvé d'information pertinente dans les documents Ynov pour répondre à votre question.",
+      "sources": [],
+      "latency_s": 0.38,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q24",
+      "question": "Peux-tu m'écrire un poème sur l'automne ?",
+      "out_of_scope": "threshold",
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {},
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Je n'ai pas trouvé d'information pertinente dans les documents Ynov pour répondre à votre question.",
+      "sources": [],
+      "latency_s": 0.27,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q25",
+      "question": "Combien coûte un abonnement Netflix ?",
+      "out_of_scope": "threshold",
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {},
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Je n'ai pas trouvé d'information pertinente dans les documents Ynov pour répondre à votre question.",
+      "sources": [],
+      "latency_s": 0.38,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q26",
+      "question": "Quelles sont les conditions d'admission à Polytechnique ?",
+      "out_of_scope": "llm",
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {},
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Je ne peux pas renseigner les conditions d’admission à Polytechnique : je réponds uniquement aux questions sur Ynov. [Source 8]",
+      "sources": [
+        {
+          "source": "bachelor-developpement-ia-data-engineering.html",
+          "page": 1,
+          "section": "Les modalités d'évaluation certificatives",
+          "score": 0.5934674,
+          "title": "Bachelor Développement IA & data engineering",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/bachelor-developpement-ia-data-engineering"
+        },
+        {
+          "source": "rncp-42169.html",
+          "page": 1,
+          "section": "Le cas échant, prérequis à l’entrée en formation",
+          "score": 0.5917218,
+          "title": "RNCP42169 — Product builder no code",
+          "url": "https://www.francecompetences.fr/recherche/rncp/42169/"
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Les modalités d'évaluation certificatives",
+          "score": 0.5909543,
+          "title": "Bachelor Informatique",
+          "url": "https://www.ynov.com/formations/informatique/bachelor-informatique"
+        },
+        {
+          "source": "rncp-39766.html",
+          "page": 1,
+          "section": "Le cas échant, prérequis à l’entrée en formation",
+          "score": 0.5890453,
+          "title": "RNCP39766 — Chef de projets systèmes embarqués",
+          "url": "https://www.francecompetences.fr/recherche/rncp/39766/"
+        },
+        {
+          "source": "mastere-expert-en-mecatronique.html",
+          "page": 1,
+          "section": "Voies d’accès et prérequis de la formation",
+          "score": 0.5843408,
+          "title": "Mastère Expert en mécatronique",
+          "url": "https://www.ynov.com/formations/informatique/mastere-expert-en-mecatronique"
+        },
+        {
+          "source": "rncp-41123.html",
+          "page": 1,
+          "section": "Le cas échant, prérequis à l’entrée en formation",
+          "score": 0.5836353,
+          "title": "RNCP41123 — Expert en transformation digitale et technologique no code",
+          "url": "https://www.francecompetences.fr/recherche/rncp/41123/"
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Voies d'accès et prérequis à la formation",
+          "score": 0.5801323,
+          "title": "BTS ERA - Étude et Réalisation d'Agencement",
+          "url": "https://www.ynov.com/formations/architecture-d-interieur/bts-era"
+        },
+        {
+          "source": "informations-communes-formations.md",
+          "page": 1,
+          "section": "Le processus d’admission",
+          "score": 0.4373786359439978,
+          "title": "Informations communes à toutes les formations Ynov",
+          "url": null
+        },
+        {
+          "source": "condition-admission.html",
+          "page": 1,
+          "section": "Quel est ton profil ?",
+          "score": 0.251423086742039,
+          "title": "Admission - Comment rejoindre Ynov",
+          "url": "https://www.ynov.com/experience-ynov/condition-admission"
+        }
+      ],
+      "latency_s": 0.51,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q27",
+      "question": "Quels sont les blocs de compétences du titre RNCP Expert en développement logiciel ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "Cadrer un projet": true,
+          "Concevoir et développer": true,
+          "Coordonner et piloter": true,
+          "Maintenir l.application": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Le titre RNCP39583 Expert en développement logiciel comprend 4 blocs de compétences :\n\n1. **RNCP39583BC01** — Cadrer un projet de développement d’applications logicielles  \n2. **RNCP39583BC02** — Concevoir et développer des applications logicielles  \n3. **RNCP39583BC03** — Coordonner et piloter un projet de développement d’applications logicielles  \n4. **RNCP39583BC04** — Maintenir l’application logicielle en condition opérationnelle [Source 1]",
+      "sources": [
+        {
+          "source": "rncp-39583.html",
+          "page": 1,
+          "section": "Blocs de compétences",
+          "score": 0.89312994,
+          "title": "RNCP39583 — Expert en développement logiciel",
+          "url": "https://www.francecompetences.fr/recherche/rncp/39583/"
+        },
+        {
+          "source": "rncp-39583.html",
+          "page": 1,
+          "section": "Objectifs et contexte de la certification",
+          "score": 0.84568214,
+          "title": "RNCP39583 — Expert en développement logiciel",
+          "url": "https://www.francecompetences.fr/recherche/rncp/39583/"
+        },
+        {
+          "source": "rncp-39583.html",
+          "page": 1,
+          "section": "RNCP39583BC01 - Cadrer un projet de développement d'applications logicielles",
+          "score": 0.83831,
+          "title": "RNCP39583 — Expert en développement logiciel",
+          "url": "https://www.francecompetences.fr/recherche/rncp/39583/"
+        },
+        {
+          "source": "rncp-39583.html",
+          "page": 1,
+          "section": "Secteurs d’activités",
+          "score": 0.8321879,
+          "title": "RNCP39583 — Expert en développement logiciel",
+          "url": "https://www.francecompetences.fr/recherche/rncp/39583/"
+        },
+        {
+          "source": "rncp-36463.html",
+          "page": 1,
+          "section": "Blocs de compétences",
+          "score": 0.83156216,
+          "title": "RNCP36463 — Concepteur développeur d’applications numériques",
+          "url": "https://www.francecompetences.fr/recherche/rncp/36463/"
+        },
+        {
+          "source": "rncp-39583.html",
+          "page": 1,
+          "section": "RNCP39583BC03 - Coordonner et piloter un projet de développement d'applications logicielles",
+          "score": 0.83138335,
+          "title": "RNCP39583 — Expert en développement logiciel",
+          "url": "https://www.francecompetences.fr/recherche/rncp/39583/"
+        },
+        {
+          "source": "rncp-39583.html",
+          "page": 1,
+          "section": "Description des modalités d'acquisition de la certification par capitalisation des blocs de compétences et/ou par correspondance",
+          "score": 0.818741,
+          "title": "RNCP39583 — Expert en développement logiciel",
+          "url": "https://www.francecompetences.fr/recherche/rncp/39583/"
+        },
+        {
+          "source": "mastere-expert-developpement-full-stack.html",
+          "page": 1,
+          "section": "* Titre d’Expert en développement logiciel – Niveau 7",
+          "score": 0.7852213820928585,
+          "title": "Mastère Expert développement full stack",
+          "url": "https://www.ynov.com/formations/informatique/mastere-expert-developpement-full-stack"
+        },
+        {
+          "source": "mastere-expert-en-developpement-informatique-specialise-banque-assurance.html",
+          "page": 1,
+          "section": "* Titre d’Expert en développement logiciel – Niveau 7",
+          "score": 0.6804341473462083,
+          "title": "Mastère Expert en développement informatique spécialisé banque & assurance",
+          "url": "https://www.ynov.com/formations/informatique/mastere-expert-en-developpement-informatique-specialise-banque-assurance"
+        }
+      ],
+      "latency_s": 0.62,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q28",
+      "question": "Quels modules sont enseignés en Bachelor 1 Cybersécurité ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "Découverte de la programmation": true,
+          "Initiation au développement web": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "En Bachelor 1 Cybersécurité, les modules enseignés sont :\n\n- **Découverte de la programmation** : Ymmersion, application CLI et parsing en Go, algorithmie et bases de données SQL. [Source 2]\n- **Initiation au développement web** : HTML/CSS, JavaScript et DOM, développement web et consommation d’API. [Source 1]\n- **Les bases de l’infrastructure et du réseau** : virtualisation et administration poste client, fonctionnement des réseaux, Linux fondamentaux. [Source 1]\n- **Fondamentaux du développement** : programmation orientée objet et Python, outils d’IA, langage compilé et interprété. [Source 1]",
+      "sources": [
+        {
+          "source": "bachelor-cybersecurite.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 1 : Cybersécurité — Initiation au développement web",
+          "score": 0.8001086,
+          "title": "Bachelor Cybersécurité",
+          "url": "https://www.ynov.com/formations/cybersecurite/bachelor-cybersecurite"
+        },
+        {
+          "source": "bachelor-cybersecurite.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 1 : Cybersécurité — Les fondamentaux d'abord, la spécialisation ensuite",
+          "score": 0.7837307,
+          "title": "Bachelor Cybersécurité",
+          "url": "https://www.ynov.com/formations/cybersecurite/bachelor-cybersecurite"
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite.html",
+          "page": 1,
+          "section": "Voies d’accès et prérequis à la formation",
+          "score": 0.77584577,
+          "title": "Mastère Expert en cybersécurité",
+          "url": "https://www.ynov.com/formations/cybersecurite/mastere-expert-en-cybersecurite"
+        },
+        {
+          "source": "bachelor-cybersecurite.html",
+          "page": 1,
+          "section": "Voies d’accès et prérequis à la formation",
+          "score": 0.7753273,
+          "title": "Bachelor Cybersécurité",
+          "url": "https://www.ynov.com/formations/cybersecurite/bachelor-cybersecurite"
+        },
+        {
+          "source": "mastere-expert-en-cybersecurite.html",
+          "page": 1,
+          "section": "Nos méthodes pédagogiques",
+          "score": 0.764151,
+          "title": "Mastère Expert en cybersécurité",
+          "url": "https://www.ynov.com/formations/cybersecurite/mastere-expert-en-cybersecurite"
+        },
+        {
+          "source": "bachelor-cybersecurite.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.5679483872060491,
+          "title": "Bachelor Cybersécurité",
+          "url": "https://www.ynov.com/formations/cybersecurite/bachelor-cybersecurite"
+        },
+        {
+          "source": "mastere-data-engineer.html",
+          "page": 1,
+          "section": "Programme du Mastère — Mastère 2 — Module 1",
+          "score": 0.4449439248875242,
+          "title": "Mastère Data engineer",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-data-engineer"
+        }
+      ],
+      "latency_s": 0.54,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q29",
+      "question": "Combien de temps a-t-on pour valider son inscription après le rendez-vous d'admission ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "10 jours": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Tu as 10 jours après le rendez-vous d’admission pour valider ton inscription. [Source 6]",
+      "sources": [
+        {
+          "source": "rncp-38383.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.61940485,
+          "title": "RNCP38383 — BTS - Etude et réalisation d'agencement",
+          "url": "https://www.francecompetences.fr/recherche/rncp/38383/"
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Ce titre en quelques chiffres",
+          "score": 0.6027003,
+          "title": "Bachelor Informatique",
+          "url": "https://www.ynov.com/formations/informatique/bachelor-informatique"
+        },
+        {
+          "source": "rncp-38368.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.59194124,
+          "title": "RNCP38368 — BTS - Négociation et digitalisation de la relation client",
+          "url": "https://www.francecompetences.fr/recherche/rncp/38368/"
+        },
+        {
+          "source": "rncp-37198.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.5908041,
+          "title": "RNCP37198 — BTS - Communication",
+          "url": "https://www.francecompetences.fr/recherche/rncp/37198/"
+        },
+        {
+          "source": "condition-admission.html",
+          "page": 1,
+          "section": "FAQ — Dans combien de temps vais-je recevoir une réponse après ma candidature ?",
+          "score": 0.5785935,
+          "title": "Admission - Comment rejoindre Ynov",
+          "url": "https://www.ynov.com/experience-ynov/condition-admission"
+        },
+        {
+          "source": "condition-admission.html",
+          "page": 1,
+          "section": "Le rendez-vous d'admission",
+          "score": 0.5751774,
+          "title": "Admission - Comment rejoindre Ynov",
+          "url": "https://www.ynov.com/experience-ynov/condition-admission"
+        },
+        {
+          "source": "centre-de-formation-des-apprentis.html",
+          "page": 1,
+          "section": "Taux d’insertion global des apprentis à 6 mois",
+          "score": 0.5551933,
+          "title": "Ynov, Centre de formation des apprentis (CFA)",
+          "url": "https://www.ynov.com/experience-ynov/centre-de-formation-des-apprentis"
+        },
+        {
+          "source": "rncp-41996.html",
+          "page": 1,
+          "section": "Statistiques",
+          "score": 0.5465099,
+          "title": "RNCP41996 — Administrateur systèmes, réseaux et bases de données",
+          "url": "https://www.francecompetences.fr/recherche/rncp/41996/"
+        }
+      ],
+      "latency_s": 0.51,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q30",
+      "question": "Quelle remise obtient-on en payant les frais de scolarité comptant ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "(?<![0-9][  ])(?<![0-9])500 ?(€|euros)": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Le paiement comptant comprend une remise de **500 €**. Il faut régler l’intégralité des frais de formation avant le début de la formation. [Source 2]",
+      "sources": [
+        {
+          "source": "bts-mec.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.61262864,
+          "title": "BTS MEC - Management économique de la construction",
+          "url": "https://www.ynov.com/formations/batiment-numerique/bts-mec"
+        },
+        {
+          "source": "informations-communes-formations.md",
+          "page": 1,
+          "section": "Modalités de paiement et prise en charge des frais",
+          "score": 0.58814204,
+          "title": "Informations communes à toutes les formations Ynov",
+          "url": null
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.5874755,
+          "title": "Bachelor Informatique",
+          "url": "https://www.ynov.com/formations/informatique/bachelor-informatique"
+        },
+        {
+          "source": "mastere-expert-en-jumeaux-numeriques-du-batiment-de-la-ville-et-des-territoires.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.5827473,
+          "title": "Mastère Expert en Jumeaux numériques du bâtiment, de la ville et des territoires",
+          "url": "https://www.ynov.com/formations/batiment-numerique/mastere-expert-en-jumeaux-numeriques-du-batiment-de-la-ville-et-des-territoires"
+        },
+        {
+          "source": "mastere-expert-developpement-mobile-lot.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.5794612,
+          "title": "Mastère Expert développement mobile & loT",
+          "url": "https://www.ynov.com/formations/informatique/mastere-expert-developpement-mobile-lot"
+        },
+        {
+          "source": "condition-admission.html",
+          "page": 1,
+          "section": "Financement des études",
+          "score": 0.5732105,
+          "title": "Admission - Comment rejoindre Ynov",
+          "url": "https://www.ynov.com/experience-ynov/condition-admission"
+        },
+        {
+          "source": "bachelor-developpement-ia-data-engineering.html",
+          "page": 1,
+          "section": "Tarifs",
+          "score": 0.55426043,
+          "title": "Bachelor Développement IA & data engineering",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/bachelor-developpement-ia-data-engineering"
+        },
+        {
+          "source": "condition-admission.html",
+          "page": 1,
+          "section": "FAQ — Quels sont les frais de scolarité pour un Bachelor ou un Mastère ?",
+          "score": 0.5342330880466208,
+          "title": "Admission - Comment rejoindre Ynov",
+          "url": "https://www.ynov.com/experience-ynov/condition-admission"
+        }
+      ],
+      "latency_s": 0.54,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q31",
+      "question": "Les Bachelors Ynov passent-ils par Parcoursup ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "sans passer par Parcoursup|accessibles directement|hors Parcoursup": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Non. Les Bachelors Ynov sont accessibles hors Parcoursup : tu peux candidater directement auprès de Ynov. [Source 1]",
+      "sources": [
+        {
+          "source": "condition-admission.html",
+          "page": 1,
+          "section": "Tout savoir sur Parcoursup",
+          "score": 0.6911792,
+          "title": "Admission - Comment rejoindre Ynov",
+          "url": "https://www.ynov.com/experience-ynov/condition-admission"
+        },
+        {
+          "source": "informations-communes-formations.md",
+          "page": 1,
+          "section": "Le processus d’admission",
+          "score": 0.64121604,
+          "title": "Informations communes à toutes les formations Ynov",
+          "url": null
+        },
+        {
+          "source": "alternance.html",
+          "page": 1,
+          "section": "Pour en savoir plus — L'alternance chez Ynov",
+          "score": 0.6280191,
+          "title": "L'Alternance chez Ynov",
+          "url": "https://www.ynov.com/alternance"
+        },
+        {
+          "source": "condition-admission.html",
+          "page": 1,
+          "section": "Accompagnement vers l’alternance",
+          "score": 0.62738544,
+          "title": "Admission - Comment rejoindre Ynov",
+          "url": "https://www.ynov.com/experience-ynov/condition-admission"
+        },
+        {
+          "source": "campus.html",
+          "page": 1,
+          "section": "Ynov en quelques chiffres",
+          "score": 0.62032413,
+          "title": "Les campus Ynov",
+          "url": "https://www.ynov.com/campus"
+        },
+        {
+          "source": "alternance.html",
+          "page": 1,
+          "section": "Pour en savoir plus — Vous recrutez nos talents",
+          "score": 0.6037016,
+          "title": "L'Alternance chez Ynov",
+          "url": "https://www.ynov.com/alternance"
+        },
+        {
+          "source": "guide-parents-scolarite-enfant.html",
+          "page": 1,
+          "section": "FAQ : les questions que se posent les parents — Que se passe-t-il si mon enfant n’a pas de proposition sur Parcoursup ?",
+          "score": 0.44307118791904376,
+          "title": "Parents, guide dans la scolarité de votre enfant",
+          "url": "https://www.ynov.com/guide-parents-scolarite-enfant"
+        },
+        {
+          "source": "guide-parents-scolarite-enfant.html",
+          "page": 1,
+          "section": "Formations Post-Bac ? Nous vous aidons à y voir plus clair",
+          "score": 0.43773811686288816,
+          "title": "Parents, guide dans la scolarité de votre enfant",
+          "url": "https://www.ynov.com/guide-parents-scolarite-enfant"
+        }
+      ],
+      "latency_s": 0.46,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q32",
+      "question": "Quel niveau faut-il pour entrer en BTS ERA ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "BAC ?\\+ ?2": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Il faut avoir le niveau BAC ou BAC+2 pour entrer en BTS ERA. [Source 9]",
+      "sources": [
+        {
+          "source": "bts-sio-slam.html",
+          "page": 1,
+          "section": "Les modalités d’évaluations certificatives",
+          "score": 0.7160847,
+          "title": "BTS SIO SLAM",
+          "url": "https://www.ynov.com/formations/informatique/bts-sio-slam"
+        },
+        {
+          "source": "bts-communication.html",
+          "page": 1,
+          "section": "Les modalités d’évaluations certificatives",
+          "score": 0.7027761,
+          "title": "BTS Communication",
+          "url": "https://www.ynov.com/formations/marketing-communication-digital/bts-communication"
+        },
+        {
+          "source": "bts-ciel.html",
+          "page": 1,
+          "section": "Les modalités d’évaluations certificatives",
+          "score": 0.69768256,
+          "title": "BTS CIEL option A - Informatique et réseaux",
+          "url": "https://www.ynov.com/formations/cybersecurite/bts-ciel"
+        },
+        {
+          "source": "bts-sio-sisr.html",
+          "page": 1,
+          "section": "Les modalités d’évaluations certificatives",
+          "score": 0.6951027,
+          "title": "BTS SIO SISR",
+          "url": "https://www.ynov.com/formations/informatique/bts-sio-sisr"
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Les modalités d’évaluations certificatives",
+          "score": 0.6853219,
+          "title": "BTS ERA - Étude et Réalisation d'Agencement",
+          "url": "https://www.ynov.com/formations/architecture-d-interieur/bts-era"
+        },
+        {
+          "source": "bts-metiers-de-l-audiovisuel-option-metiers-du-montage-et-de-la-postproduction.html",
+          "page": 1,
+          "section": "Les modalités d’évaluations certificatives",
+          "score": 0.68482506,
+          "title": "BTS Métiers de l’audiovisuel option métiers du montage et de la postproduction",
+          "url": "https://www.ynov.com/formations/audiovisuel/bts-metiers-de-l-audiovisuel-option-metiers-du-montage-et-de-la-postproduction"
+        },
+        {
+          "source": "bts-mec.html",
+          "page": 1,
+          "section": "Les modalités d’évaluations certificatives",
+          "score": 0.67920613,
+          "title": "BTS MEC - Management économique de la construction",
+          "url": "https://www.ynov.com/formations/batiment-numerique/bts-mec"
+        },
+        {
+          "source": "bts-sio-slam.html",
+          "page": 1,
+          "section": "Équivalences",
+          "score": 0.6637629,
+          "title": "BTS SIO SLAM",
+          "url": "https://www.ynov.com/formations/informatique/bts-sio-slam"
+        },
+        {
+          "source": "bts-era.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.5513021943693645,
+          "title": "BTS ERA - Étude et Réalisation d'Agencement",
+          "url": "https://www.ynov.com/formations/architecture-d-interieur/bts-era"
+        },
+        {
+          "source": "bts-sio-slam.html",
+          "page": 1,
+          "section": "Infos clés",
+          "score": 0.6373314346276152,
+          "title": "BTS SIO SLAM",
+          "url": "https://www.ynov.com/formations/informatique/bts-sio-slam"
+        }
+      ],
+      "latency_s": 1.03,
+      "edge_cases": []
+    },
+    {
+      "question_id": "q33",
+      "question": "Où sont les campus d'Ynov ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "Bordeaux": true,
+          "Lyon": true,
+          "Toulouse": true,
+          "Strasbourg": true,
+          "Connect": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Ynov compte 13 campus en France : Aix-en-Provence, Bordeaux, Lille, Lyon, Montpellier, Nantes, Nice-Sophia, Paris Est Val d’Europe, Paris Ouest Nanterre, Rennes, Rouen, Strasbourg et Toulouse. Ynov Connect est le campus 100 % en ligne et en alternance. [Sources 1, 2]",
+      "sources": [
+        {
+          "source": "campus.html",
+          "page": 1,
+          "section": "En France, aux cœurs des grandes métropoles.",
+          "score": 0.7319014,
+          "title": "Les campus Ynov",
+          "url": "https://www.ynov.com/campus"
+        },
+        {
+          "source": "informations-communes-formations.md",
+          "page": 1,
+          "section": "Liste des campus Ynov : où sont les campus, dans quelles villes",
+          "score": 0.6816113,
+          "title": "Informations communes à toutes les formations Ynov",
+          "url": null
+        },
+        {
+          "source": "informations-communes-formations.md",
+          "page": 1,
+          "section": "Passerelles — particularité : Mastère Direction artistique",
+          "score": 0.6390628,
+          "title": "Informations communes à toutes les formations Ynov",
+          "url": null
+        },
+        {
+          "source": "campus.html",
+          "page": 1,
+          "section": "Ynov en quelques chiffres",
+          "score": 0.6309252,
+          "title": "Les campus Ynov",
+          "url": "https://www.ynov.com/campus"
+        },
+        {
+          "source": "condition-admission.html",
+          "page": 1,
+          "section": "Coordonnées de tous nos campus — Contact Ynov Connect",
+          "score": 0.62908745,
+          "title": "Admission - Comment rejoindre Ynov",
+          "url": "https://www.ynov.com/experience-ynov/condition-admission"
+        },
+        {
+          "source": "alternance.html",
+          "page": 1,
+          "section": "Pour en savoir plus — Trouver son alternance avec Ynov",
+          "score": 0.6279383,
+          "title": "L'Alternance chez Ynov",
+          "url": "https://www.ynov.com/alternance"
+        },
+        {
+          "source": "mastere-expert-en-jumeaux-numeriques-du-batiment-de-la-ville-et-des-territoires.html",
+          "page": 1,
+          "section": "Lieux",
+          "score": 0.3231898734901421,
+          "title": "Mastère Expert en Jumeaux numériques du bâtiment, de la ville et des territoires",
+          "url": "https://www.ynov.com/formations/batiment-numerique/mastere-expert-en-jumeaux-numeriques-du-batiment-de-la-ville-et-des-territoires"
+        },
+        {
+          "source": "mastere-data-engineer.html",
+          "page": 1,
+          "section": "Lieux",
+          "score": 0.32508642862826004,
+          "title": "Mastère Data engineer",
+          "url": "https://www.ynov.com/formations/intelligence-artificielle-data/mastere-data-engineer"
+        }
+      ],
+      "latency_s": 2.89,
+      "edge_cases": [],
+      "review_note": "Relu le 9 octobre 2026 : les 13 campus et Ynov Connect, sans invention, y compris pour la formulation courte (q34)."
+    },
+    {
+      "question_id": "q34",
+      "question": "Où sont les campus ?",
+      "out_of_scope": null,
+      "passed": true,
+      "verdict": "correct",
+      "auto_check": {
+        "must": {
+          "Bordeaux": true,
+          "Lyon": true,
+          "Toulouse": true,
+          "Strasbourg": true,
+          "Connect": true
+        },
+        "must_not_hits": [],
+        "verdict": "correct"
+      },
+      "answer": "Ynov compte 13 campus en France : Aix-en-Provence, Bordeaux, Lille, Lyon, Montpellier, Nantes, Nice-Sophia, Paris Est Val d’Europe, Paris Ouest Nanterre, Rennes, Rouen, Strasbourg et Toulouse. Ynov Connect est le campus 100 % en ligne et en alternance. [Source 2]",
+      "sources": [
+        {
+          "source": "campus.html",
+          "page": 1,
+          "section": "En France, aux cœurs des grandes métropoles.",
+          "score": 0.6168354,
+          "title": "Les campus Ynov",
+          "url": "https://www.ynov.com/campus"
+        },
+        {
+          "source": "informations-communes-formations.md",
+          "page": 1,
+          "section": "Liste des campus Ynov : où sont les campus, dans quelles villes",
+          "score": 0.5320693,
+          "title": "Informations communes à toutes les formations Ynov",
+          "url": null
+        },
+        {
+          "source": "bachelor-informatique.html",
+          "page": 1,
+          "section": "Compétences et objectifs de la formation",
+          "score": 0.5180039,
+          "title": "Bachelor Informatique",
+          "url": "https://www.ynov.com/formations/informatique/bachelor-informatique"
+        },
+        {
+          "source": "campus.html",
+          "page": 1,
+          "section": "Ynov en quelques chiffres",
+          "score": 0.50737727,
+          "title": "Les campus Ynov",
+          "url": "https://www.ynov.com/campus"
+        },
+        {
+          "source": "bachelor-architecture-d-interieur.html",
+          "page": 1,
+          "section": "La Fabryk",
+          "score": 0.494083,
+          "title": "Bachelor Architecture d'intérieur",
+          "url": "https://www.ynov.com/formations/architecture-d-interieur/bachelor-architecture-d-interieur"
+        },
+        {
+          "source": "bachelor-audiovisuel.html",
+          "page": 1,
+          "section": "Nos méthodes pédagogiques",
+          "score": 0.49354988,
+          "title": "Bachelor Création de contenus et audiovisuel",
+          "url": "https://www.ynov.com/formations/audiovisuel/bachelor-audiovisuel"
+        },
+        {
+          "source": "bts-communication.html",
+          "page": 1,
+          "section": "Voies d'accès et prérequis à la formation",
+          "score": 0.4921344,
+          "title": "BTS Communication",
+          "url": "https://www.ynov.com/formations/marketing-communication-digital/bts-communication"
+        },
+        {
+          "source": "bachelor-audiovisuel.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelors — Bachelor 3 : Création de contenus et audiovisuel",
+          "score": 0.34246825861808666,
+          "title": "Bachelor Création de contenus et audiovisuel",
+          "url": "https://www.ynov.com/formations/audiovisuel/bachelor-audiovisuel"
+        },
+        {
+          "source": "bachelor-audiovisuel.html",
+          "page": 1,
+          "section": "Programme du Bachelor — Bachelor 1 : Création de contenus et audiovisuel — Ce que tu fais concrètement en 1ère année",
+          "score": 0.29971931181212563,
+          "title": "Bachelor Création de contenus et audiovisuel",
+          "url": "https://www.ynov.com/formations/audiovisuel/bachelor-audiovisuel"
+        }
+      ],
+      "latency_s": 3.13,
+      "edge_cases": [],
+      "review_note": "Relu le 9 octobre 2026 : les 13 campus et Ynov Connect, sans invention, y compris pour la formulation courte (q34)."
+    }
+  ],
+  "summary": {
+    "total": 34,
+    "passed": 34,
+    "correct": 34,
+    "partial": 0,
+    "wrong": 0,
+    "refused": 0,
+    "no_answer": 0,
+    "error": 0,
+    "in_scope_total": 24,
+    "in_scope_correct": 24,
+    "out_of_scope_total": 10,
+    "out_of_scope_correct": 10
+  }
+}
