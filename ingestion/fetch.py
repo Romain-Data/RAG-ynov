@@ -50,6 +50,7 @@ COMMON_PAGES = (
     "/handicap",
     "/guide-parents-scolarite-enfant",
     "/experience-ynov/certification-qualiopi",
+    "/campus",
 )
 
 

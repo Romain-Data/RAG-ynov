@@ -7,7 +7,9 @@ The HTML loader drops the boilerplate sections repeated on every formation page
   merged when the types share the same wording;
 - formations whose wording differs from their type's get a "particularité" section,
   so nothing the loader dropped is lost;
-- the shared payment / alternance / formation continue terms from Tarifs.
+- the shared payment / alternance / formation continue terms from Tarifs;
+- the list of campuses, from the map of the /campus page (data/common/campus.html), which
+  only lists city names with no sentence saying that they are the campuses.
 
 Usage:
     uv run python -m ingestion.build_common [--formations data/formations] [--out data/common]
@@ -21,6 +23,7 @@ from datetime import date
 from pathlib import Path
 
 import yaml
+from bs4 import BeautifulSoup
 
 from ingestion.html_loader import (
     TARIF_BOILERPLATE_HEADERS,
@@ -71,7 +74,21 @@ def _tarif_boilerplate(tarifs: str) -> list[str]:
     return lines
 
 
-def build(formations_dir: Path) -> str:
+def _campus_section(campus_html: str) -> list[str]:
+    """The "Où sont les campus ?" section, from the map pins of the /campus page."""
+    soup = BeautifulSoup(campus_html, "html.parser")
+    cities = [str(a["aria-label"]) for a in soup.select("a.CampusMap-Pin[aria-label]")]
+    if not cities:
+        return []
+    return [
+        "",
+        "## Où sont les campus d'Ynov ? Liste des villes",
+        f"Ynov compte {len(cities)} campus en France, situés à : {', '.join(cities)}. "
+        "Ynov Connect est le campus 100 % en ligne et en alternance.",
+    ]
+
+
+def build(formations_dir: Path, campus_html: str | None = None) -> str:
     # generic title key -> list of (formation, diploma type, display title, body)
     sections: dict[str, list[tuple[str, str | None, str, str]]] = collections.defaultdict(list)
     tarif_lines: list[list[str]] = []
@@ -92,6 +109,9 @@ def build(formations_dir: Path) -> str:
         "Mastères), sauf mention contraire. Les tarifs propres à chaque formation figurent "
         "sur sa fiche."
     )
+
+    if campus_html:
+        out += _campus_section(campus_html)
 
     if tarif_lines:
         common = max(collections.Counter(map(tuple, tarif_lines)).items(), key=lambda kv: kv[1])
@@ -137,7 +157,9 @@ def main() -> None:
 
     args.out.mkdir(parents=True, exist_ok=True)
     md_path = args.out / f"{OUT_NAME}.md"
-    md_path.write_text(build(args.formations), encoding="utf-8")
+    campus_path = args.out / "campus.html"
+    campus_html = campus_path.read_text(encoding="utf-8") if campus_path.exists() else None
+    md_path.write_text(build(args.formations, campus_html), encoding="utf-8")
     manifest = {
         "source": md_path.name,
         "doc_type": "info",

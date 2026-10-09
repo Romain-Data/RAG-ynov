@@ -42,3 +42,18 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
+
+def test_campus_section_lists_the_map_pins():
+    from ingestion.build_common import _campus_section
+
+    html = (
+        '<a class="CampusMap-Pin" aria-label="Lille" href="/campus/lille"></a>'
+        '<a class="CampusMap-Pin" aria-label="Nice - Sophia" href="/campus/sophia"></a>'
+        '<a class="Other" aria-label="Ignoré"></a>'
+    )
+    text = "\n".join(_campus_section(html))
+    assert "## Où sont les campus d'Ynov ?" in text
+    assert "2 campus en France, situés à : Lille, Nice - Sophia." in text
+    assert "Ynov Connect" in text
+    assert _campus_section("<p>aucune carte</p>") == []

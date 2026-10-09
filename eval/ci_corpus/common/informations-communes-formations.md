@@ -2,6 +2,9 @@
 
 Ces informations s'appliquent à l'ensemble des formations Ynov (BTS, Bachelors, Mastères), sauf mention contraire. Les tarifs propres à chaque formation figurent sur sa fiche.
 
+## Où sont les campus d'Ynov ? Liste des villes
+Ynov compte 13 campus en France, situés à : Aix-en-Provence, Bordeaux, Lille, Lyon, Montpellier, Nantes, Nice - Sophia, Paris Est Val d'Europe, Paris Ouest Nanterre, Rennes, Rouen, Strasbourg, Toulouse. Ynov Connect est le campus 100 % en ligne et en alternance.
+
 ## Modalités de paiement et prise en charge des frais
 Le paiement comptant correspond à un paiement de l’intégralité des frais de formation avant le démarrage de la formation et comprend une remise de 500 euros.
 Le paiement échelonné correspond à un paiement en 4 échéances.
