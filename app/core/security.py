@@ -54,3 +54,8 @@ def rate_limit_health(request: Request) -> None:
 @limiter.limit(f"{settings.rate_limit_account}/minute")
 def rate_limit_account(request: Request) -> None:
     """Rate limit for the account pages: sign-up, recovery, deletion (default 20 req/min/IP)."""
+
+
+@limiter.limit(f"{settings.rate_limit_admin_login}/minute")
+def rate_limit_admin_login(request: Request) -> None:
+    """Rate limit for the password attempts on /admin/login (default 10 req/min/IP)."""

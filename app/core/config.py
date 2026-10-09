@@ -48,6 +48,11 @@ class Settings(BaseSettings):
     answer_log_enabled: bool = True
     answer_log_retention_days: int = 180
 
+    # Password of the /admin pages that review the journal (#18). Empty = /admin is not
+    # mounted. Use a long random secret: the session cookies are signed with a key derived
+    # from it, and changing it logs everyone out.
+    admin_password: str = ""
+
     # HTTP Basic password in front of the whole site (user "preprod"), for the preprod.
     # Empty = no protection (production).
     site_password: str = ""
@@ -57,6 +62,7 @@ class Settings(BaseSettings):
     rate_limit_ingest: int = 5
     rate_limit_health: int = 120
     rate_limit_account: int = 20
+    rate_limit_admin_login: int = 10
 
     # Misc
     log_level: str = "INFO"
