@@ -2,6 +2,7 @@
 
 import secrets
 import time
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import pytest
@@ -18,7 +19,7 @@ from app import main
 from app.core.config import settings
 from app.core.security import add_security_middleware, limiter
 from chat.db import db, init_db
-from journal import review, store
+from journal import review, stats, store
 
 # Generated for each run: no password-like literal in the repository
 PASSWORD = secrets.token_urlsafe(24)
@@ -469,3 +470,102 @@ class TestPromotion:
         assert signed_in.get("/admin/reponses/999/yaml").status_code == 404
         resp = signed_in.post("/admin/reponses/999/promotion", data={"question_id": "q50"})
         assert resp.status_code == 404
+
+
+class TestSummary:
+    @staticmethod
+    def _age(entry_id: int, days: int) -> None:
+        old = (datetime.now(UTC) - timedelta(days=days)).isoformat()
+        with db() as conn:
+            conn.execute("UPDATE answer_log SET created_at = ? WHERE id = ?", (old, entry_id))
+
+    @staticmethod
+    def _fill() -> dict[str, int]:
+        ids = {
+            "good": add(),
+            "wrong": add(
+                "Quel est le prix ?",
+                result={"retrieved": [{"source": "a.html", "section": "S", "score": 0.52}]},
+            ),
+            "off": add(
+                "Quel temps à Lyon ?",
+                result={
+                    "grade": "refuse",
+                    "answer": "Je n'ai pas trouvé...",
+                    "sources": [],
+                    "retrieved": [{"source": "b.html", "section": "T", "score": 0.41}],
+                    "llm_model": None,
+                },
+            ),
+            "hello": add(
+                "Bonjour",
+                result={"retrieved": [], "sources": [], "llm_model": None},
+            ),
+        }
+        store.record(channel="api", question="Q ?", error="LLMUnavailableError: 429 budget")
+        review.review(ids["good"], "bonne")
+        review.review(ids["wrong"], "fausse")
+        review.review(ids["off"], "hors_sujet")
+        return ids
+
+    def test_needs_the_login(self, client):
+        resp = client.get("/admin/synthese")
+        assert resp.status_code == 303 and resp.headers["location"] == "/admin/login"
+
+    def test_an_empty_journal_says_so(self, signed_in):
+        resp = signed_in.get("/admin/synthese")
+        assert resp.status_code == 200 and "Aucune réponse sur cette période" in resp.text
+
+    def test_counts_how_the_answers_end_and_how_they_were_reviewed(self, signed_in):
+        self._fill()
+        data = stats.summary()
+        assert data["totals"]["total"] == 5 and data["totals"]["reviewed"] == 3
+        assert {r: v["n"] for r, v in data["by_route"].items()} == {
+            "generate": 2,
+            "refuse": 1,
+            "smalltalk": 1,
+            "error": 1,
+        }
+        assert data["crosstab"][("generate", "bonne")] == 1
+        assert data["crosstab"][("generate", "fausse")] == 1
+        assert data["crosstab"][("refuse", "hors_sujet")] == 1
+        assert data["crosstab"][("smalltalk", "")] == 1  # not reviewed yet
+        page = signed_in.get("/admin/synthese").text
+        assert "Comment les réponses se terminent" in page and "3 revue(s)" in page
+
+    def test_scores_per_review_sit_next_to_the_threshold(self, signed_in):
+        self._fill()
+        data = stats.summary()
+        assert data["by_label"]["bonne"]["max_score"] == 0.71
+        assert data["by_label"]["fausse"]["min_score"] == 0.52
+        assert data["by_label"]["hors_sujet"]["avg_score"] == 0.41
+        page = signed_in.get("/admin/synthese").text
+        assert "Seuil actuel : 0,47" in page and "0,52" in page and "0,41" in page
+
+    def test_shows_the_models_and_the_errors(self, signed_in):
+        self._fill()
+        data = stats.summary()
+        models = {m["model"]: m["n"] for m in data["by_model"]}
+        assert models == {"mistral-medium-2508": 2, "": 1}  # "" : the error, before any answer
+        page = signed_in.get("/admin/synthese").text
+        assert "mistral-medium-2508" in page and "LLMUnavailableError: 429 budget" in page
+
+    def test_a_period_leaves_out_the_older_entries(self, signed_in):
+        ids = self._fill()
+        self._age(ids["good"], 40)
+        self._age(ids["wrong"], 10)
+        assert stats.summary("")["totals"]["total"] == 5
+        assert stats.summary("30")["totals"]["total"] == 4
+        assert stats.summary("7")["totals"]["total"] == 3
+        assert stats.summary("nimporte quoi")["totals"]["total"] == 5  # unknown: all of it
+        assert "7 derniers jours" in signed_in.get("/admin/synthese?periode=7").text
+
+    def test_what_comes_from_the_journal_is_escaped(self, signed_in):
+        add(result={"llm_model": "<script>alert(1)</script>"})
+        store.record(channel="api", question="Q ?", error="<img src=x onerror=alert(1)>")
+        page = signed_in.get("/admin/synthese").text
+        assert "<script>" not in page and "<img" not in page
+        assert "&lt;script&gt;" in page and "&lt;img" in page
+
+    def test_the_other_pages_link_to_it(self, signed_in):
+        assert 'href="/admin/synthese"' in signed_in.get("/admin/").text
