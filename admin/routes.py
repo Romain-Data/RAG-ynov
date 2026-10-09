@@ -35,7 +35,9 @@ _HEADERS = {
     "Cache-Control": "no-store",
     "X-Robots-Tag": "noindex, nofollow",
     "X-Frame-Options": "DENY",
-    "Referrer-Policy": "no-referrer",
+    # Not "no-referrer": with it browsers send "Origin: null" on the forms of the page itself,
+    # which the CSRF check (admin/auth.py::same_origin) refuses. Nothing leaves the site anyway.
+    "Referrer-Policy": "same-origin",
     "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'",
 }
 _QUESTION_ID = re.compile(r"^q\d{1,4}$")

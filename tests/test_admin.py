@@ -192,6 +192,12 @@ class TestOrigin:
         assert resp.status_code == 403
         assert review.get_entry(entry_id)["review_label"] is None
 
+    def test_pages_let_browsers_send_their_origin_on_forms(self, client):
+        """ "Referrer-Policy: no-referrer" makes browsers send "Origin: null" on a form posted
+        to the same site, which is refused above: the login could never succeed."""
+        policy = client.get("/admin/login").headers["referrer-policy"]
+        assert policy in {"same-origin", "strict-origin-when-cross-origin"}
+
     def test_null_origin_is_refused(self, signed_in):
         resp = signed_in.post("/admin/logout", headers={"Origin": "null"})
         assert resp.status_code == 403
