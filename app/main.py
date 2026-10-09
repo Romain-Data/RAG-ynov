@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI
 
+from admin.routes import mount_admin
 from app.api import health, ingest, query
 from app.core.config import settings
 from app.core.logging import setup_logging
@@ -56,6 +57,9 @@ if settings.site_password:
 app.include_router(health.router, prefix="/api")
 app.include_router(query.router, prefix="/api")
 app.include_router(ingest.router, prefix="/api")
+
+# Review of the answer journal on /admin, when ADMIN_PASSWORD is set (before the chat, below)
+mount_admin(app)
 
 
 @app.get("/api", dependencies=[Depends(rate_limit_health)])
