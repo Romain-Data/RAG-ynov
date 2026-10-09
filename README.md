@@ -79,6 +79,21 @@ volume): back it up. `python -m chat.backup` copies it (SQLite backup API, integ
 `/data/rag-ynov-backups`, outside the Docker volume. Pages: `/compte/inscription`, `/compte/recuperation`,
 `/compte/suppression` (deletes the account and its conversations).
 
+## Answer journal and review
+
+Every question asked in the chat or on `POST /api/query` is written to the `answer_log` table
+of the chat database (`journal/`): the answer, its sources, the search scores, the model that
+really answered (the `model` field of the LLM response, since `MAMMOUTH_CHAT_MODEL` is an alias),
+the collection and the threshold. No pseudo and no IP are kept, e-mail addresses and phone numbers
+are masked, and entries older than `ANSWER_LOG_RETENTION_DAYS` (180) are deleted by
+`python -m journal.purge`, a daily task in Coolify. `ANSWER_LOG_ENABLED=false` stops the writing.
+The journal never blocks an answer.
+
+`/admin` (set `ADMIN_PASSWORD`, otherwise it is not mounted) lists the entries, shows the detail of
+each one and lets the reviewer classify it (bonne, partielle, fausse, hors_sujet), then gives an
+excerpt to paste into `eval/questions.yaml`. Login is a form with a signed 8-hour cookie, not HTTP
+Basic (the preprod already has one in front of the whole site).
+
 ## Roadmap
 
 The project plan lives in [ROADMAP.md](ROADMAP.md), each item tracked in a GitHub issue labelled `roadmap`.
@@ -91,6 +106,10 @@ rag-ynov/
 │   ├── api/                # Routes (/health, /query, /ingest)
 │   ├── core/               # Configuration, logging
 │   └── schemas/            # Pydantic models
+├── chat/                   # Chat interface (Chainlit), accounts, SQLite schema, backups
+├── journal/                # Journal of the answers: writing, purge, review queries
+├── admin/                  # /admin pages that review the journal
+├── eval/                   # Question sets, retrieval and end-to-end evaluation
 ├── ingestion/              # Ingestion pipeline (load → chunk → embed → index)
 ├── graph/                  # LangGraph nodes + builder
 │   └── nodes/              # retrieve, grade, generate, refuse
