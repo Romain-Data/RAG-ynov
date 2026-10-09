@@ -83,6 +83,11 @@ fieldset label { margin-right: 1rem; white-space: nowrap; }
 
 
 def layout(title: str, body: str, *, signed_in: bool = True) -> str:
+    nav = (
+        '<p class="muted"><a href="/admin/">Liste</a> · <a href="/admin/synthese">Synthèse</a></p>'
+        if signed_in
+        else ""
+    )
     logout = (
         '<form class="inline" method="post" action="/admin/logout">'
         '<button class="link">Se déconnecter</button></form>'
@@ -95,7 +100,7 @@ def layout(title: str, body: str, *, signed_in: bool = True) -> str:
         '<meta name="robots" content="noindex, nofollow">'
         f"<title>{escape(title)} — {escape(APP_NAME)}</title><style>{_STYLE}</style></head>"
         f'<body><main><header><h1><a href="/admin/">{escape(title)}</a></h1>{logout}</header>'
-        f"{body}</main></body></html>"
+        f"{nav}{body}</main></body></html>"
     )
 
 
@@ -324,3 +329,130 @@ def yaml_page(entry_id: int, question_id: str, excerpt: str, promoted_as: str | 
 
 def not_found() -> str:
     return layout("Introuvable", '<p>Cette page n\'existe pas. <a href="/admin/">Retour</a></p>')
+
+
+def _pct(part: int, whole: int) -> str:
+    return f"{100 * part / whole:.0f} %" if whole else "–"
+
+
+def _number(value: float | None, unit: str = "") -> str:
+    return "–" if value is None else f"{value:.0f}{unit}"
+
+
+def stats_page(data: dict, threshold: float) -> str:
+    """The summary: how the answers end, how they were reviewed, the scores against the
+    threshold, the models that answered, the days and the errors."""
+    totals = data["totals"]
+    total = totals["total"] or 0
+    period = data["period"]
+    periods = {"7": "7 derniers jours", "30": "30 derniers jours"}
+    choose = "".join(
+        f'<option value="{value}"{" selected" if value == period else ""}>{label}</option>'
+        for value, label in {"": "Tout le journal", **periods}.items()
+    )
+    head = (
+        '<form class="filters" method="get" action="/admin/synthese">'
+        f'<label>Période<select name="periode">{choose}</select></label>'
+        "<button>Afficher</button></form>"
+    )
+    if not total:
+        return layout("Synthèse", head + '<p class="muted">Aucune réponse sur cette période.</p>')
+    reviewed = totals["reviewed"] or 0
+    intro = (
+        f"<p>{total} réponse(s), du {escape(_date(totals['first']))} au "
+        f"{escape(_date(totals['last']))} (UTC) · {reviewed} revue(s) "
+        f"({_pct(reviewed, total)}) · {totals['promoted'] or 0} reprise(s) dans le jeu "
+        "d'évaluation.</p>"
+    )
+
+    labels = list(REVIEW_LABELS)
+    route_rows = []
+    for route, name in ROUTES.items():
+        line = data["by_route"].get(route)
+        if line is None:
+            continue
+        cells = "".join(
+            f'<td class="num">{data["crosstab"].get((route, label), 0)}</td>'
+            for label in [*labels, ""]
+        )
+        route_rows.append(
+            f"<tr><td>{escape(name)}</td>"
+            f'<td class="num">{line["n"]}</td><td class="num">{_pct(line["n"], total)}</td>'
+            f'<td class="num">{_score(line["avg_score"])}</td>{cells}</tr>'
+        )
+    by_route = (
+        "<h2>Comment les réponses se terminent</h2>"
+        '<table><thead><tr><th>Issue</th><th class="num">Nombre</th><th class="num">Part</th>'
+        '<th class="num">Score moyen</th>'
+        + "".join(f'<th class="num">{escape(LABELS[label])}</th>' for label in labels)
+        + '<th class="num">Non revues</th></tr></thead><tbody>'
+        + "".join(route_rows)
+        + "</tbody></table>"
+    )
+
+    label_rows = "".join(
+        f"<tr><td>{escape(LABELS[label])}</td>"
+        f'<td class="num">{line["n"]}</td><td class="num">{_score(line["min_score"])}</td>'
+        f'<td class="num">{_score(line["avg_score"])}</td>'
+        f'<td class="num">{_score(line["max_score"])}</td></tr>'
+        for label in labels
+        if (line := data["by_label"].get(label))
+    )
+    by_label = (
+        "<h2>Scores de la recherche selon la revue</h2>"
+        f'<p class="muted">Seuil actuel : {_score(threshold)}. Une réponse « fausse » ou '
+        "« hors sujet » au-dessus du seuil plaide pour le relever ; une « bonne » réponse "
+        "juste au-dessus montre la marge qui reste.</p>"
+        '<table><thead><tr><th>Revue</th><th class="num">Nombre</th><th class="num">Min</th>'
+        '<th class="num">Moyenne</th><th class="num">Max</th></tr></thead>'
+        f"<tbody>{label_rows}</tbody></table>"
+        if label_rows
+        else "<h2>Scores de la recherche selon la revue</h2>"
+        '<p class="muted">Aucune réponse revue sur cette période.</p>'
+    )
+
+    model_rows = "".join(
+        f"<tr><td>{escape(line['model'] or '(inconnu : erreur avant la réponse)')}</td>"
+        f'<td class="num">{line["n"]}</td>'
+        f'<td class="num">{_number(line["avg_latency"], " ms")}</td>'
+        f'<td class="num">{_number(line["avg_in"])} → {_number(line["avg_out"])}</td>'
+        f"<td>{escape(_date(line['first']))} → {escape(_date(line['last']))}</td></tr>"
+        for line in data["by_model"]
+    )
+    by_model = (
+        "<h2>Modèle qui a répondu</h2>"
+        '<p class="muted">Le modèle réel derrière l\'alias : une nouvelle ligne signale un '
+        "changement côté Mammouth.</p>"
+        '<table><thead><tr><th>Modèle</th><th class="num">Nombre</th>'
+        '<th class="num">Durée moyenne</th><th class="num">Jetons moyens (entrée → sortie)</th>'
+        f"<th>Vu du … au … (UTC)</th></tr></thead><tbody>{model_rows}</tbody></table>"
+        if model_rows
+        else ""
+    )
+
+    day_rows = "".join(
+        f'<tr><td>{escape(line["day"])}</td><td class="num">{line["n"]}</td>'
+        f'<td class="num">{line["refused"] or 0}</td>'
+        f'<td class="num">{line["errors"] or 0}</td></tr>'
+        for line in data["per_day"]
+    )
+    per_day = (
+        "<h2>Par jour</h2>"
+        '<table><thead><tr><th>Jour (UTC)</th><th class="num">Réponses</th>'
+        '<th class="num">Refus au seuil</th><th class="num">Erreurs</th></tr></thead>'
+        f"<tbody>{day_rows}</tbody></table>"
+    )
+
+    error_rows = "".join(
+        f'<tr><td>{escape(line["cause"])}</td><td class="num">{line["n"]}</td>'
+        f"<td>{escape(_date(line['last']))}</td></tr>"
+        for line in data["errors"]
+    )
+    errors = (
+        "<h2>Erreurs</h2>"
+        '<table><thead><tr><th>Cause</th><th class="num">Nombre</th><th>Dernière (UTC)</th>'
+        f"</tr></thead><tbody>{error_rows}</tbody></table>"
+        if error_rows
+        else ""
+    )
+    return layout("Synthèse", head + intro + by_route + by_label + by_model + per_day + errors)
