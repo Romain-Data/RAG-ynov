@@ -41,3 +41,13 @@ def client() -> TestClient:
     """HTTP client with disabled lifespan."""
     with TestClient(app, raise_server_exceptions=True) as c:
         yield c
+
+
+@pytest.fixture(autouse=True)
+def journal_db(tmp_path, monkeypatch):
+    """Every test writes its journal entries to its own database, never to chat_data/."""
+    from app.core.config import settings
+    from chat.db import init_db
+
+    monkeypatch.setattr(settings, "chat_db_path", str(tmp_path / "chat.db"))
+    init_db()

@@ -64,6 +64,9 @@ def signup_form(error: str | None = None, pseudo: str = "") -> str:
         (
             "<p>Un pseudo et un mot de passe suffisent : ni e-mail, ni nom. Évitez d'utiliser "
             "votre vrai nom comme pseudo.</p>"
+            "<p>Les questions posées et les réponses données sont conservées 6 mois, sans lien "
+            "avec votre pseudo, pour contrôler et améliorer la qualité des réponses. "
+            "N'y écrivez pas d'informations personnelles.</p>"
             + _error(error)
             + '<form method="post">'
             + _field("pseudo", "Pseudo", value=pseudo, autocomplete="username")

@@ -7,6 +7,7 @@ chat/messages.py (history and sources).
 
 import asyncio
 import logging
+import time
 
 import chainlit as cl
 from chainlit.data.sql_alchemy import SQLAlchemyDataLayer
@@ -16,6 +17,7 @@ from chat import accounts
 from chat.db import sqlalchemy_url
 from chat.messages import AUTHOR, history_from_steps, with_sources
 from graph.chat import get_chat_graph
+from journal import store
 
 logger = logging.getLogger(__name__)
 
@@ -56,12 +58,33 @@ async def resume(thread: ThreadDict) -> None:
 async def on_message(message: cl.Message) -> None:
     history: list[dict] = cl.user_session.get("history") or []
     history = [*history, {"role": "user", "content": message.content}]
+    thread_id = cl.context.session.thread_id
+    started = time.monotonic()
     try:
         result = await get_chat_graph().ainvoke({"messages": history})
-    except Exception:
+    except Exception as exc:
         logger.exception("The chat graph failed")
+        await asyncio.to_thread(
+            store.record,
+            channel="chat",
+            question=message.content,
+            error=f"{type(exc).__name__}: {exc}",
+            thread_id=thread_id,
+            latency_ms=round((time.monotonic() - started) * 1000),
+        )
         await cl.Message(content=ERROR_MESSAGE, author=AUTHOR).send()
         return  # the question is not kept in the history: the user can ask again
+    latency_ms = round((time.monotonic() - started) * 1000)
     answer = result.get("answer", "").strip()
     cl.user_session.set("history", [*history, {"role": "assistant", "content": answer}])
-    await cl.Message(content=with_sources(answer, result.get("sources", [])), author=AUTHOR).send()
+    reply = cl.Message(content=with_sources(answer, result.get("sources", [])), author=AUTHOR)
+    await reply.send()
+    await asyncio.to_thread(
+        store.record,
+        channel="chat",
+        question=message.content,
+        result=dict(result),
+        thread_id=thread_id,
+        message_id=reply.id,
+        latency_ms=latency_ms,
+    )
