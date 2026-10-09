@@ -22,3 +22,8 @@ class GraphState(TypedDict, total=False):
     # Generation
     answer: str
     sources: list[Source]
+    # What the LLM call reported (journal, #18): the model that really answered (the alias
+    # may hide a change) and the tokens used
+    llm_model: str | None
+    tokens_in: int | None
+    tokens_out: int | None
