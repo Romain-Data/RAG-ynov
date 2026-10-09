@@ -8,6 +8,9 @@ import pytest
 import yaml
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
+from starlette.applications import Starlette
+from starlette.responses import PlainTextResponse
+from starlette.routing import Route
 
 from admin import auth
 from admin.routes import mount_admin
@@ -161,6 +164,23 @@ class TestAuthentication:
         assert source.index("mount_admin(app)") < source.index("mount_chat(app)")
 
 
+def test_admin_without_a_slash_is_not_answered_by_the_chat():
+    """Chainlit is mounted on / and answers every path nothing else matches: /admin (typed
+    without the final slash) used to show the chat login instead of the admin pages."""
+    catch_all = Starlette(
+        routes=[Route("/{path:path}", lambda _request: PlainTextResponse("chat"))]
+    )
+    app = FastAPI()
+    assert mount_admin(app)
+    app.mount("/", catch_all)  # after the admin routes, like mount_chat in app/main.py
+    client = TestClient(app, base_url="https://testserver", follow_redirects=False)
+
+    resp = client.get("/admin")
+    assert resp.status_code == 303 and resp.headers["location"] == "/admin/"
+    assert client.get("/admin/").headers["location"] == "/admin/login"
+    assert client.get("/autre").text == "chat"  # the catch-all is really there
+
+
 class TestOrigin:
     def test_foreign_origin_is_refused_on_a_post(self, signed_in):
         entry_id = add()
@@ -171,6 +191,12 @@ class TestOrigin:
         )
         assert resp.status_code == 403
         assert review.get_entry(entry_id)["review_label"] is None
+
+    def test_pages_let_browsers_send_their_origin_on_forms(self, client):
+        """ "Referrer-Policy: no-referrer" makes browsers send "Origin: null" on a form posted
+        to the same site, which is refused above: the login could never succeed."""
+        policy = client.get("/admin/login").headers["referrer-policy"]
+        assert policy in {"same-origin", "strict-origin-when-cross-origin"}
 
     def test_null_origin_is_refused(self, signed_in):
         resp = signed_in.post("/admin/logout", headers={"Origin": "null"})

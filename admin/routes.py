@@ -35,7 +35,9 @@ _HEADERS = {
     "Cache-Control": "no-store",
     "X-Robots-Tag": "noindex, nofollow",
     "X-Frame-Options": "DENY",
-    "Referrer-Policy": "no-referrer",
+    # Not "no-referrer": with it browsers send "Origin: null" on the forms of the page itself,
+    # which the CSRF check (admin/auth.py::same_origin) refuses. Nothing leaves the site anyway.
+    "Referrer-Policy": "same-origin",
     "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'",
 }
 _QUESTION_ID = re.compile(r"^q\d{1,4}$")
@@ -92,6 +94,14 @@ def logout(request: Request) -> Response:
     response = _redirect("/admin/login")
     response.delete_cookie(auth.COOKIE, path="/admin")
     return response
+
+
+@router.get("")
+def without_slash() -> Response:
+    """/admin as typed in the address bar. Without this route nothing matches it, and the
+    chat (Chainlit, mounted on /) answers in place of the redirect to /admin/ that FastAPI
+    would otherwise make."""
+    return _redirect("/admin/")
 
 
 @router.get("/")
