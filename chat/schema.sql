@@ -72,3 +72,40 @@ CREATE TABLE IF NOT EXISTS accounts (
     created_at TEXT NOT NULL,
     last_login_at TEXT
 );
+
+-- Journal of the answers (#18), written by journal/store.py for the chat and for /api/query.
+-- No pseudo and no IP: thread_id and message_id only tie an entry to a conversation of the
+-- chat (for the feedback buttons of #19) and are cleared when that account is deleted.
+-- Purged after ANSWER_LOG_RETENTION_DAYS (python -m journal.purge).
+CREATE TABLE IF NOT EXISTS answer_log (
+    id INTEGER PRIMARY KEY,
+    created_at TEXT NOT NULL,
+    channel TEXT NOT NULL CHECK (channel IN ('chat', 'api')),
+    thread_id TEXT,
+    message_id TEXT,
+    question TEXT NOT NULL,
+    rewritten TEXT,
+    answer TEXT NOT NULL,
+    route TEXT NOT NULL CHECK (route IN ('generate', 'refuse', 'smalltalk', 'error')),
+    top_score REAL,
+    sources TEXT NOT NULL DEFAULT '[]',
+    retrieved TEXT NOT NULL DEFAULT '[]',
+    llm_model TEXT,
+    llm_alias TEXT,
+    tokens_in INTEGER,
+    tokens_out INTEGER,
+    latency_ms INTEGER,
+    error TEXT,
+    collection TEXT NOT NULL,
+    embedding_model TEXT NOT NULL,
+    threshold REAL NOT NULL,
+    app_version TEXT,
+    review_label TEXT CHECK (review_label IN ('bonne', 'partielle', 'fausse', 'hors_sujet')),
+    review_note TEXT,
+    reviewed_at TEXT,
+    promoted_as TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_answer_log_created ON answer_log (created_at);
+CREATE INDEX IF NOT EXISTS idx_answer_log_review ON answer_log (review_label);
+CREATE INDEX IF NOT EXISTS idx_answer_log_route ON answer_log (route);
+CREATE INDEX IF NOT EXISTS idx_answer_log_thread ON answer_log (thread_id);

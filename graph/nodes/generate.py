@@ -107,5 +107,12 @@ Réponse :"""
     data = chat_completion(payload)
 
     answer = data["choices"][0]["message"]["content"].strip()
+    usage = data.get("usage") or {}
 
-    return {"answer": answer, "sources": sources}
+    return {
+        "answer": answer,
+        "sources": sources,
+        "llm_model": data.get("model"),
+        "tokens_in": usage.get("prompt_tokens"),
+        "tokens_out": usage.get("completion_tokens"),
+    }

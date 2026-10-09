@@ -27,9 +27,9 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     # Compile LangGraph singletons
     get_graph()
     get_chat_graph()
-    # Accounts and conversations of the chat (SQLite file)
-    if app.state.chat_enabled:
-        init_db()
+    # Accounts and conversations of the chat, and the journal of the answers (SQLite file):
+    # the API writes the journal even when the chat is not mounted
+    init_db()
     yield
     # Shutdown - nothing to close for these singletons
 

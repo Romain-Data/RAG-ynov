@@ -43,6 +43,11 @@ class Settings(BaseSettings):
     chat_backup_keep: int = 14
     chainlit_auth_secret: str = ""
 
+    # Journal of the answers (#18), in the chat database: how long the entries are kept
+    # (python -m journal.purge) and a switch to stop writing them.
+    answer_log_enabled: bool = True
+    answer_log_retention_days: int = 180
+
     # HTTP Basic password in front of the whole site (user "preprod"), for the preprod.
     # Empty = no protection (production).
     site_password: str = ""

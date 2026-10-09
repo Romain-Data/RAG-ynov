@@ -154,6 +154,12 @@ def delete_account(pseudo: str, password: str) -> None:
         raise AccountError("Pseudo ou mot de passe incorrect.")
     with db() as conn:
         threads = "SELECT id FROM threads WHERE userIdentifier = ?"
+        # The journal keeps the questions (anonymous) but loses the tie to the conversation
+        conn.execute(
+            "UPDATE answer_log SET thread_id = NULL, message_id = NULL "
+            f"WHERE thread_id IN ({threads})",
+            (account,),
+        )
         for table, column in (
             ("steps", "threadId"),
             ("elements", "threadId"),
