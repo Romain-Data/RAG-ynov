@@ -8,6 +8,9 @@ import pytest
 import yaml
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
+from starlette.applications import Starlette
+from starlette.responses import PlainTextResponse
+from starlette.routing import Route
 
 from admin import auth
 from admin.routes import mount_admin
@@ -159,6 +162,23 @@ class TestAuthentication:
         # Chainlit, mounted on /, answers every path declared after it
         source = Path(main.__file__).read_text(encoding="utf-8")
         assert source.index("mount_admin(app)") < source.index("mount_chat(app)")
+
+
+def test_admin_without_a_slash_is_not_answered_by_the_chat():
+    """Chainlit is mounted on / and answers every path nothing else matches: /admin (typed
+    without the final slash) used to show the chat login instead of the admin pages."""
+    catch_all = Starlette(
+        routes=[Route("/{path:path}", lambda _request: PlainTextResponse("chat"))]
+    )
+    app = FastAPI()
+    assert mount_admin(app)
+    app.mount("/", catch_all)  # after the admin routes, like mount_chat in app/main.py
+    client = TestClient(app, base_url="https://testserver", follow_redirects=False)
+
+    resp = client.get("/admin")
+    assert resp.status_code == 303 and resp.headers["location"] == "/admin/"
+    assert client.get("/admin/").headers["location"] == "/admin/login"
+    assert client.get("/autre").text == "chat"  # the catch-all is really there
 
 
 class TestOrigin:

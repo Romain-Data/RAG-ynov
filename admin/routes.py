@@ -94,6 +94,14 @@ def logout(request: Request) -> Response:
     return response
 
 
+@router.get("")
+def without_slash() -> Response:
+    """/admin as typed in the address bar. Without this route nothing matches it, and the
+    chat (Chainlit, mounted on /) answers in place of the redirect to /admin/ that FastAPI
+    would otherwise make."""
+    return _redirect("/admin/")
+
+
 @router.get("/")
 def entries(
     request: Request,
