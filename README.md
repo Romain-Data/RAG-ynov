@@ -91,7 +91,9 @@ The journal never blocks an answer.
 
 `/admin` (set `ADMIN_PASSWORD`, otherwise it is not mounted) lists the entries, shows the detail of
 each one and lets the reviewer classify it (bonne, partielle, fausse, hors_sujet), then gives an
-excerpt to paste into `eval/questions.yaml`. Login is a form with a signed 8-hour cookie, not HTTP
+excerpt to paste into `eval/questions.yaml`. `/admin/synthese` sums the journal up (how answers end
+crossed with the reviews, search scores per review next to the threshold, models that answered, days,
+errors) over all of it or the last 7 or 30 days. Login is a form with a signed 8-hour cookie, not HTTP
 Basic (the preprod already has one in front of the whole site).
 
 ## Roadmap
