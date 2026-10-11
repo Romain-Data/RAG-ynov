@@ -13,7 +13,8 @@ from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from admin import auth, pages
 from app.core.config import settings
 from app.core.security import rate_limit_admin_login
-from journal import review
+from graph.nodes.grade import GRADE_THRESHOLD
+from journal import review, stats
 
 logger = logging.getLogger(__name__)
 
@@ -125,6 +126,13 @@ def entries(
             rows, total, review=statut, route=issue, channel=canal, text=q, page=page
         )
     )
+
+
+@router.get("/synthese")
+def summary(request: Request, periode: str = "") -> Response:
+    if (denied := _guard(request)) is not None:
+        return denied
+    return _html(pages.stats_page(stats.summary(periode), GRADE_THRESHOLD))
 
 
 @router.get("/reponses/{entry_id}")
