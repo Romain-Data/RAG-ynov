@@ -63,6 +63,7 @@ class Settings(BaseSettings):
     rate_limit_health: int = 120
     rate_limit_account: int = 20
     rate_limit_admin_login: int = 10
+    rate_limit_feedback: int = 30
 
     # Misc
     log_level: str = "INFO"

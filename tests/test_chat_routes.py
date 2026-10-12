@@ -43,8 +43,9 @@ class TestPages:
         assert resp.status_code == 200
         assert "<form" in resp.text and 'lang="fr"' in resp.text
 
-    def test_signup_tells_what_is_kept_of_the_questions(self, client):
-        assert "conservées 6 mois" in client.get("/compte/inscription").text
+    def test_signup_tells_what_is_kept_of_the_questions_and_the_feedback(self, client):
+        page = client.get("/compte/inscription").text
+        assert "conservés 6 mois" in page and "vos avis" in page
 
     def test_signup_shows_the_recovery_code_once(self, client):
         resp = signup(client)

@@ -95,6 +95,15 @@ are masked, and entries older than `ANSWER_LOG_RETENTION_DAYS` (180) are deleted
 `python -m journal.purge`, a daily task in Coolify. `ANSWER_LOG_ENABLED=false` stops the writing.
 The journal never blocks an answer.
 
+The thumbs that Chainlit shows under each answer of the chat ("Utile" / "Pas utile", with an
+optional comment) are copied to the entry of that answer (`feedback` 1 or 0, `feedback_comment`,
+masked like the question, and `feedback_at`) by a subclass of Chainlit's data layer
+(`chat/feedback.py`). `PUT` and `DELETE /feedback` go through a guard declared before Chainlit: the
+answer must belong to a conversation of the signed-in user, one feedback per answer, a comment of
+1,000 characters at most, `RATE_LIMIT_FEEDBACK` (30) requests per minute per IP. A feedback stays in
+the journal when its account is deleted (without the tie to the conversation) and goes with its
+entry after 180 days. `POST /api/query` has no feedback.
+
 `/admin` (set `ADMIN_PASSWORD`, otherwise it is not mounted) lists the entries, shows the detail of
 each one and lets the reviewer classify it (bonne, partielle, fausse, hors_sujet), then gives an
 excerpt to paste into `eval/questions.yaml`. `/admin/synthese` sums the journal up (how answers end

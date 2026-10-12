@@ -1,11 +1,13 @@
-"""Write the journal of the answers (#18) and purge it.
+"""Write the journal of the answers (#18), copy the users' feedback into it (#19), purge it.
 
-`record` never raises: a journal that fails must not take an answer down with it.
+`record` and the feedback functions never raise: a journal that fails must not take an answer
+(or a click on a thumb) down with it.
 """
 
 import json
 import logging
 import os
+import sqlite3
 from datetime import UTC, datetime, timedelta
 
 from app.core.config import settings
@@ -16,7 +18,12 @@ from journal.redact import redact
 logger = logging.getLogger(__name__)
 
 MAX_TEXT = 4000  # the API caps a question at 2000 characters, the chat does not cap it
+MAX_COMMENT = 1000  # the guard of PUT /feedback refuses longer comments (chat/feedback.py)
 ROUTES = ("generate", "refuse", "smalltalk", "error")
+
+# Chainlit ties a feedback to the `on_message` run, not to the answer: the answer is the run's
+# child step, and its id is the message_id of the entry.
+_ANSWER_OF_RUN = "message_id IN (SELECT id FROM steps WHERE parentId = :run_id)"
 
 
 def route_of(result: dict | None, error: str | None) -> str:
@@ -94,6 +101,63 @@ def record(
             conn.execute(f"INSERT INTO answer_log ({columns}) VALUES ({marks})", row)
     except Exception:
         logger.exception("The answer could not be written to the journal")
+
+
+def _comment(comment: str | None) -> str | None:
+    comment = redact((comment or "").strip())[:MAX_COMMENT]
+    return comment or None
+
+
+def set_feedback(run_id: str, value: int, comment: str | None = None) -> int:
+    """Copy a user's feedback (1 "Utile", 0 "Pas utile") to the entry of the answer it is
+    about. Returns how many entries were updated: 0 when that answer is not in the journal."""
+    if not settings.answer_log_enabled:
+        return 0
+    try:
+        with db() as conn:
+            return conn.execute(
+                "UPDATE answer_log SET feedback = :value, feedback_comment = :comment, "
+                f"feedback_at = :at WHERE {_ANSWER_OF_RUN}",
+                {"value": value, "comment": _comment(comment), "at": _now(), "run_id": run_id},
+            ).rowcount
+    except Exception:
+        logger.exception("The feedback could not be written to the journal")
+        return 0
+
+
+def clear_feedback(run_id: str) -> int:
+    """The user took the feedback back (a second click on the same thumb)."""
+    if not settings.answer_log_enabled:
+        return 0
+    try:
+        with db() as conn:
+            return conn.execute(
+                "UPDATE answer_log SET feedback = NULL, feedback_comment = NULL, "
+                f"feedback_at = NULL WHERE {_ANSWER_OF_RUN}",
+                {"run_id": run_id},
+            ).rowcount
+    except Exception:
+        logger.exception("The feedback could not be cleared from the journal")
+        return 0
+
+
+def backfill_feedback(conn: sqlite3.Connection) -> int:
+    """Copy the feedback given before the journal kept it, once, when chat/db.py adds the
+    columns. Its date is unknown: feedback_at stays empty. Returns how many entries got one."""
+    try:
+        found = conn.execute(
+            "SELECT a.id, f.value, f.comment FROM answer_log a "
+            "JOIN steps s ON s.id = a.message_id JOIN feedbacks f ON f.forId = s.parentId "
+            "WHERE f.value IN (0, 1) ORDER BY f.rowid"
+        ).fetchall()
+        conn.executemany(
+            "UPDATE answer_log SET feedback = ?, feedback_comment = ? WHERE id = ?",
+            [(value, _comment(comment), entry_id) for entry_id, value, comment in found],
+        )
+        return len({entry_id for entry_id, _, _ in found})
+    except Exception:
+        logger.exception("The earlier feedback could not be copied to the journal")
+        return 0
 
 
 def purge(days: int | None = None) -> int:
