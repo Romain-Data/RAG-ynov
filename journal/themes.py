@@ -44,6 +44,7 @@ MAX_NAME = 60
 MAX_QUESTION = 300  # characters of a question sent to the LLM
 MAX_NOTE = 1000
 UNTHEMED_SHOWN = 50
+EXAMPLES = 2  # different questions of a theme kept as examples (the monthly report)
 
 CAUSES = {
     "contenu": "Manque de contenu sur le site",
@@ -339,9 +340,14 @@ def _group(batch_size: int) -> GroupResult:
 def _summary(theme: dict, entries: list[dict]) -> dict:
     """A theme with its counts: questions, conversations (one per thread, one per entry
     without a thread: the API, a deleted account), kinds, dates and an example question (the
-    one asked most often, else the latest)."""
+    one asked most often, else the latest), then the EXAMPLES different questions in that
+    order (the monthly report quotes them)."""
     asked = Counter(fold(e["text"]) for e in entries)
-    example = max(entries, key=lambda e: (asked[fold(e["text"])], e["id"]), default=None)
+    ranked = sorted(entries, key=lambda e: (-asked[fold(e["text"])], -e["id"]))
+    example = ranked[0] if ranked else None
+    examples: dict[str, str] = {}
+    for e in ranked:
+        examples.setdefault(fold(e["text"]), e["text"])
     threads = {e["thread_id"] for e in entries if e["thread_id"]}
     kinds = Counter(e["kind"] for e in entries)
     return {
@@ -353,6 +359,7 @@ def _summary(theme: dict, entries: list[dict]) -> dict:
         "last": max((e["created_at"] for e in entries), default=None),
         "example": example["text"] if example else None,
         "example_id": example["id"] if example else None,
+        "examples": list(examples.values())[:EXAMPLES],
     }
 
 
@@ -362,18 +369,33 @@ _ENTRY_COLUMNS = (
 )
 
 
-def list_themes(period: str = "") -> list[dict]:
+def _between(start: str | None, end: str | None, column: str) -> tuple[str, dict]:
+    """The SQL condition (to put after a WHERE clause) and its parameters for the entries from
+    `start` (included) to `end` (excluded); either may be None."""
+    clause, params = "", {}
+    if start:
+        clause += f" AND {column} >= :start"
+        params["start"] = start
+    if end:
+        clause += f" AND {column} < :end"
+        params["end"] = end
+    return clause, params
+
+
+def list_themes(
+    period: str = "", *, start: str | None = None, end: str | None = None
+) -> list[dict]:
     """The themes with at least one question in the last `period` days ("7", "30", else the
-    whole journal), most asked first."""
-    since_date = since(period)
-    clause = "AND a.created_at >= :since" if since_date else ""
+    whole journal), or from `start` (included) to `end` (excluded) when given (ISO dates, a
+    month of the report), most asked first."""
+    clause, params = _between(start or since(period), end, "a.created_at")
     with db() as conn:
         conn.row_factory = sqlite3.Row
         rows = conn.execute(
             f"SELECT t.id AS theme_id, t.name, t.cause, t.note, {_ENTRY_COLUMNS} "
             f"FROM answer_log a JOIN gap_theme t ON t.id = a.gap_theme_id "
-            f"WHERE gap_kind(a.route, a.answer, a.feedback) IS NOT NULL {clause} ORDER BY a.id",
-            {"since": since_date},
+            f"WHERE gap_kind(a.route, a.answer, a.feedback) IS NOT NULL{clause} ORDER BY a.id",
+            params,
         ).fetchall()
     grouped: dict[int, tuple[dict, list[dict]]] = {}
     for row in rows:
@@ -383,20 +405,21 @@ def list_themes(period: str = "") -> list[dict]:
     return sorted(found, key=lambda t: (-t["questions"], -t["conversations"], fold(t["name"])))
 
 
-def unthemed(period: str = "") -> tuple[int, list[dict]]:
-    """The questions left without an answer that have no theme yet, in the period: how many,
-    and the latest UNTHEMED_SHOWN of them."""
-    since_date = since(period)
-    clause = "AND created_at >= :since" if since_date else ""
-    where = f"WHERE {_GAP} AND gap_theme_id IS NULL {clause}"
+def unthemed(
+    period: str = "", *, start: str | None = None, end: str | None = None
+) -> tuple[int, list[dict]]:
+    """The questions left without an answer that have no theme yet, in the period (or from
+    `start` to `end`, as for list_themes): how many, and the latest UNTHEMED_SHOWN of them."""
+    clause, params = _between(start or since(period), end, "created_at")
+    where = f"WHERE {_GAP} AND gap_theme_id IS NULL{clause}"
     with db() as conn:
         conn.row_factory = sqlite3.Row
-        count = conn.execute(f"SELECT COUNT(*) FROM answer_log {where}", {"since": since_date})
+        count = conn.execute(f"SELECT COUNT(*) FROM answer_log {where}", params)
         total = int(count.fetchone()[0])
         rows = conn.execute(
             f"SELECT id, created_at, {_TEXT} AS text, gap_kind(route, answer, feedback) AS kind "
             f"FROM answer_log {where} ORDER BY id DESC LIMIT {UNTHEMED_SHOWN}",
-            {"since": since_date},
+            params,
         ).fetchall()
     return total, [dict(row) for row in rows]
 

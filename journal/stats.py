@@ -32,6 +32,27 @@ def _gaps(by_kind: list[dict]) -> dict:
     }
 
 
+def gaps_between(start: str | None, end: str | None) -> dict:
+    """The questions left without an answer (see _gaps) from `start` (included) to `end`
+    (excluded), ISO dates; either may be None. Shared by the summary and the monthly report."""
+    clause, params = "", {}
+    if start:
+        clause += " AND created_at >= :start"
+        params["start"] = start
+    if end:
+        clause += " AND created_at < :end"
+        params["end"] = end
+    with db() as conn:
+        conn.row_factory = sqlite3.Row
+        # kind None: the question got an answer
+        rows = conn.execute(
+            "SELECT gap_kind(route, answer, feedback) AS kind, COUNT(*) AS n FROM answer_log "
+            f"WHERE route IN ('generate', 'refuse'){clause} GROUP BY kind",
+            params,
+        ).fetchall()
+    return _gaps([dict(row) for row in rows])
+
+
 def _feedback(by_route: list[dict], crosstab: list[dict]) -> dict:
     """The thumbs of the chat: counts per route, their total without the replies to greetings
     (a "Utile" under "Bonjour !" says nothing about the answers), and thumbs x review."""
@@ -117,11 +138,6 @@ def summary(period: str = "") -> dict:
             f"SELECT feedback, COALESCE(review_label, '') AS label, COUNT(*) AS n "
             f"FROM answer_log {where} {and_} feedback IS NOT NULL GROUP BY feedback, label"
         )
-        # kind None: the question got an answer
-        gaps_by_kind = rows(
-            f"SELECT gap_kind(route, answer, feedback) AS kind, COUNT(*) AS n FROM answer_log "
-            f"{where} {and_} route IN ('generate', 'refuse') GROUP BY kind"
-        )
     return {
         "period": period if since_date else "",
         "totals": totals,
@@ -132,5 +148,5 @@ def summary(period: str = "") -> dict:
         "per_day": per_day,
         "errors": errors,
         "feedback": _feedback(feedback_by_route, feedback_crosstab),
-        "gaps": _gaps(gaps_by_kind),
+        "gaps": gaps_between(since_date, None),
     }
