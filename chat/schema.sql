@@ -77,6 +77,9 @@ CREATE TABLE IF NOT EXISTS accounts (
 -- No pseudo and no IP: thread_id and message_id only tie an entry to a conversation of the
 -- chat (for the feedback buttons of #19) and are cleared when that account is deleted.
 -- Purged after ANSWER_LOG_RETENTION_DAYS (python -m journal.purge).
+-- feedback, feedback_comment, feedback_at: the user's thumbs (1 "Utile", 0 "Pas utile") copied
+-- from Chainlit's feedbacks table (#19). Added after the first release: chat/db.py adds them to
+-- an older database, then creates their index (it cannot be created here before they exist).
 CREATE TABLE IF NOT EXISTS answer_log (
     id INTEGER PRIMARY KEY,
     created_at TEXT NOT NULL,
@@ -103,7 +106,10 @@ CREATE TABLE IF NOT EXISTS answer_log (
     review_label TEXT CHECK (review_label IN ('bonne', 'partielle', 'fausse', 'hors_sujet')),
     review_note TEXT,
     reviewed_at TEXT,
-    promoted_as TEXT
+    promoted_as TEXT,
+    feedback INTEGER CHECK (feedback IN (0, 1)),
+    feedback_comment TEXT,
+    feedback_at TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_answer_log_created ON answer_log (created_at);
 CREATE INDEX IF NOT EXISTS idx_answer_log_review ON answer_log (review_label);

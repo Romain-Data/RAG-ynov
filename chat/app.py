@@ -10,11 +10,11 @@ import logging
 import time
 
 import chainlit as cl
-from chainlit.data.sql_alchemy import SQLAlchemyDataLayer
 from chainlit.types import ThreadDict
 
 from chat import accounts
 from chat.db import sqlalchemy_url
+from chat.feedback import FeedbackDataLayer
 from chat.messages import AUTHOR, history_from_steps, with_sources
 from graph.chat import get_chat_graph
 from journal import store
@@ -34,8 +34,8 @@ ERROR_MESSAGE = (
 
 
 @cl.data_layer
-def get_data_layer() -> SQLAlchemyDataLayer:
-    return SQLAlchemyDataLayer(conninfo=sqlalchemy_url())
+def get_data_layer() -> FeedbackDataLayer:
+    return FeedbackDataLayer(conninfo=sqlalchemy_url())
 
 
 @cl.password_auth_callback
@@ -66,15 +66,19 @@ async def on_message(message: cl.Message) -> None:
         result = await get_chat_graph().ainvoke({"messages": history})
     except Exception as exc:
         logger.exception("The chat graph failed")
+        latency_ms = round((time.monotonic() - started) * 1000)
+        # Sent first: the entry keeps its id, which ties the thumbs under it to the journal
+        error_reply = cl.Message(content=ERROR_MESSAGE, author=AUTHOR)
+        await error_reply.send()
         await asyncio.to_thread(
             store.record,
             channel="chat",
             question=message.content,
             error=f"{type(exc).__name__}: {exc}",
             thread_id=thread_id,
-            latency_ms=round((time.monotonic() - started) * 1000),
+            message_id=error_reply.id,
+            latency_ms=latency_ms,
         )
-        await cl.Message(content=ERROR_MESSAGE, author=AUTHOR).send()
         return  # the question is not kept in the history: the user can ask again
     latency_ms = round((time.monotonic() - started) * 1000)
     answer = result.get("answer", "").strip()

@@ -284,5 +284,6 @@ class TestChatHandler:
         sent = self._run(graph)
         (row,) = rows()
         assert row["route"] == "error" and "429 budget" in row["error"]
-        assert row["thread_id"] == "t-1" and row["message_id"] is None
+        # The error message has thumbs too: its id ties them to the entry
         assert len(sent) == 1
+        assert (row["thread_id"], row["message_id"]) == ("t-1", sent[0].id)

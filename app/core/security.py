@@ -59,3 +59,8 @@ def rate_limit_account(request: Request) -> None:
 @limiter.limit(f"{settings.rate_limit_admin_login}/minute")
 def rate_limit_admin_login(request: Request) -> None:
     """Rate limit for the password attempts on /admin/login (default 10 req/min/IP)."""
+
+
+@limiter.limit(f"{settings.rate_limit_feedback}/minute")
+def rate_limit_feedback(request: Request) -> None:
+    """Rate limit for the thumbs of the chat, PUT and DELETE /feedback (default 30 req/min/IP)."""

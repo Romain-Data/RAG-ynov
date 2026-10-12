@@ -113,9 +113,9 @@
         "negative": "Pas utile",
         "edit": "Modifier le commentaire",
         "dialog": {
-          "title": "Ajouter un commentaire",
-          "submit": "Envoyer le commentaire",
-          "yourFeedback": "Votre avis..."
+          "title": "Votre avis sur cette réponse",
+          "submit": "Envoyer l'avis",
+          "yourFeedback": "Facultatif : ce qui manquait ou ce qui était faux…"
         },
         "status": {
           "updating": "Mise à jour",

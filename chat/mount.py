@@ -29,8 +29,11 @@ def mount_chat(app: FastAPI) -> bool:
 
     from chainlit.utils import mount_chainlit
 
+    from chat.feedback import router as feedback_router
     from chat.routes import router
 
     app.include_router(router)
+    # Before Chainlit: these routes guard its PUT and DELETE /feedback, then call them
+    app.include_router(feedback_router)
     mount_chainlit(app=app, target=str(CHAT_DIR / "app.py"), path="/")
     return True
