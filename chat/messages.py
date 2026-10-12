@@ -53,17 +53,19 @@ def strip_sources(text: str) -> str:
     return text.split(_SOURCES_SEPARATOR, 1)[0]
 
 
-def history_from_steps(steps: Sequence[Mapping[str, Any]], skip: str | None = None) -> list[dict]:
+def history_from_steps(steps: Sequence[Mapping[str, Any]]) -> list[dict]:
     """Rebuild the chat history of a resumed thread from its persisted steps.
 
-    `skip` is the greeting, an assistant message that is not part of the conversation.
+    The assistant messages before the first user message are the greeting, which is not part
+    of the conversation. It is recognised by its place, not by its text: the text changes over
+    time and every thread keeps the greeting it was started with.
     """
     roles = {"user_message": "user", "assistant_message": "assistant"}
-    history = []
+    history: list[dict] = []
     for step in steps:
         role = roles.get(step.get("type", ""))
         content = (step.get("output") or "").strip()
-        if role is None or not content or content == skip:
+        if role is None or not content or (role == "assistant" and not history):
             continue
         history.append(
             {"role": role, "content": strip_sources(content) if role == "assistant" else content}

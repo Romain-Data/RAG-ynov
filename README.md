@@ -79,6 +79,12 @@ volume): back it up. `python -m chat.backup` copies it (SQLite backup API, integ
 `/data/rag-ynov-backups`, outside the Docker volume. Pages: `/compte/inscription`, `/compte/recuperation`,
 `/compte/suppression` (deletes the account and its conversations).
 
+Chainlit has no hook for these pages, so `chat/public/custom.js` (its single `custom_js`) adds
+the sign-up and recovery links under the login form, and a "Supprimer mon compte" entry to the user
+menu (the round button with the initial of the pseudo, top right), just above "Se déconnecter".
+The greeting is not part of the conversation history: when a conversation is reopened, the assistant
+messages before the first question are left out, whatever their text.
+
 ## Answer journal and review
 
 Every question asked in the chat or on `POST /api/query` is written to the `answer_log` table
