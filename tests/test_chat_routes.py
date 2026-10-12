@@ -139,10 +139,26 @@ class TestTheme:
                 assert re.fullmatch(r"\d{1,3} \d{1,3}% \d{1,3}%", value), (name, value)
 
     @pytest.mark.parametrize(
-        "name", ["logo_light.png", "logo_dark.png", "favicon.png", "login-bg.jpg", "login-links.js"]
+        "name", ["logo_light.png", "logo_dark.png", "favicon.png", "login-bg.jpg", "custom.js"]
     )
     def test_public_files_exist(self, name):
         assert (self.PUBLIC / name).stat().st_size > 0
+
+    def test_custom_js_adds_the_account_links(self):
+        # Chainlit takes a single custom_js: the links under the login form and the account
+        # deletion entry of the user menu live in the same file
+        config = (self.PUBLIC.parent / ".chainlit" / "config.toml").read_text(encoding="utf-8")
+        path = re.search(r'^custom_js = "/public/([^"]+)"', config, re.MULTILINE)
+        assert path, "custom_js is not set in config.toml"
+        script = (self.PUBLIC / path.group(1)).read_text(encoding="utf-8")
+        for needle in (
+            "/compte/inscription",
+            "/compte/recuperation",
+            "/compte/suppression",
+            "user-nav-button",
+            "aria-controls",
+        ):
+            assert needle in script, needle
 
     def test_the_assistant_avatar_file_matches_the_message_author(self):
         # chainlit/server.py get_avatar: lowercase, spaces and dots turned into "_"

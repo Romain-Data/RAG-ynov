@@ -24,7 +24,9 @@ logger = logging.getLogger(__name__)
 GREETING = (
     "Bonjour ! Posez-moi vos questions sur les formations Ynov : programmes, campus, "
     "admission, tarifs. Je garde le fil de la conversation, vous pouvez enchaîner avec des "
-    "relances.\n\n[Supprimer mon compte](/compte/suppression)"
+    "relances.\n\nSous chaque réponse, les pouces « Utile » et « Pas utile » permettent de "
+    "dire si elle vous a aidé, avec un commentaire facultatif. Pour supprimer votre compte, "
+    "ouvrez le menu en haut à droite (le rond avec l'initiale de votre pseudo)."
 )
 ERROR_MESSAGE = (
     "Désolé, je n'ai pas pu répondre à cause d'un problème technique. Réessayez dans un instant."
@@ -51,7 +53,7 @@ async def start() -> None:
 
 @cl.on_chat_resume
 async def resume(thread: ThreadDict) -> None:
-    cl.user_session.set("history", history_from_steps(thread["steps"], skip=GREETING))
+    cl.user_session.set("history", history_from_steps(thread["steps"]))
 
 
 @cl.on_message

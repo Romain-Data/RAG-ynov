@@ -2,6 +2,8 @@
 
 import re
 
+import pytest
+
 from chat.messages import AUTHOR, cited_numbers, history_from_steps, strip_sources, with_sources
 
 SOURCES = [
@@ -84,21 +86,68 @@ class TestSources:
         assert strip_sources("Sans bloc") == "Sans bloc"
 
 
+@pytest.fixture
+def greeting() -> str:
+    # imported here: chat/app.py imports Chainlit, which reads its configuration at import time
+    from chat.app import GREETING
+
+    return GREETING
+
+
 class TestHistoryFromSteps:
-    def test_keeps_the_conversation_only(self):
+    CONVERSATION = [
+        {"type": "user_message", "output": "Durée du Bachelor ?"},
+        {"type": "run", "output": "internal"},
+        {"type": "assistant_message", "output": "3 ans [Source 1]\n\n**Sources**\n1. x.html"},
+        {"type": "user_message", "output": "  "},
+        {"type": "user_message", "output": "Et à Lyon ?"},
+    ]
+    HISTORY = [
+        {"role": "user", "content": "Durée du Bachelor ?"},
+        {"role": "assistant", "content": "3 ans [Source 1]"},
+        {"role": "user", "content": "Et à Lyon ?"},
+    ]
+    # The greeting of the threads started before #19, with the account deletion link
+    OLD_GREETING = (
+        "Bonjour ! Posez-moi vos questions sur les formations Ynov : programmes, campus, "
+        "admission, tarifs. Je garde le fil de la conversation, vous pouvez enchaîner avec des "
+        "relances.\n\n[Supprimer mon compte](/compte/suppression)"
+    )
+
+    @pytest.mark.parametrize("old", [True, False], ids=["old greeting", "new greeting"])
+    def test_skips_the_greeting_whatever_its_text(self, old, greeting):
+        text = self.OLD_GREETING if old else greeting
+        steps = [{"type": "run", "output": ""}, {"type": "assistant_message", "output": text}]
+        assert history_from_steps([*steps, *self.CONVERSATION]) == self.HISTORY
+
+    def test_skips_every_assistant_message_before_the_first_question(self):
         steps = [
-            {"type": "assistant_message", "output": "Bonjour !"},  # the greeting
-            {"type": "user_message", "output": "Durée du Bachelor ?"},
-            {"type": "run", "output": "internal"},
-            {"type": "assistant_message", "output": "3 ans [Source 1]\n\n**Sources**\n1. x.html"},
-            {"type": "user_message", "output": "  "},
-            {"type": "user_message", "output": "Et à Lyon ?"},
+            {"type": "assistant_message", "output": "Bonjour !"},
+            {"type": "assistant_message", "output": "Une seconde annonce"},
+            {"type": "user_message", "output": ""},  # an empty message does not start it
+            {"type": "assistant_message", "output": "Encore une annonce"},
         ]
-        assert history_from_steps(steps, skip="Bonjour !") == [
-            {"role": "user", "content": "Durée du Bachelor ?"},
-            {"role": "assistant", "content": "3 ans [Source 1]"},
-            {"role": "user", "content": "Et à Lyon ?"},
+        assert history_from_steps([*steps, *self.CONVERSATION]) == self.HISTORY
+
+    def test_keeps_an_answer_that_repeats_the_greeting(self, greeting):
+        steps = [
+            {"type": "assistant_message", "output": greeting},
+            {"type": "user_message", "output": "Que sais-tu faire ?"},
+            {"type": "assistant_message", "output": greeting},
         ]
+        assert history_from_steps(steps) == [
+            {"role": "user", "content": "Que sais-tu faire ?"},
+            {"role": "assistant", "content": greeting},
+        ]
+
+    def test_no_question_yet(self, greeting):
+        assert history_from_steps([{"type": "assistant_message", "output": greeting}]) == []
+
+
+def test_the_greeting_points_to_the_menu_instead_of_a_deletion_link(greeting):
+    # the link moved to the user menu (chat/public/custom.js)
+    assert "/compte/suppression" not in greeting
+    assert "menu en haut à droite" in greeting
 
 
 def test_author_is_accepted_by_the_avatar_route_of_chainlit():
