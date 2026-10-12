@@ -19,6 +19,10 @@ Usage:
 With --conversations (local only), the scenarios of eval/conversations.yaml are played
 through the conversation graph (graph/chat.py): each turn is asked with the previous
 turns as history, and the standalone rewrite of the question is saved for review.
+
+On a server, /api/health is read before and after the questions: the run records what
+answered (LLM model, embedding model, collection, threshold, deployed commit), and says so
+when it changed during the run (a deployment in progress).
 """
 
 import argparse
@@ -48,23 +52,77 @@ RATE_LIMIT_PAUSE_S = 2.5  # /api/query allows 30 requests per minute per IP
 
 
 Answer = tuple[dict | None, float, str | None]  # (response, latency in s, error)
+# Fields of /api/health that say what answers; a change during a run is reported
+SERVER_FIELDS = ("chat_model", "embedding_model", "collection", "grade_threshold", "version")
+
+
+def _auth() -> tuple[str, str] | None:
+    """The preprod sits behind a password (SITE_PASSWORD on the server)."""
+    password = os.environ.get("EVAL_SITE_PASSWORD")
+    return ("preprod", password) if password else None
 
 
 def ask(url: str, question: str) -> Answer:
     start = time.time()
     try:
-        # The preprod sits behind a password (SITE_PASSWORD on the server)
-        password = os.environ.get("EVAL_SITE_PASSWORD")
         resp = httpx.post(
             f"{url}/api/query",
             json={"question": question},
             timeout=120,
-            auth=("preprod", password) if password else None,
+            auth=_auth(),
         )
         resp.raise_for_status()
         return resp.json(), time.time() - start, None
     except httpx.HTTPError as exc:
         return None, time.time() - start, str(exc)
+
+
+def server_info(url: str) -> dict | None:
+    """What answers on the server, from /api/health; None when it does not answer (the run
+    goes on without it)."""
+    try:
+        resp = httpx.get(f"{url}/api/health", timeout=10, auth=_auth())
+        resp.raise_for_status()
+        data = resp.json()
+    except (httpx.HTTPError, ValueError):
+        return None
+    return data if isinstance(data, dict) else None
+
+
+def server_config(url: str, before: dict | None, after: dict | None) -> tuple[dict, str | None]:
+    """The config of a run on a server, named like the config of a local run, and a warning
+    when the server changed between the first and the last question."""
+    server = before or after or {}
+    config = {
+        "url": url,
+        "server": server or None,
+        "llm_model": server.get("chat_model"),
+        "embedding_model": server.get("embedding_model"),
+        "collection": server.get("collection"),
+        "grade_threshold": server.get("grade_threshold"),
+        "server_version": server.get("version"),
+    }
+    if not (before and after):
+        return config, None
+    changed = [field for field in SERVER_FIELDS if before.get(field) != after.get(field)]
+    if not changed:
+        return config, None
+    config["server_after"] = after
+    detail = ", ".join(f"{field} : {before.get(field)} → {after.get(field)}" for field in changed)
+    return config, f"Configuration du serveur changée pendant le passage ({detail})."
+
+
+def describe_server(config: dict) -> str:
+    """One line on what answered, for the terminal and the summary of the workflow."""
+    if not config.get("server"):
+        return "Serveur : /api/health injoignable, configuration non enregistrée."
+    threshold = config["grade_threshold"]
+    return (
+        f"Serveur : modèle {config['llm_model'] or '?'}, "
+        f"collection {config['collection'] or '?'}, "
+        f"seuil {threshold if threshold is not None else '?'}, "
+        f"commit {config['server_version'] or '?'}."
+    )
 
 
 def local_asker(
@@ -222,7 +280,7 @@ def run_conversations(
     return results
 
 
-def markdown_summary(results: list[dict], title: str) -> str:
+def markdown_summary(results: list[dict], title: str, config: dict | None = None) -> str:
     """A short Markdown report of a run, for the summary page of a GitHub Actions run."""
     counts: dict[str, int] = {}
     for r in results:
@@ -233,6 +291,10 @@ def markdown_summary(results: list[dict], title: str) -> str:
         f"{counts.get('correct', 0)}/{len(results)} réponses correctes "
         "(vérification automatique, à relire à la main).",
         "",
+    ]
+    if config and "server" in config:
+        lines += [describe_server(config), ""]
+    lines += [
         "| Verdict | Nombre |",
         "|---|---|",
         *[f"| {verdict} | {n} |" for verdict, n in sorted(counts.items())],
@@ -282,6 +344,7 @@ def main() -> None:
     if args.conversations and not args.local:
         parser.error("--conversations needs --local")
     ids = set(args.ids.split(",")) if args.ids else None
+    notes = args.notes
     if args.local:
         ask_fn, config = local_asker(
             args.data,
@@ -295,8 +358,13 @@ def main() -> None:
         else:
             results = run(ask_fn, ids, pause=0.5)
     else:
-        config = {"url": args.url}
+        before = server_info(args.url)
+        print(describe_server(server_config(args.url, before, None)[0]))
         results = run(lambda question: ask(args.url, question), ids, RATE_LIMIT_PAUSE_S)
+        config, warning = server_config(args.url, before, server_info(args.url))
+        if warning:
+            print(warning)
+            notes = f"{notes} {warning}".strip()
     correct = sum(r["verdict"] == "correct" for r in results)
     print(f"\n{correct}/{len(results)} réponses correctes (vérification automatique)")
 
@@ -312,7 +380,7 @@ def main() -> None:
                 "question_set": CONVERSATION_SET if args.conversations else QUESTION_SET,
                 "milestone": False,
                 "label": args.save,
-                "notes": args.notes,
+                "notes": notes,
                 "config": config,
                 "results": results,
             }
@@ -321,7 +389,8 @@ def main() -> None:
 
     if args.summary:
         with args.summary.open("a", encoding="utf-8") as f:
-            f.write(markdown_summary(results, f"eval.e2e sur {args.environment or args.url}"))
+            title = f"eval.e2e sur {args.environment or args.url}"
+            f.write(markdown_summary(results, title, config))
     errors = [r for r in results if r["verdict"] == "error"]
     if args.fail_on_error and errors:
         print(f"{len(errors)} question(s) sans réponse : {errors[0].get('error')}")

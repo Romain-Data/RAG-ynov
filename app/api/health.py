@@ -1,18 +1,22 @@
 """Health endpoint with rate limiting."""
 
+import os
+
 from fastapi import APIRouter, Depends, Request
 from httpx import AsyncClient
 
 from app.core.config import settings
 from app.core.security import rate_limit_health
 from app.schemas import HealthResponse
+from graph.nodes import grade
 
 router = APIRouter(tags=["health"])
 
 
 @router.get("/health", response_model=HealthResponse, dependencies=[Depends(rate_limit_health)])
 async def health_check(request: Request) -> HealthResponse:
-    """Health check endpoint that verifies API and Qdrant connectivity."""
+    """Health check endpoint that verifies API and Qdrant connectivity, and tells what answers:
+    models, collection, threshold and deployed commit (recorded by eval.e2e in each run)."""
     # Check Qdrant
     qdrant_status = "unreachable"
     qdrant_url = f"http://{settings.qdrant_host}:{settings.qdrant_port}"
@@ -34,4 +38,7 @@ async def health_check(request: Request) -> HealthResponse:
         qdrant=qdrant_status,
         embedding_model=settings.embedding_model,
         chat_model=settings.mammouth_chat_model,
+        collection=settings.qdrant_collection_name,
+        grade_threshold=grade.GRADE_THRESHOLD,
+        version=os.environ.get("SOURCE_COMMIT") or None,
     )

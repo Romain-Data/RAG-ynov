@@ -20,3 +20,13 @@ def test_summary_of_a_clean_run_has_no_detail_table() -> None:
     summary = e2e.markdown_summary([_result("q01", "correct")], "titre")
     assert "1/1 réponses correctes" in summary
     assert "| Question |" not in summary
+
+
+def test_summary_says_what_answered_on_a_server() -> None:
+    health = {"chat_model": "mammouth-recommended", "collection": "ynov_rag_v4", "version": None}
+    config, _ = e2e.server_config("https://x", {**health, "grade_threshold": 0.47}, None)
+    summary = e2e.markdown_summary([_result("q01", "correct")], "titre", config)
+    assert "Serveur : modèle mammouth-recommended, collection ynov_rag_v4" in summary
+    # A local run has no server to describe
+    local = {"mode": "local graph", "llm_model": "mistral-medium-3-5"}
+    assert "Serveur" not in e2e.markdown_summary([_result("q01", "correct")], "titre", local)

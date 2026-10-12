@@ -9,7 +9,7 @@
   "milestone": true,
   "label": "e2e-prod-premier-test",
   "source": "backfill",
-  "notes": "Premier test en prod après la première ingestion (3 987 chunks). 6 questions posées à la main. Sources : 5 premières, avec leur score ; sections tronquées à l'affichage à 70 caractères. Reconstitué le 2026-10-02 à partir des sorties de la session.\n",
+  "notes": "Premier test en prod après la première ingestion (3 987 chunks). 6 questions posées à la main. Sources : 5 premières, avec leur score ; sections tronquées à l'affichage à 70 caractères. Reconstitué le 2026-10-02 à partir des sorties de la session. Modèle du LLM reconstitué le 12 octobre 2026 (#16) d'après : issue #16 : le modèle de la prod est passé de mistral-medium-3-5 à mammouth-recommended le 4 octobre 2026.",
   "config": {
     "url": "https://rag.romaincollery.com",
     "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -20,7 +20,9 @@
     "max_per_section": null,
     "grade_threshold": 0.5,
     "qdrant_server": "1.13.2",
-    "qdrant_client": "1.19.1"
+    "qdrant_client": "1.19.1",
+    "llm_model": "mistral-medium-3-5",
+    "llm_model_source": "reconstitué"
   },
   "results": [
     {

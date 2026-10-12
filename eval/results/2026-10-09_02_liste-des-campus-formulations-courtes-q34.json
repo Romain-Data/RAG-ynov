@@ -5,12 +5,14 @@
   "kind": "e2e",
   "environment": "preprod",
   "git_commit": "1ce288d",
-  "question_set": "v11",
+  "question_set": "v13",
   "milestone": false,
   "label": "liste des campus, formulations courtes (q34)",
-  "notes": " Préprod réingérée avec la section reformulée (PR #56) ; verdicts relus, 34/34 corrects.",
+  "notes": "Préprod réingérée avec la section reformulée (PR #56) ; verdicts relus, 34/34 corrects. Jeu de questions corrigé le 12 octobre 2026 (#16) : v13 et non v11 (QUESTION_SET n'avait pas suivi questions.yaml). Modèle du LLM reconstitué le 12 octobre 2026 (#16) d'après : notes du passage 2026-10-04_05 (mammouth-recommended « retenu pour la préprod et la prod ») et ROADMAP.md (« mammouth-recommended en prod et en préprod depuis le 4 octobre 2026 »).",
   "config": {
-    "url": "https://rag-preprod.romaincollery.com"
+    "url": "https://rag-preprod.romaincollery.com",
+    "llm_model": "mammouth-recommended",
+    "llm_model_source": "reconstitué"
   },
   "results": [
     {

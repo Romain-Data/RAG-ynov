@@ -18,6 +18,9 @@ services:
       - CHAINLIT_AUTH_SECRET=${CHAINLIT_AUTH_SECRET}
       - CHAT_DB_PATH=/app/chat_data/chat.db
       - CHAT_BACKUP_DIR=/app/backups
+      # Deployed commit, set by Coolify when "Include Source Commit in Build" is on (empty
+      # otherwise): shown by /api/health and kept in answer_log.app_version
+      - SOURCE_COMMIT=${SOURCE_COMMIT:-}
     env_file:
       - .env
     volumes:

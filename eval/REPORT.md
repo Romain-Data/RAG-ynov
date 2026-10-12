@@ -74,8 +74,8 @@
 | ★ | `2026-10-06_05_conversations-lot5` | conversation | local | c2 | chunks 300, k=10 | 17/17 ✅ · 0 🟡 · 0 ❌ · hors périmètre 1/1 |
 | ★ | `2026-10-06_06_regle-4` | e2e | local | v10 | chunks 300, k=10 | 22/22 ✅ · 0 🟡 · 0 ❌ · hors périmètre 10/10 |
 | ★ | `2026-10-06_07_preprod-lot7` | e2e | preprod | v10 | chunks ?, k=? | 22/22 ✅ · 0 🟡 · 0 ❌ · hors périmètre 10/10 |
-|  | `2026-10-09_01_liste-des-campus-q33` | e2e | preprod | v11 | chunks ?, k=? | 23/23 ✅ · 0 🟡 · 0 ❌ · hors périmètre 10/10 |
-|  | `2026-10-09_02_liste-des-campus-formulations-courtes-q34` | e2e | preprod | v11 | chunks ?, k=? | 24/24 ✅ · 0 🟡 · 0 ❌ · hors périmètre 10/10 |
+|  | `2026-10-09_01_liste-des-campus-q33` | e2e | preprod | v12 | chunks ?, k=? | 23/23 ✅ · 0 🟡 · 0 ❌ · hors périmètre 10/10 |
+|  | `2026-10-09_02_liste-des-campus-formulations-courtes-q34` | e2e | preprod | v13 | chunks ?, k=? | 24/24 ✅ · 0 🟡 · 0 ❌ · hors périmètre 10/10 |
 
 ## Matrice par question (étapes clés)
 

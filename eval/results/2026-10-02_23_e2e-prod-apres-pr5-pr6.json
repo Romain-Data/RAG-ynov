@@ -9,7 +9,7 @@
   "milestone": true,
   "label": "e2e-prod-apres-pr5-pr6",
   "source": "backfill",
-  "notes": "Test en prod après PR #5 (qualité de la recherche) et PR #6 (Qdrant 1.19.1), nouvelle ingestion de 6 472 chunks. Les 16 questions du jeu de référence. Sources : 4 premières, sans score, sections tronquées à 30 caractères à l'affichage. Reconstitué le 2026-10-02 à partir des sorties de la session.\n",
+  "notes": "Test en prod après PR #5 (qualité de la recherche) et PR #6 (Qdrant 1.19.1), nouvelle ingestion de 6 472 chunks. Les 16 questions du jeu de référence. Sources : 4 premières, sans score, sections tronquées à 30 caractères à l'affichage. Reconstitué le 2026-10-02 à partir des sorties de la session. Modèle du LLM reconstitué le 12 octobre 2026 (#16) d'après : issue #16 : le modèle de la prod est passé de mistral-medium-3-5 à mammouth-recommended le 4 octobre 2026.",
   "config": {
     "url": "https://rag.romaincollery.com",
     "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -20,7 +20,9 @@
     "max_per_section": 2,
     "grade_threshold": 0.5,
     "qdrant_server": "1.19.1",
-    "qdrant_client": "1.19.1"
+    "qdrant_client": "1.19.1",
+    "llm_model": "mistral-medium-3-5",
+    "llm_model_source": "reconstitué"
   },
   "results": [
     {

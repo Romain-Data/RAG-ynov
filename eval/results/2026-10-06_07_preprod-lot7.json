@@ -8,9 +8,17 @@
   "question_set": "v10",
   "milestone": true,
   "label": "preprod-lot7",
-  "notes": "Lot 7 de #14 : préprod déployée depuis main (434b043) et réingérée dans la collection ynov_rag_v2 (6 466 chunks, 207 s), MiniLM, seuil 0,47, recherche hybride, section entière, règle 4, smalltalk, liens. Jeu v10, 32 questions, verdicts relus. Le workflow GitHub a compté q19, q26 et q31 « wrong » à tort : voir EC-10.",
+  "notes": "Lot 7 de #14 : préprod déployée depuis main (434b043) et réingérée dans la collection ynov_rag_v2 (6 466 chunks, 207 s), MiniLM, seuil 0,47, recherche hybride, section entière, règle 4, smalltalk, liens. Jeu v10, 32 questions, verdicts relus. Le workflow GitHub a compté q19, q26 et q31 « wrong » à tort : voir EC-10. Modèle du LLM reconstitué le 12 octobre 2026 (#16) d'après : notes du passage 2026-10-04_05 (mammouth-recommended « retenu pour la préprod et la prod ») et ROADMAP.md (« mammouth-recommended en prod et en préprod depuis le 4 octobre 2026 »). Champs collection, server_version, grade_threshold reconstitués le 12 octobre 2026 (#16) d'après ces notes.",
   "config": {
-    "url": "https://rag-preprod.romaincollery.com"
+    "url": "https://rag-preprod.romaincollery.com",
+    "llm_model": "mammouth-recommended",
+    "llm_model_source": "reconstitué",
+    "collection": "ynov_rag_v2",
+    "collection_source": "reconstitué",
+    "server_version": "434b043",
+    "server_version_source": "reconstitué",
+    "grade_threshold": 0.47,
+    "grade_threshold_source": "reconstitué"
   },
   "results": [
     {
