@@ -1377,3 +1377,122 @@ class TestDashboardPage:
         brief = page[page.index("<h2>En bref</h2>") : page.index('<h2 class="sr">Filtres</h2>')]
         assert "USAGE-CARD" in brief
         assert page.index("Fiabilité de la vérification automatique") < page.index("Usage réel")
+
+
+class TestDashboardUsage:
+    """The usage of the journal on the dashboard (#16, PR 3): weeks, rates with their counts,
+    the runs of the preprod and the production, the configurations seen."""
+
+    REFUSED = {"grade": "refuse", "retrieved": [], "sources": [], "llm_model": None}
+    HELLO = {"retrieved": [], "sources": [], "llm_model": None}
+
+    @pytest.fixture(autouse=True)
+    def runs_dir(self, tmp_path, monkeypatch) -> Path:
+        folder = tmp_path / "results"
+        folder.mkdir()
+        monkeypatch.setattr(eval_results, "RESULTS_DIR", folder)
+        return folder
+
+    @staticmethod
+    def _age(entry_id: int, days: int) -> None:
+        when = (datetime.now(UTC) - timedelta(days=days)).isoformat()
+        with db() as conn:
+            conn.execute("UPDATE answer_log SET created_at = ? WHERE id = ?", (when, entry_id))
+
+    @staticmethod
+    def _usage(page: str) -> str:
+        return page[page.index('<h2 id="usage">Usage réel</h2>') :]
+
+    @staticmethod
+    def _brief(page: str) -> str:
+        return page[page.index("<h2>En bref</h2>") : page.index('<h2 class="sr">Filtres</h2>')]
+
+    def _three_weeks(self) -> None:
+        for days in (14, 7):
+            self._age(add(), days)
+            self._age(add(result=self.REFUSED), days)
+        rate(add(), 1)
+        rate(add(), 0, "Il manque la date")
+        add(result=self.HELLO)
+
+    def test_an_empty_journal(self, signed_in):
+        page = signed_in.get("/admin/tableau-de-bord").text
+        assert "Le journal est vide : aucune question." in self._usage(page)
+        assert "Usage · 4 dernières semaines" in self._brief(page)
+        assert "Le journal est vide." in self._brief(page)
+
+    def test_a_single_week_gives_the_table_without_charts(self, signed_in):
+        add()
+        add(result=self.REFUSED)
+        usage = self._usage(signed_in.get("/admin/tableau-de-bord").text)
+        assert "Moins de deux semaines de données" in usage
+        assert 'role="img"' not in usage
+        assert "1/2 (50 %)" in usage  # without an answer: the refusal, with its count
+
+    def test_weeks_with_charts_and_hollow_points(self, signed_in):
+        self._three_weeks()
+        resp = signed_in.get("/admin/tableau-de-bord")
+        assert resp.status_code == 200 and "<script" not in resp.text
+        usage = self._usage(resp.text)
+        for title in (
+            "Questions par semaine, hors politesse",
+            "Part des questions restées sans réponse, par semaine",
+            "Satisfaction des utilisateurs du chat, par semaine",
+        ):
+            assert f'aria-label="{title}"' in usage, title
+        assert "pt hollow" in usage and "peu de cas" in usage  # fewer than 10 cases
+        assert usage.count("<tr><td>") >= 3  # one line per week
+        assert "50 % (2 votes)" in usage  # the thumbs of this week, the greeting left out
+
+    def test_the_brief_card_sums_the_last_weeks(self, signed_in):
+        self._three_weeks()
+        brief = self._brief(signed_in.get("/admin/tableau-de-bord").text)
+        assert '<p class="big">6</p>' in brief  # 2 + 2 + 2 questions, the greeting apart
+        assert "Sans réponse : 2/6 (33 %)" in brief
+        assert "Satisfaction : 50 % (2 votes)" in brief
+        assert 'href="#usage"' in brief
+
+    def test_the_runs_of_the_servers_on_their_week(self, signed_in, runs_dir):
+        add()
+        self._age(add(), 7)
+        today = datetime.now(UTC).date().isoformat()
+        TestDashboardPage.write_run(runs_dir, f"{today}_01_preprod", "preprod")
+        TestDashboardPage.write_run(runs_dir, f"{today}_02_local")
+        usage = self._usage(signed_in.get("/admin/tableau-de-bord").text)
+        short = f"{today[5:]}_01"
+        assert f"passage {short} (préprod) 1/1 correctes, 0 fausse" in usage  # the listing
+        assert f"<td>{short} (préprod) 1/1 correctes, 0 fausse</td>" in usage  # the table
+        assert 'class="mark"' in usage
+        assert f"{today[5:]}_02" not in usage  # a local run is not about the real usage
+
+    def test_the_configurations_seen_in_the_journal(self, signed_in):
+        old = add()
+        self._age(old, 7)
+        with db() as conn:
+            conn.execute("UPDATE answer_log SET collection = 'ynov_rag_v3' WHERE id = ?", (old,))
+        add()
+        usage = self._usage(signed_in.get("/admin/tableau-de-bord").text)
+        assert "Changements de configuration vus dans le journal" in usage
+        assert "ynov_rag_v3" in usage and settings.qdrant_collection_name in usage
+        assert f"Collection : {settings.qdrant_collection_name} à partir du" in usage
+        assert "mistral-medium-2508 à partir du" not in usage  # the first value is no change
+        assert "jamais renseigné" in usage and "SOURCE_COMMIT" in usage
+
+    def test_values_of_the_journal_are_escaped(self, signed_in):
+        entry = add()
+        with db() as conn:
+            conn.execute(
+                "UPDATE answer_log SET llm_model = '<b>model</b>', app_version = "
+                "'<script>alert(1)</script>' WHERE id = ?",
+                (entry,),
+            )
+        page = signed_in.get("/admin/tableau-de-bord").text
+        assert "<script" not in page and "<b>model" not in page
+        assert "&lt;b&gt;model&lt;/b&gt;" in self._usage(page)
+
+    def test_the_summary_links_to_the_usage(self, signed_in):
+        add()
+        page = signed_in.get("/admin/synthese").text
+        assert 'href="/admin/tableau-de-bord#usage"' in page
+        usage = self._usage(signed_in.get("/admin/tableau-de-bord").text)
+        assert 'href="/admin/synthese"' in usage and 'href="/admin/sans-reponse"' in usage
