@@ -19,7 +19,7 @@ from app import main
 from app.core.config import settings
 from app.core.security import add_security_middleware, limiter
 from chat.db import db, init_db
-from journal import gaps, review, stats, store
+from journal import gaps, review, stats, store, themes
 
 # Generated for each run: no password-like literal in the repository
 PASSWORD = secrets.token_urlsafe(24)
@@ -858,3 +858,271 @@ class TestUnansweredQuestions:
         add("Bonjour", result={"retrieved": [], "sources": [], "llm_model": None})
         page = signed_in.get("/admin/synthese").text
         assert "Aucune question sur cette période (hors politesse)." in page
+
+
+REFUSED = {"grade": "refuse", "retrieved": [], "sources": [], "llm_model": None}
+
+
+def unanswered(question: str = "Y a-t-il des logements étudiants ?", theme: str = "") -> int:
+    """An entry refused at the threshold, put in `theme` when given."""
+    entry_id = add(question, result=REFUSED)
+    if theme:
+        assert themes.move(entry_id, new_name=theme) is None
+    return entry_id
+
+
+def theme_id(name: str) -> int:
+    return next(t["id"] for t in themes.choices() if t["name"] == name)
+
+
+class TestThemePages:
+    """/admin/sans-reponse (#20): the themes, the grouping button, a theme and its decisions."""
+
+    @pytest.fixture(autouse=True)
+    def no_search(self, monkeypatch):
+        """The theme page asks the search what it finds today: Qdrant is not there in tests."""
+        self.searched: list[str] = []
+
+        def search(question: str) -> list[dict]:
+            self.searched.append(question)
+            return [
+                {"source": "vie.html", "section": "Logement", "title": "Vie étudiante",
+                 "url": "https://www.ynov.com/vie", "score": 0.52},
+                {"source": "x.html", "section": "Autre", "title": None, "url": "javascript:x",
+                 "score": 0.31},
+            ]  # fmt: skip
+
+        monkeypatch.setattr(themes, "current_search", search)
+
+    def test_the_pages_need_a_session(self, client):
+        theme = theme_id_after(unanswered(theme="Logement étudiant"))
+        for path in ("/admin/sans-reponse", f"/admin/sans-reponse/{theme}"):
+            resp = client.get(path)
+            assert resp.status_code == 303 and resp.headers["location"] == "/admin/login"
+        for path in (
+            "/admin/sans-reponse/regrouper",
+            f"/admin/sans-reponse/{theme}/nom",
+            f"/admin/sans-reponse/{theme}/cause",
+            f"/admin/sans-reponse/{theme}/fusion",
+            "/admin/reponses/1/theme",
+        ):
+            resp = client.post(path, data={"nom": "X", "cause": "contenu", "cible": "1"})
+            assert resp.status_code == 303 and resp.headers["location"] == "/admin/login"
+        assert themes.get_theme(theme)["name"] == "Logement étudiant"
+
+    def test_the_list_of_themes(self, signed_in):
+        unanswered("Un logement à Lyon ?", "Logement étudiant")
+        unanswered("Une chambre ?", "Logement étudiant")
+        unanswered("<script>alert(1)</script>", "Date de rentrée")
+        unanswered("Pas encore rangée ?")
+        add("Question avec réponse")
+        resp = signed_in.get("/admin/sans-reponse")
+        page = resp.text
+        assert resp.status_code == 200 and resp.headers["cache-control"] == "no-store"
+        assert "default-src 'none'" in resp.headers["content-security-policy"]
+        assert page.index("Logement étudiant") < page.index("Date de rentrée")  # most asked first
+        assert "À qualifier" in page and "Une chambre ?" in page  # the example
+        assert "&lt;script&gt;alert(1)&lt;/script&gt;" in page and "<script>" not in page
+        assert "Questions non regroupées : 1" in page and "Pas encore rangée ?" in page
+        assert "Regrouper 1 nouvelle(s) question(s) (1 appel au LLM)" in page
+        assert "Question avec réponse" not in page
+        assert '<a href="/admin/sans-reponse">Sans réponse</a>' in page  # the navigation
+
+    def test_no_button_when_everything_is_grouped(self, signed_in):
+        unanswered(theme="Logement étudiant")
+        page = signed_in.get("/admin/sans-reponse").text
+        assert "Regrouper" not in page and "Toutes les questions sans réponse sont rangées" in page
+
+    def test_the_period(self, signed_in):
+        old = unanswered("Ancienne question", "Vieux thème")
+        unanswered("Récente", "Logement étudiant")
+        with db() as conn:
+            conn.execute(
+                "UPDATE answer_log SET created_at = '2026-01-01T00:00:00+00:00' WHERE id = ?",
+                (old,),
+            )
+        page = signed_in.get("/admin/sans-reponse", params={"periode": "7"}).text
+        assert "Vieux thème" not in page and "Logement étudiant" in page
+        assert '<option value="7" selected>' in page
+        assert "Vieux thème" in signed_in.get("/admin/sans-reponse?periode=x").text
+
+    def test_grouping_from_the_button(self, signed_in, monkeypatch):
+        unanswered("Un logement ?")
+        unanswered("HEC ?")
+        calls: list[dict] = []
+
+        def llm(payload: dict, timeout: float = 30.0) -> dict:
+            calls.append(payload)
+            content = '{"1": "Logement étudiant", "2": "Autres écoles"}'
+            return {"choices": [{"message": {"content": content}, "finish_reason": "stop"}]}
+
+        monkeypatch.setattr(themes, "chat_completion", llm)
+        resp = signed_in.post("/admin/sans-reponse/regrouper")
+        assert resp.status_code == 303 and len(calls) == 1
+        assert resp.headers["location"] == (
+            "/admin/sans-reponse?resultat=ok&questions=2&nouveaux=2"
+        )
+        page = signed_in.get(resp.headers["location"]).text
+        assert "2 question(s) rangée(s), dont 2 dans de nouveaux thèmes." in page
+        assert "Logement étudiant" in page and "Question hors sujet" in page  # fixed theme
+
+    def test_a_failed_grouping_says_so(self, signed_in, monkeypatch):
+        from graph.llm import LLMUnavailableError
+
+        unanswered("Un logement ?")
+
+        def down(payload: dict, timeout: float = 30.0) -> dict:
+            raise LLMUnavailableError("429 budget")
+
+        monkeypatch.setattr(themes, "chat_completion", down)
+        resp = signed_in.post("/admin/sans-reponse/regrouper")
+        page = signed_in.get(resp.headers["location"]).text
+        assert "Le LLM n&#x27;a pas répondu : rien n&#x27;a été rangé" in page
+        assert themes.choices() == []
+
+    def test_messages_come_from_fixed_texts_only(self, signed_in):
+        page = signed_in.get(
+            "/admin/sans-reponse",
+            params={"resultat": "<script>x</script>", "questions": "-3", "nouveaux": "1"},
+        ).text
+        assert "<script>x" not in page and "question(s) rangée(s)" not in page
+        page = signed_in.get(
+            "/admin/sans-reponse", params={"resultat": "ok", "questions": "-3"}
+        ).text
+        assert "Aucune question à ranger." in page
+        assert signed_in.get("/admin/sans-reponse?questions=abc").status_code == 422
+
+    def test_a_foreign_origin_cannot_start_a_grouping(self, signed_in, monkeypatch):
+        unanswered("Un logement ?")
+        monkeypatch.setattr(themes, "chat_completion", lambda *_a, **_k: pytest.fail("LLM"))
+        resp = signed_in.post(
+            "/admin/sans-reponse/regrouper", headers={"Origin": "https://evil.example"}
+        )
+        assert resp.status_code == 403
+
+    def test_a_theme(self, signed_in):
+        entry_id = unanswered("Un logement à Lyon ?", "Logement étudiant")
+        theme = theme_id_after(entry_id)
+        page = signed_in.get(f"/admin/sans-reponse/{theme}").text
+        assert "Thème : Logement étudiant" in page
+        assert self.searched == ["Un logement à Lyon ?"]
+        assert "Ce que la recherche trouve aujourd" in page and "≥ seuil" in page
+        assert '<a href="https://www.ynov.com/vie" rel="noopener noreferrer">' in page
+        assert "javascript:x" not in page
+        assert f'href="/admin/reponses/{entry_id}"' in page
+        assert f'action="/admin/reponses/{entry_id}/theme"' in page
+        assert f'name="retour" value="{theme}"' in page
+        assert "Suggestion" not in page and "Fusionner" not in page  # no other theme
+
+    def test_a_theme_when_the_search_fails(self, signed_in, monkeypatch):
+        def broken(question: str) -> list[dict]:
+            raise ConnectionError("qdrant")
+
+        monkeypatch.setattr(themes, "current_search", broken)
+        theme = theme_id_after(unanswered(theme="Logement étudiant"))
+        resp = signed_in.get(f"/admin/sans-reponse/{theme}")
+        assert resp.status_code == 200 and "La recherche ne répond pas" in resp.text
+
+    def test_an_unknown_theme(self, signed_in):
+        assert signed_in.get("/admin/sans-reponse/999").status_code == 404
+        assert signed_in.post("/admin/sans-reponse/999/cause").status_code == 404
+
+    def test_the_suggestion_of_a_fixed_theme(self, signed_in):
+        theme = theme_id_after(unanswered("HEC ?", "Autres écoles"))
+        themes.set_cause(theme, None)
+        page = signed_in.get(f"/admin/sans-reponse/{theme}").text
+        assert "Suggestion : Question hors sujet" in page
+
+    def test_choosing_the_cause(self, signed_in):
+        entry_id = unanswered(theme="Logement étudiant")
+        theme = theme_id_after(entry_id)
+        resp = signed_in.post(
+            f"/admin/sans-reponse/{theme}/cause",
+            data={"cause": "recherche", "note": "La page existe : <b>vie étudiante</b>"},
+        )
+        assert resp.status_code == 303
+        found = themes.get_theme(theme)
+        assert found["cause"] == "recherche"
+        page = signed_in.get(f"/admin/sans-reponse/{theme}").text
+        assert "&lt;b&gt;vie étudiante&lt;/b&gt;" in page
+        assert f'href="/admin/reponses/{entry_id}/yaml"' in page  # back to eval/
+        listing = signed_in.get("/admin/sans-reponse").text
+        assert "Défaut de recherche du chatbot" in listing
+        resp = signed_in.post(f"/admin/sans-reponse/{theme}/cause", data={"cause": "autre"})
+        assert resp.status_code == 400 and themes.get_theme(theme)["cause"] == "recherche"
+        signed_in.post(f"/admin/sans-reponse/{theme}/cause", data={"cause": ""})
+        assert themes.get_theme(theme)["cause"] is None
+
+    def test_renaming(self, signed_in):
+        theme = theme_id_after(unanswered(theme="Logement"))
+        unanswered("Rentrée ?", "Date de <b>rentrée</b>")
+        resp = signed_in.post(f"/admin/sans-reponse/{theme}/nom", data={"nom": "Logement étudiant"})
+        assert resp.status_code == 303 and themes.get_theme(theme)["name"] == "Logement étudiant"
+        resp = signed_in.post(f"/admin/sans-reponse/{theme}/nom", data={"nom": "date de rentrée"})
+        assert resp.status_code == 400 and "fusionnez plutôt" in resp.text
+        assert "Date de rentrée" in resp.text  # the tag was cleaned from the name
+
+    def test_merging(self, signed_in):
+        source = theme_id_after(unanswered("Un logement ?", "Logement"))
+        target = theme_id_after(unanswered("Une chambre ?", "Logement étudiant"))
+        page = signed_in.get(f"/admin/sans-reponse/{source}").text
+        assert f'<option value="{target}">Logement étudiant</option>' in page
+        resp = signed_in.post(f"/admin/sans-reponse/{source}/fusion", data={"cible": str(target)})
+        assert resp.status_code == 303 and resp.headers["location"] == (
+            f"/admin/sans-reponse/{target}"
+        )
+        assert themes.get_theme(source) is None and themes.get_theme(target)["questions"] == 2
+        for bad in ("", "abc", str(target), "999"):
+            resp = signed_in.post(f"/admin/sans-reponse/{target}/fusion", data={"cible": bad})
+            assert resp.status_code == 400
+
+    def test_moving_a_question_from_its_theme_page(self, signed_in):
+        entry_id = unanswered("Un logement ?", "Logement")
+        source = theme_id_after(entry_id)
+        target = theme_id_after(unanswered("Une chambre ?", "Logement étudiant"))
+        resp = signed_in.post(
+            f"/admin/reponses/{entry_id}/theme",
+            data={"theme": str(target), "retour": str(source)},
+        )
+        assert resp.status_code == 303
+        assert resp.headers["location"] == f"/admin/sans-reponse/{source}"
+        assert theme_id_after(entry_id) == target
+        resp = signed_in.post(
+            f"/admin/reponses/{entry_id}/theme",
+            data={"theme": "", "nouveau": "Résidences", "retour": "https://evil.example"},
+        )
+        assert resp.headers["location"] == f"/admin/reponses/{entry_id}"  # never elsewhere
+        assert themes.get_theme(theme_id_after(entry_id))["name"] == "Résidences"
+        signed_in.post(f"/admin/reponses/{entry_id}/theme", data={"theme": ""})
+        assert themes.pending_counts()["questions"] == 1  # back to the next grouping
+
+    def test_moving_refuses_what_is_not_there(self, signed_in):
+        entry_id = unanswered(theme="Logement")
+        for data in ({"theme": "999"}, {"theme": "abc"}, {"theme": "", "nouveau": "<>"}):
+            resp = signed_in.post(f"/admin/reponses/{entry_id}/theme", data=data)
+            assert resp.status_code == 400
+        answered = add("Question avec réponse")
+        resp = signed_in.post(f"/admin/reponses/{answered}/theme", data={"nouveau": "X"})
+        assert resp.status_code == 400 and "pas une question sans réponse" in resp.text
+        assert signed_in.post("/admin/reponses/999/theme").status_code == 404
+
+    def test_the_detail_of_an_answer_shows_its_theme(self, signed_in):
+        entry_id = unanswered(theme="Logement & résidences")
+        theme = theme_id_after(entry_id)
+        page = signed_in.get(f"/admin/reponses/{entry_id}").text
+        assert f'<a href="/admin/sans-reponse/{theme}">Logement &amp; résidences</a>' in page
+        assert f'action="/admin/reponses/{entry_id}/theme"' in page
+        pending = unanswered("Pas encore rangée ?")
+        assert "Pas encore rangée dans un thème" in signed_in.get(f"/admin/reponses/{pending}").text
+        answered = add("Question avec réponse")
+        assert "<h2>Thème</h2>" not in signed_in.get(f"/admin/reponses/{answered}").text
+
+    def test_the_summary_links_to_the_themes(self, signed_in):
+        unanswered()
+        assert 'href="/admin/sans-reponse"' in signed_in.get("/admin/synthese").text
+
+
+def theme_id_after(entry_id: int) -> int:
+    with db() as conn:
+        row = conn.execute("SELECT gap_theme_id FROM answer_log WHERE id = ?", (entry_id,))
+        return int(row.fetchone()[0])

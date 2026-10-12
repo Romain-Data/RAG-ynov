@@ -78,8 +78,9 @@ CREATE TABLE IF NOT EXISTS accounts (
 -- chat (for the feedback buttons of #19) and are cleared when that account is deleted.
 -- Purged after ANSWER_LOG_RETENTION_DAYS (python -m journal.purge).
 -- feedback, feedback_comment, feedback_at: the user's thumbs (1 "Utile", 0 "Pas utile") copied
--- from Chainlit's feedbacks table (#19). Added after the first release: chat/db.py adds them to
--- an older database, then creates their index (it cannot be created here before they exist).
+-- from Chainlit's feedbacks table (#19). gap_theme_id: the theme of a question left without an
+-- answer (#20, gap_theme below). Added after the first release: chat/db.py adds them to an
+-- older database, then creates their index (it cannot be created here before they exist).
 CREATE TABLE IF NOT EXISTS answer_log (
     id INTEGER PRIMARY KEY,
     created_at TEXT NOT NULL,
@@ -109,9 +110,24 @@ CREATE TABLE IF NOT EXISTS answer_log (
     promoted_as TEXT,
     feedback INTEGER CHECK (feedback IN (0, 1)),
     feedback_comment TEXT,
-    feedback_at TEXT
+    feedback_at TEXT,
+    gap_theme_id INTEGER
 );
 CREATE INDEX IF NOT EXISTS idx_answer_log_created ON answer_log (created_at);
 CREATE INDEX IF NOT EXISTS idx_answer_log_review ON answer_log (review_label);
 CREATE INDEX IF NOT EXISTS idx_answer_log_route ON answer_log (route);
 CREATE INDEX IF NOT EXISTS idx_answer_log_thread ON answer_log (thread_id);
+
+-- Themes of the questions left without an answer (#20), named by the LLM (journal/themes.py)
+-- and reviewed in /admin/sans-reponse. The cause is a decision about the whole theme: nothing
+-- on the site ("contenu"), not a question about Ynov ("hors_sujet"), or a page that exists but
+-- the search missed ("recherche"); NULL until someone decides. A theme outlives the purge of
+-- its questions (its cause and note keep the history); nothing personal is stored here.
+CREATE TABLE IF NOT EXISTS gap_theme (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE,
+    cause TEXT CHECK (cause IN ('contenu', 'hors_sujet', 'recherche')),
+    note TEXT,
+    created_at TEXT NOT NULL,
+    updated_at TEXT
+);
