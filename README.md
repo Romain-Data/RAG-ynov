@@ -7,28 +7,39 @@ Retrieval-augmented generation system for Ynov school documents (programs and ad
 - Python 3.12+
 - FastAPI — REST API
 - LangGraph — RAG pipeline orchestration (retrieval + generation)
-- Qdrant — Vector database (Docker)
-- FastEmbed — Local embeddings (ONNX, intfloat/multilingual-e5-small)
-- Mammouth AI — LLM for generation (external API)
+- Qdrant — Vector database (Docker), hybrid search: dense vectors + BM25 sparse vectors
+- FastEmbed — Local embeddings (ONNX, sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2) and BM25
+- Mammouth AI — LLM for generation (external API, `mammouth-recommended` in production)
+- Chainlit — Chat interface, mounted on the API
+- SQLite — Accounts, conversations, answer journal and user feedback
 - uv — Dependency management
 - Docker Compose — Deployment (Coolify/Traefik ready)
 
 ## Architecture
 
 ```
-User Question
+User question
         │
         ▼
-Retrieve (Qdrant KNN search)
+Smalltalk? (greetings, thanks) ── yes ──▶ fixed reply, no search, no LLM
+        │ no
+        ▼
+Condense (chat only: a follow-up becomes a standalone question)
         │
         ▼
-Grade (similarity score threshold)
+Retrieve (Qdrant: dense MiniLM + BM25)
+        │
+        ▼
+Grade (cosine score threshold)
         │
         ▼
 Generate (Mammouth AI)        Refuse if score < threshold
         │                       │
         ▼                       ▼
 Answer + Sources          Polite refusal message
+        │
+        ▼
+Answer journal (SQLite) ◀── users' thumbs in the chat, reviewed on /admin
 ```
 
 ## Quick Start
@@ -62,7 +73,9 @@ A chat for the public, served by the same API on `/` ([Chainlit](https://chainli
 Users create an account with a **pseudo and a password, nothing else** (no e-mail, no
 name): the sign-up page shows a one-time recovery code, the only way to reset a forgotten
 password. Conversations keep their history, can be reopened later and answer follow-up
-questions ("Et à Lyon ?") through the conversation graph (`graph/chat.py`).
+questions ("Et à Lyon ?") through the conversation graph (`graph/chat.py`). Under each answer,
+thumbs ("Utile" / "Pas utile", with an optional comment) tell whether it helped: see
+[Answer journal and review](#answer-journal-and-review).
 
 ```bash
 # Generate the secret signing the session cookies, put it in .env, then start the stack
@@ -124,16 +137,16 @@ The project plan lives in [ROADMAP.md](ROADMAP.md), each item tracked in a GitHu
 ```
 rag-ynov/
 ├── app/                    # FastAPI application
-│   ├── api/                # Routes (/health, /query, /ingest)
-│   ├── core/               # Configuration, logging
+│   ├── api/                # Routes (/api/health, /api/query, /api/ingest)
+│   ├── core/               # Configuration, logging, rate limits
 │   └── schemas/            # Pydantic models
-├── chat/                   # Chat interface (Chainlit), accounts, SQLite schema, backups
-├── journal/                # Journal of the answers: writing, purge, review queries
+├── chat/                   # Chat interface (Chainlit), accounts, feedback guard, SQLite schema, backups
+├── journal/                # Journal of the answers: writing, feedback, purge, review queries, summary
 ├── admin/                  # /admin pages that review the journal
 ├── eval/                   # Question sets, retrieval and end-to-end evaluation
-├── ingestion/              # Ingestion pipeline (load → chunk → embed → index)
-├── graph/                  # LangGraph nodes + builder
-│   └── nodes/              # retrieve, grade, generate, refuse
+├── ingestion/              # Ingestion pipeline (fetch → load → chunk → embed → index)
+├── graph/                  # LangGraph graphs: builder.py (API), chat.py (conversation)
+│   └── nodes/              # smalltalk, condense, retrieve, grade, generate, refuse
 ├── data/                   # Corpus, not in git: python -m ingestion.fetch, copied to the server
 ├── tests/                  # fixtures/: a fictitious FAQ for loader tests only
 ├── docker/
@@ -143,34 +156,35 @@ rag-ynov/
 └── .env.example
 ```
 
-## Git Branches
+## Branches and pull requests
 
-| Branch              | Content                                                          |
-|---------------------|------------------------------------------------------------------|
-| chore/init-project  | Initial setup: uv, Docker, configuration, logging                |
-| feat/ingestion      | Ingestion pipeline: loaders, chunking, embedder, Qdrant indexer  |
-| feat/graph          | LangGraph: StateGraph, nodes (retrieve, grade, generate, refuse) |
-| feat/api            | REST endpoints: /health, /query, /ingest with error handling     |
-| feat/docker         | Dockerfile, docker-compose Coolify-ready, final README           |
+`main` is protected: every change goes through a branch named after its subject (`feat/…`,
+`fix/…`, `chore/…`, `docs/…`) and a pull request, and the `quality`, `tests` and `retrieval`
+checks must pass. The CI never calls the LLM. See "Comment avancer sur un chantier" in
+[ROADMAP.md](ROADMAP.md).
 
 ## Coolify Deployment
 
 The `docker-compose.yml` is compatible with Coolify:
 
 - API container exposes port 8000 internally (Traefik handles external routing)
-- Qdrant uses persistent volume `qdrant_storage`
-- Healthcheck configured on Qdrant `/healthz` endpoint
+- Qdrant uses persistent volume `qdrant_storage_v1_19`, the chat database the `chat_data` volume
+- Healthchecks: the API on `/api/health`, Qdrant on its port 6333
 - Environment variables loaded from `.env` (never committed)
 - No port conflicts with other services on the VPS
+
+A preprod (`docker-compose.preprod.yml`, behind a site password) runs the same code and is
+deployed and evaluated before production.
 
 ## Testing
 
 ```bash
-# Run test suite
-uv run pytest
-
-# Run with coverage (if configured)
-uv run pytest --cov=app --cov=ingestion --cov=graph
+# What the CI runs on every pull request (no LLM call: it is mocked in the tests)
+uv run ruff check .
+uv run ruff format --check .
+uv run mypy app ingestion graph chat eval journal admin
+uv run pytest -q
+uv run python -m eval.retrieval --data eval/ci_corpus --check eval/ci_baseline.json
 ```
 
 ## License
