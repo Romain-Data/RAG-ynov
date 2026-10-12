@@ -8,31 +8,34 @@ Usage:
 
 import yaml
 
-from eval.results import EVAL_DIR, load_questions, load_runs
+# The figures are shared with the dashboard of /admin: one definition of each
+from eval.dashboard import (
+    EDGE_CASES,
+    STATUS_LABELS,
+    VERDICT_ICONS,
+    auto_check_agreement,
+    collection,
+    load_runs,
+    mark,
+    model,
+    score,
+    short_id,
+)
+from eval.results import EVAL_DIR, load_questions
 
 REPORT = EVAL_DIR / "REPORT.md"
-EDGE_CASES = EVAL_DIR / "edge_cases.yaml"
-VERDICT_ICONS = {
-    "correct": "✅",
-    "partial": "🟡",
-    "wrong": "❌",
-    "refused": "⛔",
-    "no_answer": "∅",
-    "error": "⚠️",
-}
-STATUS_LABELS = {
-    "open": "🔴 ouvert",
-    "mitigated": "🟠 atténué",
-    "fixed": "🟢 corrigé",
-    "lesson": "📘 enseignement",
-    "wontfix": "⚪ abandonné",
-}
 
 
 def _config_summary(run: dict) -> str:
     c = run.get("config", {})
     if run["kind"] in ("e2e", "conversation"):
-        return f"chunks {c.get('chunk_size', '?')}, k={c.get('limit', '?')}"
+        if "chunk_size" in c:
+            return f"chunks {c['chunk_size']}, k={c.get('limit', '?')}"
+        # A run on a server does not know the chunking: what answered says more
+        parts = [f"modèle {model(run) or '?'}"]
+        if name := collection(run):
+            parts.append(f"collection {name}")
+        return ", ".join(parts)
     cap = c.get("max_per_section")
     return (
         f"chunks {c.get('chunk_size')}, k={c.get('limit')}, "
@@ -41,7 +44,7 @@ def _config_summary(run: dict) -> str:
 
 
 def _score(run: dict) -> str:
-    s = run["summary"]
+    s = score(run)
     if run["kind"] == "retrieval":
         refused = s.get("refused_by_threshold")
         in_scope = [r for r in run["results"] if not r.get("out_of_scope")]
@@ -64,31 +67,8 @@ def _score(run: dict) -> str:
     return f"{s['correct']}/{s['total']} ✅ · {s['partial']} 🟡 · {s['wrong']} ❌"
 
 
-def _cell(run: dict, result: dict | None) -> str:
-    if result is None:
-        return "·"
-    if run["kind"] in ("e2e", "conversation"):
-        return VERDICT_ICONS.get(result["verdict"], "?")
-    if result.get("in_context") and not result.get("rank"):
-        mark = "✅ ctx"
-    elif result["passed"]:
-        mark = f"✅ {result['rank']}"
-    else:
-        mark = "❌" + (f" {result['rank']}" if result.get("rank") else "")
-    if result.get("min_distinct", 1) > 1:
-        mark += f" ({result['distinct_sections']}/{result['min_distinct']})"
-    if result.get("refused_by_threshold"):
-        mark += " ⛔"
-    return mark
-
-
-def _short_id(run: dict) -> str:
-    """Month-day and sequence of a run id ("10-03_02"): the sequence restarts every day."""
-    return str(run["run_id"][5:13])
-
-
 def build() -> str:
-    runs = load_runs()
+    runs = load_runs().runs
     questions = load_questions()
     cases = yaml.safe_load(EDGE_CASES.read_text(encoding="utf-8"))
     e2e = [r for r in runs if r["kind"] == "e2e"]
@@ -105,7 +85,7 @@ def build() -> str:
     out += ["## Synthèse", ""]
     if e2e:
         last = e2e[-1]
-        s = last["summary"]
+        s = score(last)
         out.append(
             f"- **Dernier test de bout en bout** ({last['environment']}, "
             f"`{last['run_id']}`) : {_score(last)} ; {s['refused']} refusée(s), "
@@ -157,16 +137,16 @@ def build() -> str:
         "Bout en bout : " + " · ".join(f"{i} {v}" for v, i in VERDICT_ICONS.items()) + ".",
         "",
     ]
-    header = " | ".join(f"{_short_id(r)} {r['kind'][:3]}" for r in milestones)
+    header = " | ".join(f"{short_id(r)} {r['kind'][:3]}" for r in milestones)
     out += [f"| Question | {header} |", "|---|" + "---|" * len(milestones)]
     for q in questions:
         cells = []
         for r in milestones:
             res = next((x for x in r["results"] if x["question_id"] == q["id"]), None)
-            cells.append(_cell(r, res))
+            cells.append(mark(r, res))
         out.append(f"| **{q['id']}** {q['question'][:60]} | {' | '.join(cells)} |")
     out.append("")
-    out += ["Colonnes : " + " · ".join(f"`{_short_id(r)}` {r['label']}" for r in milestones), ""]
+    out += ["Colonnes : " + " · ".join(f"`{short_id(r)}` {r['label']}" for r in milestones), ""]
 
     if conversations:
         last = conversations[-1]
@@ -203,22 +183,18 @@ def build() -> str:
             )
         out.append("")
 
-        reviewed = [x for r in e2e for x in r["results"] if "auto_check" in x]
-        agree = sum(x["auto_check"]["verdict"] == x["verdict"] for x in reviewed)
+        agreement = auto_check_agreement(e2e)
         out += [
             "### Fiabilité de la vérification automatique",
             "",
             f"Sur les réponses revues à la main, le verdict automatique (`answer_must`) "
-            f"concorde dans {agree}/{len(reviewed)} cas. Désaccords :",
+            f"concorde dans {agreement.agree}/{agreement.reviewed} cas. Désaccords :",
             "",
         ]
-        for r in e2e:
-            for x in r["results"]:
-                if "auto_check" in x and x["auto_check"]["verdict"] != x["verdict"]:
-                    out.append(
-                        f"- `{r['run_id']}` {x['question_id']} : revue "
-                        f"**{x['verdict']}**, automatique **{x['auto_check']['verdict']}**"
-                    )
+        for run_id, question_id, verdict, automatic in agreement.disagreements:
+            out.append(
+                f"- `{run_id}` {question_id} : revue **{verdict}**, automatique **{automatic}**"
+            )
         out.append("")
 
     out += [
@@ -267,6 +243,8 @@ def build() -> str:
 
 
 def main() -> None:
+    for name, reason in load_runs().skipped:
+        print(f"Passage écarté : {name} ({reason})")
     REPORT.write_text(build(), encoding="utf-8")
     print(REPORT)
 

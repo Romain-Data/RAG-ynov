@@ -166,6 +166,21 @@ or script, printable to PDF), the archive of a month once its questions are purg
 `python -m journal.report --mois AAAA-MM --out report.html` writes it from a local copy of the
 database. Read-only, no LLM call.
 
+`/admin/tableau-de-bord` (#16) shows how the measured quality evolves, from the evaluation runs
+of `eval/results/` (they are in the Docker image: a run shows once the pull request that saves it
+is deployed). In brief, the last end-to-end run of each environment (with its model, collection
+and deployed commit, marked « reconstitué » when filled in afterwards), the last retrieval run
+with the margins of the threshold, and the open edge cases; then, over the runs, the share of Ynov
+questions answered right, the 16 reference questions q01–q16 (asked since 2 October, the only
+score comparable from end to end) and the wrong answers, one line per environment, with numbered
+marks where the question set, the model, the collection or the threshold changed; the retrieval
+milestones and the extreme scores against the threshold; the question × run matrix (end to end or
+retrieval, milestones or all runs, one environment or all, filters in the query string); the edge
+cases per status; how often the automatic check agrees with the review. The figures come from the
+verdicts as reviewed by hand (`eval/dashboard.py`, shared with `eval/REPORT.md`); the charts are
+inline SVG drawn by Python (`admin/charts.py`), each followed by its table, with no script (the CSP
+of `/admin` allows none). A run file that cannot be read is listed at the bottom of the page.
+
 ## Roadmap
 
 The project plan lives in [ROADMAP.md](ROADMAP.md), each item tracked in a GitHub issue labelled `roadmap`.
@@ -180,8 +195,8 @@ rag-ynov/
 │   └── schemas/            # Pydantic models
 ├── chat/                   # Chat interface (Chainlit), accounts, feedback guard, SQLite schema, backups
 ├── journal/                # Journal of the answers: writing, feedback, purge, review queries, summary, questions without an answer, their themes and their monthly report
-├── admin/                  # /admin pages that review the journal
-├── eval/                   # Question sets, retrieval and end-to-end evaluation
+├── admin/                  # /admin pages: review of the journal, dashboard and its SVG charts
+├── eval/                   # Question sets, retrieval and end-to-end evaluation, figures of the dashboard
 ├── ingestion/              # Ingestion pipeline (fetch → load → chunk → embed → index)
 ├── graph/                  # LangGraph graphs: builder.py (API), chat.py (conversation)
 │   └── nodes/              # smalltalk, condense, retrieve, grade, generate, refuse
@@ -228,8 +243,10 @@ uv run python -m eval.retrieval --data eval/ci_corpus --check eval/ci_baseline.j
 ## Evaluation
 
 Every evaluation run is saved in `eval/results/`, one JSON file per run (format described in
-`eval/results.py`), and summarised in [eval/REPORT.md](eval/REPORT.md) by
-`uv run python -m eval.report`.
+`eval/results.py`), summarised in [eval/REPORT.md](eval/REPORT.md) by
+`uv run python -m eval.report` and drawn over time on `/admin/tableau-de-bord` (see above). Both
+count from the reviewed verdicts, not from the `summary` saved with the run, which is not updated
+when a verdict is corrected by hand.
 
 ```bash
 uv run python -m eval.retrieval --save "label"    # retrieval only, local index, no LLM call

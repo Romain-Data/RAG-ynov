@@ -97,6 +97,7 @@ def layout(title: str, body: str, *, signed_in: bool = True, style: str = "") ->
         '<p class="muted nav"><a href="/admin/">Liste</a> · '
         '<a href="/admin/sans-reponse">Sans réponse</a> · '
         '<a href="/admin/synthese">Synthèse</a> · '
+        '<a href="/admin/tableau-de-bord">Tableau de bord</a> · '
         '<a href="/admin/rapport">Rapport</a></p>'
         if signed_in
         else ""
@@ -597,6 +598,8 @@ def stats_page(data: dict, threshold: float) -> str:
         '<form class="filters" method="get" action="/admin/synthese">'
         f'<label>Période<select name="periode">{choose}</select></label>'
         "<button>Afficher</button></form>"
+        '<p class="muted">La qualité mesurée par les passages d\'évaluation et son évolution : '
+        '<a href="/admin/tableau-de-bord">tableau de bord</a>.</p>'
     )
     if not total:
         return layout("Synthèse", head + '<p class="muted">Aucune réponse sur cette période.</p>')
