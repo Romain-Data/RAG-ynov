@@ -11,6 +11,7 @@ from urllib.parse import urlencode
 
 from chat.pages import APP_NAME
 from journal.gaps import GAP_KINDS, WITHOUT_ANSWER
+from journal.report import month_label
 from journal.review import PAGE_SIZE, REVIEW_LABELS
 from journal.themes import BATCH_SIZE, CAUSES, MAX_NAME, MAX_NOTE
 
@@ -91,11 +92,12 @@ fieldset label { margin-right: 1rem; white-space: nowrap; }
 """
 
 
-def layout(title: str, body: str, *, signed_in: bool = True) -> str:
+def layout(title: str, body: str, *, signed_in: bool = True, style: str = "") -> str:
     nav = (
-        '<p class="muted"><a href="/admin/">Liste</a> · '
+        '<p class="muted nav"><a href="/admin/">Liste</a> · '
         '<a href="/admin/sans-reponse">Sans réponse</a> · '
-        '<a href="/admin/synthese">Synthèse</a></p>'
+        '<a href="/admin/synthese">Synthèse</a> · '
+        '<a href="/admin/rapport">Rapport</a></p>'
         if signed_in
         else ""
     )
@@ -109,7 +111,7 @@ def layout(title: str, body: str, *, signed_in: bool = True) -> str:
         '<!doctype html><html lang="fr"><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width, initial-scale=1">'
         '<meta name="robots" content="noindex, nofollow">'
-        f"<title>{escape(title)} — {escape(APP_NAME)}</title><style>{_STYLE}</style></head>"
+        f"<title>{escape(title)} — {escape(APP_NAME)}</title><style>{_STYLE}{style}</style></head>"
         f'<body><main><header><h1><a href="/admin/">{escape(title)}</a></h1>{logout}</header>'
         f"{nav}{body}</main></body></html>"
     )
@@ -946,3 +948,256 @@ def theme_page(
         f"{_search_now(hits, search_error, threshold)}{questions}{rename}{merge}"
     )
     return layout(f"Thème : {theme['name']}", body)
+
+
+# --- Monthly report of the questions without an answer (#20) -------------------------------
+
+# Printing (to a PDF from the browser): light colours, no navigation nor forms, no break
+# inside a line of a table
+_PRINT_STYLE = """
+h3 { font-size: .95rem; margin: 1.1rem 0 .3rem; }
+ul.examples { margin: 0; padding-left: 1.1rem; }
+@media print {
+  :root { color-scheme: light; --accent: #1f3a24; --bg: #fff; --card: #fff; --text: #000;
+          --muted: #444; --border: #bbb; --error: #8a1c16; --soft: #f3f3f3; }
+  body { padding: 0; }
+  main { border: 0; padding: 0; max-width: none; }
+  .nav, .no-print, header form { display: none; }
+  a { color: inherit; text-decoration: none; }
+  h2, h3 { break-after: avoid; }
+  tr, li { break-inside: avoid; }
+}
+"""
+# The kinds of journal/gaps.py in the words of the report (singular, plural): no "seuil",
+# no "modèle"
+_NO_ANSWER = ("sans réponse", "sans réponse")
+_REPORT_KINDS = {
+    "refus": _NO_ANSWER,
+    "hors_ynov": _NO_ANSWER,
+    "aveu": _NO_ANSWER,
+    "incomplete": ("incomplète", "incomplètes"),
+    "pas_utile": ("jugée « pas utile »", "jugées « pas utile »"),
+}
+
+
+def _n(count: int, singular: str, plural: str) -> str:
+    """The count and the word that goes with it (1 question, 3 questions): the report is read
+    by people who do not read "question(s)"."""
+    return f"{count} {singular if count < 2 else plural}"
+
+
+def _long_date(iso: str) -> str:
+    try:
+        return datetime.fromisoformat(iso).strftime("%d/%m/%Y à %H:%M")
+    except ValueError:
+        return iso
+
+
+def _report_kinds(by_kind: dict[str, int]) -> str:
+    """The kinds of a theme (3 sans réponse · 1 incomplète): the three kinds without an answer
+    count together."""
+    counts: dict[tuple[str, str], int] = {}
+    for kind, count in by_kind.items():
+        if kind in _REPORT_KINDS:
+            words = _REPORT_KINDS[kind]
+            counts[words] = counts.get(words, 0) + count
+    return " · ".join(escape(_n(count, *words)) for words, count in counts.items())
+
+
+def _report_trend(theme: dict, previous_label: str) -> str:
+    if theme["trend"] == "nouveau":
+        return "nouveau"
+    return f"{escape(theme['trend'])} ({theme['previous']} en {escape(previous_label)})"
+
+
+def _report_examples(theme: dict) -> str:
+    if theme["examples"]:
+        items = "".join(f"<li>« {escape(text)} »</li>" for text in theme["examples"])
+        return f'<ul class="examples">{items}</ul>'
+    return '<span class="muted">1 conversation : question non citée</span>'
+
+
+def _report_table(found: list[dict], previous_label: str) -> str:
+    """The themes of a section of the report; a comment column when a theme has a note."""
+    noted = any(t.get("note") for t in found)
+    rows = "".join(
+        f"<tr><td><strong>{escape(t['name'])}</strong></td>"
+        f'<td class="num">{t["questions"]}</td><td class="num">{t["conversations"]}</td>'
+        f"<td>{_report_trend(t, previous_label)}</td><td>{_report_kinds(t['by_kind'])}</td>"
+        f"<td>{_report_examples(t)}</td>"
+        + (f"<td>{escape(t.get('note') or '–')}</td>" if noted else "")
+        + "</tr>"
+        for t in found
+    )
+    return (
+        '<table><thead><tr><th>Thème</th><th class="num">Questions</th>'
+        '<th class="num">Conversations</th><th>Évolution</th><th>Détail</th><th>Exemples</th>'
+        + ("<th>Suivi</th>" if noted else "")
+        + f"</tr></thead><tbody>{rows}</tbody></table>"
+    )
+
+
+def _report_counts(counts: dict, label: str) -> str:
+    questions = counts["questions"]
+    kinds = counts["by_kind"]
+    return (
+        f"{_n(questions, 'question posée', 'questions posées')} au chatbot en {escape(label)}, "
+        f"dont {counts['without_answer']} sans réponse "
+        f"({_pct(counts['without_answer'], questions)}), {kinds['incomplete']} avec une réponse "
+        f"incomplète et {_n(kinds['pas_utile'], 'jugée', 'jugées')} « pas utile » par la "
+        "personne qui l'a posée"
+    )
+
+
+_HOW_TO_READ = (
+    "<h2>Comment lire ce rapport</h2><ul>"
+    "<li>Les questions posées au chatbot sont conservées six mois, sans le nom ni le pseudo de "
+    "la personne. Les salutations (« Bonjour », « Merci ») et les pannes techniques ne sont "
+    "pas comptées.</li>"
+    "<li>Une question est <strong>sans réponse</strong> quand le chatbot n'a rien trouvé qui "
+    "s'en approche dans les pages d'Ynov, quand il a dit ne pas pouvoir répondre avec ce "
+    "qu'il avait trouvé, ou quand la question ne portait pas sur Ynov. Une réponse "
+    "<strong>incomplète</strong> donne une partie de l'information et signale qu'il manque "
+    "le reste. Une réponse <strong>jugée « pas utile »</strong> a été notée ainsi par la "
+    "personne, d'un clic sous la réponse.</li>"
+    "<li>Les questions sont rangées par thème automatiquement, puis relues : chaque thème "
+    "reçoit une cause : l'information manque sur le site (elle pourrait y être ajoutée), le "
+    "chatbot aurait dû la trouver (à corriger de notre côté), ou la question est hors sujet. Un "
+    "thème « à vérifier » n'a pas encore été examiné.</li>"
+    "<li>Une <strong>conversation</strong> regroupe les questions d'un même échange : une "
+    "personne qui reformule trois fois sa question compte pour une conversation. Les "
+    "questions sont citées en exemple seulement pour un thème abordé dans au moins deux "
+    "conversations, pour qu'une question ne permette pas de reconnaître qui l'a posée.</li>"
+    "<li>L'<strong>évolution</strong> compare le nombre de questions du thème avec le mois "
+    "précédent.</li></ul>"
+)
+
+
+def _report_body(data: dict, *, standalone: bool) -> str:
+    label = data["label"]
+    previous_label = data["previous_label"]
+    counts = data["counts"]
+    made = (
+        f'<p class="muted">Questions posées au chatbot en {escape(label)}. Rapport établi le '
+        f"{escape(_long_date(data['generated_at']))} (UTC).</p>"
+    )
+    if not counts["questions"]:
+        return (
+            made + "<h2>En bref</h2>"
+            f"<p>Aucune question n'a été posée au chatbot en {escape(label)} (hors "
+            "salutations et pannes).</p>" + _HOW_TO_READ
+        )
+    unthemed = data["unthemed"]
+    loose = escape(_n(unthemed, "question du mois", "questions du mois"))
+    one = unthemed < 2
+    if unthemed and standalone:
+        warning = (
+            f'<p class="error">{loose} sans thème quand ce rapport a été établi : '
+            f"{'elle ne figure' if one else 'elles ne figurent'} dans aucun thème ci-dessous.</p>"
+        )
+    elif unthemed:
+        warning = (
+            f'<p class="error">{loose} pas encore {"rangée" if one else "rangées"} par thème : '
+            f'<a href="/admin/sans-reponse">{"regroupez-la" if one else "regroupez-les"} '
+            "d'abord dans Sans réponse</a>, puis revenez sur ce rapport.</p>"
+        )
+    else:
+        warning = ""
+    previous = data["previous_counts"]
+    before = (
+        f'<p class="muted">Le mois précédent : {_report_counts(previous, previous_label)}.</p>'
+        if previous["questions"]
+        else f'<p class="muted">Aucune question en {escape(previous_label)}.</p>'
+    )
+    summary = f"<h2>En bref</h2><p>{_report_counts(counts, label)}.</p>{before}" + (
+        "<p>Toutes les questions du mois ont reçu une réponse.</p>" if not counts["flagged"] else ""
+    )
+    missing = data["missing"]
+    to_check = data["to_check"]
+    site = (
+        "<h2>Ce que les visiteurs cherchent et que le site ne dit pas</h2>"
+        "<p class=\"muted\">Les sujets sur lesquels les pages d'Ynov n'apportent pas "
+        "l'information demandée, les plus demandés d'abord.</p>"
+        + (
+            _report_table(missing, previous_label)
+            if missing
+            else '<p class="muted">Aucun sujet confirmé ce mois-ci.</p>'
+        )
+        + (
+            "<h3>À vérifier</h3>"
+            '<p class="muted">Sujets pas encore examinés : il reste à vérifier si '
+            "l'information manque vraiment sur le site.</p>"
+            + _report_table(to_check, previous_label)
+            if to_check
+            else ""
+        )
+    )
+    search = data["search"]
+    chatbot = (
+        "<h2>Questions auxquelles le chatbot aurait dû répondre</h2>"
+        "<p class=\"muted\">L'information existe sur le site, mais le chatbot ne l'a pas "
+        "trouvée : c'est à corriger de notre côté. La colonne « Suivi », quand elle est "
+        "remplie, dit ce qui a été fait.</p>"
+        + (
+            _report_table(search, previous_label)
+            if search
+            else '<p class="muted">Aucune ce mois-ci.</p>'
+        )
+    )
+    off_topic = data["off_topic"]
+    total = data["off_topic_total"]
+    off = "<h2>Questions hors sujet</h2>" + (
+        f"<p>{_n(total, 'question', 'questions')} sans rapport avec les formations d'Ynov ou "
+        "portant sur d'autres écoles. Les principaux thèmes :</p><ul>"
+        + "".join(
+            f"<li>{escape(t['name'])} : {_n(t['questions'], 'question', 'questions')}</li>"
+            for t in off_topic
+        )
+        + "</ul>"
+        if total
+        else '<p class="muted">Aucune ce mois-ci.</p>'
+    )
+    return made + warning + summary + site + chatbot + off + _HOW_TO_READ
+
+
+def report_title(data: dict) -> str:
+    return f"Questions sans réponse : {data['label']}"
+
+
+def report_page(data: dict, months: list[str]) -> str:
+    """The report of a month in /admin: a month selector and a link to download it."""
+    choose = "".join(
+        f'<option value="{escape(month)}"{" selected" if month == data["month"] else ""}>'
+        f"{escape(month_label(month))}</option>"
+        for month in months
+    )
+    download = escape(urlencode({"mois": data["month"], "telecharger": "1"}))
+    head = (
+        '<form class="filters no-print" method="get" action="/admin/rapport">'
+        f'<label>Mois<select name="mois">{choose}</select></label>'
+        "<button>Afficher</button></form>"
+        f'<p class="no-print"><a href="/admin/rapport?{download}">Télécharger ce rapport</a> '
+        '<span class="muted">(un fichier HTML autonome, à ouvrir dans un navigateur ou à '
+        "imprimer en PDF).</span></p>"
+    )
+    return layout(
+        report_title(data), head + _report_body(data, standalone=False), style=_PRINT_STYLE
+    )
+
+
+def report_document(data: dict) -> str:
+    """The report as a file of its own: styles inside, no script, no link back to /admin,
+    and a Content-Security-Policy that still holds when it is opened from the disk."""
+    title = report_title(data)
+    return (
+        '<!doctype html><html lang="fr"><head><meta charset="utf-8">'
+        '<meta name="viewport" content="width=device-width, initial-scale=1">'
+        '<meta http-equiv="Content-Security-Policy" '
+        "content=\"default-src 'none'; style-src 'unsafe-inline'\">"
+        '<meta name="robots" content="noindex, nofollow">'
+        f"<title>{escape(title)} — {escape(APP_NAME)}</title>"
+        f"<style>{_STYLE}{_PRINT_STYLE}</style></head>"
+        f"<body><main><header><h1>{escape(title)}</h1></header>"
+        f'<p class="muted">{escape(APP_NAME)}</p>{_report_body(data, standalone=True)}'
+        "</main></body></html>"
+    )

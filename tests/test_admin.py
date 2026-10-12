@@ -19,7 +19,7 @@ from app import main
 from app.core.config import settings
 from app.core.security import add_security_middleware, limiter
 from chat.db import db, init_db
-from journal import gaps, review, stats, store, themes
+from journal import gaps, report, review, stats, store, themes
 
 # Generated for each run: no password-like literal in the repository
 PASSWORD = secrets.token_urlsafe(24)
@@ -1126,3 +1126,123 @@ def theme_id_after(entry_id: int) -> int:
     with db() as conn:
         row = conn.execute("SELECT gap_theme_id FROM answer_log WHERE id = ?", (entry_id,))
         return int(row.fetchone()[0])
+
+
+class TestReportPage:
+    """/admin/rapport (#20): the monthly report, in /admin and as a file of its own."""
+
+    @staticmethod
+    def _this_month() -> str:
+        return report.month_label(report.current_month())
+
+    def test_needs_the_login(self, client):
+        for path in ("/admin/rapport", "/admin/rapport?mois=2026-10&telecharger=1"):
+            resp = client.get(path)
+            assert resp.status_code == 303 and resp.headers["location"] == "/admin/login"
+
+    def test_the_current_month_by_default(self, signed_in):
+        unanswered("Un logement à Lyon ?", "Logement étudiant")
+        unanswered("Une chambre ?", "Logement étudiant")
+        resp = signed_in.get("/admin/rapport")
+        page = resp.text
+        assert resp.status_code == 200 and resp.headers["cache-control"] == "no-store"
+        assert "default-src 'none'" in resp.headers["content-security-policy"]
+        assert f"Questions sans réponse : {self._this_month()}" in page
+        assert '<a href="/admin/rapport">Rapport</a>' in page  # the navigation
+        month = report.current_month()
+        assert f'<option value="{month}" selected>' in page
+        assert f'href="/admin/rapport?mois={month}&amp;telecharger=1"' in page
+        assert "Logement étudiant" in page and "À vérifier" in page
+        assert "@media print" in page
+
+    @pytest.mark.parametrize("month", ["2026-13", "../../etc", "x" * 50, "2026-10'"])
+    def test_an_invalid_month_shows_the_current_one(self, signed_in, month):
+        resp = signed_in.get("/admin/rapport", params={"mois": month})
+        assert resp.status_code == 200 and self._this_month() in resp.text
+
+    def test_the_month_selector_lists_the_months_of_the_journal(self, signed_in):
+        entry_id = unanswered()
+        with db() as conn:
+            conn.execute(
+                "UPDATE answer_log SET created_at = '2026-03-10T10:00:00+00:00' WHERE id = ?",
+                (entry_id,),
+            )
+        page = signed_in.get("/admin/rapport?mois=2026-03").text
+        assert '<option value="2026-03" selected>mars 2026</option>' in page
+        assert f'<option value="{report.current_month()}">' in page
+        assert "1 question posée au chatbot en mars 2026" in page
+
+    def test_an_empty_month(self, signed_in):
+        page = signed_in.get("/admin/rapport?mois=2020-01").text
+        assert "Aucune question n'a été posée au chatbot en janvier 2020" in page
+        assert "Comment lire ce rapport" in page
+
+    def test_the_download(self, signed_in):
+        unanswered("Un logement à Lyon ?", "Logement étudiant")
+        unanswered("Pas encore rangée ?")
+        month = report.current_month()
+        resp = signed_in.get("/admin/rapport", params={"mois": month, "telecharger": "1"})
+        assert resp.status_code == 200
+        assert resp.headers["content-disposition"] == (
+            f'attachment; filename="rapport-questions-sans-reponse-{month}.html"'
+        )
+        assert resp.headers["cache-control"] == "no-store"
+        assert "default-src 'none'" in resp.headers["content-security-policy"]
+        html = resp.text
+        assert html.startswith("<!doctype html>") and "<style>" in html and "@media print" in html
+        assert "/admin" not in html and "<a " not in html and "<form" not in html
+        assert 'http-equiv="Content-Security-Policy"' in html  # still locked from the disk
+        assert "Logement étudiant" in html
+        assert "1 question du mois sans thème" in html  # said without a link
+
+    def test_the_file_name_comes_from_the_validated_month(self, signed_in):
+        resp = signed_in.get(
+            "/admin/rapport", params={"mois": '2026-10"; x="y', "telecharger": "1"}
+        )
+        month = report.current_month()
+        assert resp.headers["content-disposition"] == (
+            f'attachment; filename="rapport-questions-sans-reponse-{month}.html"'
+        )
+
+    def test_unthemed_questions_are_pointed_to_in_the_page(self, signed_in):
+        unanswered("Pas encore rangée ?")
+        page = signed_in.get("/admin/rapport").text
+        assert "1 question du mois pas encore rangée par thème" in page
+        assert '<a href="/admin/sans-reponse">regroupez-la' in page
+
+    def test_content_is_escaped(self, signed_in):
+        for thread in ("a", "b"):  # two conversations: the examples are quoted
+            entry_id = add("<script>alert(1)</script>", result=REFUSED, thread_id=thread)
+            assert themes.move(entry_id, new_name="Logement <b>étudiant</b> & co") is None
+        theme = theme_id_after(entry_id)
+        themes.set_cause(theme, "contenu", "<img src=x onerror=alert(1)>")
+        for path in ("/admin/rapport", "/admin/rapport?telecharger=1"):
+            html = signed_in.get(path).text
+            assert "<script>" not in html and "<img" not in html and "<b>" not in html
+            assert "« &lt;script&gt;alert(1)&lt;/script&gt; »" in html
+            assert "Logement étudiant &amp; co" in html
+            assert "&lt;img src=x onerror=alert(1)&gt;" in html
+
+    def test_a_single_conversation_is_not_quoted(self, signed_in):
+        unanswered("Ma question très personnelle ?", "Logement étudiant")
+        page = signed_in.get("/admin/rapport").text
+        assert "Ma question très personnelle" not in page
+        assert "1 conversation : question non citée" in page
+
+    def test_sections_by_cause(self, signed_in):
+        unanswered("Un logement ?", "Logement étudiant")
+        unanswered("Le prix du BTS SIO ?", "Frais de scolarité")
+        unanswered("Quel temps fait-il ?", "Hors sujet")
+        themes.set_cause(theme_id("Logement étudiant"), "contenu")
+        themes.set_cause(theme_id("Frais de scolarité"), "recherche", "Repris en q35.")
+        page = signed_in.get("/admin/rapport").text
+        site = page.index("Ce que les visiteurs cherchent et que le site ne dit pas")
+        chatbot = page.index("Questions auxquelles le chatbot aurait dû répondre")
+        off = page.index("Questions hors sujet")
+        assert site < page.index("Logement étudiant") < chatbot
+        assert chatbot < page.index("Frais de scolarité") < off
+        assert "Repris en q35." in page and "<th>Suivi</th>" in page
+        assert "Hors sujet : 1 question" in page
+        for jargon in ("seuil", "score", "chunk", "LLM"):
+            body = page[page.index("<h2>En bref</h2>") :]
+            assert jargon not in body, jargon

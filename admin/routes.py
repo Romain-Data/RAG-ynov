@@ -1,5 +1,6 @@
 """Admin routes: /admin (list), /admin/reponses/{id} (review), /admin/synthese (summary),
-/admin/sans-reponse (questions left without an answer, by theme), /admin/login.
+/admin/sans-reponse (questions left without an answer, by theme), /admin/rapport (their
+monthly report), /admin/login.
 
 Every response goes through `_html` or `_redirect`, which add the security headers; every
 handler but the login starts with `_guard`.
@@ -16,7 +17,7 @@ from admin import auth, pages
 from app.core.config import settings
 from app.core.security import rate_limit_admin_login
 from graph.nodes.grade import GRADE_THRESHOLD
-from journal import review, stats, themes
+from journal import report, review, stats, themes
 
 logger = logging.getLogger(__name__)
 
@@ -147,6 +148,23 @@ def entries(
             unreviewed_negative=review.count_unreviewed_negative(),
         )
     )
+
+
+@router.get("/rapport")
+def monthly_report(request: Request, mois: str = "", telecharger: str = "") -> Response:
+    """The report of a month (#20). An invalid month shows the current one; with
+    `telecharger`, the same report as a file of its own, named after the validated month."""
+    if (denied := _guard(request)) is not None:
+        return denied
+    month = report.parse_month(mois)
+    data = report.month_report(month)
+    if telecharger:
+        filename = f"rapport-questions-sans-reponse-{month}.html"
+        return HTMLResponse(
+            pages.report_document(data),
+            headers={**_HEADERS, "Content-Disposition": f'attachment; filename="{filename}"'},
+        )
+    return _html(pages.report_page(data, report.available_months(month)))
 
 
 @router.get("/synthese")
