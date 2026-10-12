@@ -1,6 +1,7 @@
 """Tests for the evaluation reporting (answer checks, run files, report)."""
 
 import json
+import re
 from pathlib import Path
 
 import pytest
@@ -198,3 +199,18 @@ def test_a_typographic_apostrophe_does_not_hide_a_refusal() -> None:
     answer = "Je ne peux répondre qu’aux questions sur Ynov Campus."
     assert check_answer({"out_of_scope": "llm"}, answer)["verdict"] == "correct"
     assert check_answer({"answer_must": ["qu'aux"]}, answer)["must"] == {"qu'aux": True}
+
+
+@pytest.mark.parametrize(
+    ("path", "current"),
+    [
+        (results.QUESTIONS, results.QUESTION_SET),
+        (results.CONVERSATIONS, results.CONVERSATION_SET),
+    ],
+)
+def test_set_version_is_the_last_one_documented(path: Path, current: str) -> None:
+    """QUESTION_SET stayed at v11 when q33 (v12) and q34 (v13) were added, so the runs of
+    2026-10-09 carried the wrong set: it must follow the history at the top of the file."""
+    header = path.read_text(encoding="utf-8").split("\n- id:")[0]
+    versions = re.findall(r"^#\s+([vc]\d+)\s", header, re.MULTILINE)
+    assert versions and current == versions[-1]

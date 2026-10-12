@@ -25,6 +25,10 @@ class HealthResponse(BaseModel):
     qdrant: str
     embedding_model: str
     chat_model: str
+    # What answered, recorded by eval.e2e in each run on a server (#16)
+    collection: str
+    grade_threshold: float
+    version: str | None = None  # deployed commit (SOURCE_COMMIT, given by Coolify)
 
 
 class IngestRequest(BaseModel):

@@ -15,6 +15,20 @@ class TestHealthEndpoint:
         )
         assert data["chat_model"] == "mistral-medium-3-5"
 
+    def test_health_tells_what_answers(self, client, monkeypatch):
+        """Collection, threshold and deployed commit: recorded by eval.e2e in each run (#16)."""
+        from app.core.config import settings
+        from graph.nodes import grade
+
+        monkeypatch.delenv("SOURCE_COMMIT", raising=False)
+        data = client.get("/api/health").json()
+        assert data["collection"] == settings.qdrant_collection_name
+        assert data["grade_threshold"] == grade.GRADE_THRESHOLD
+        assert data["version"] is None  # Coolify gives no commit: null, not ""
+
+        monkeypatch.setenv("SOURCE_COMMIT", "61c1240")
+        assert client.get("/api/health").json()["version"] == "61c1240"
+
     def test_health_root(self, client):
         """Root endpoint returns API metadata."""
         resp = client.get("/api")

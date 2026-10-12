@@ -33,3 +33,10 @@ def test_preprod_never_mounts_production_folders() -> None:
     prod_folders = set(_host_folders(PROD))
     assert prod_folders
     assert not prod_folders & set(_host_folders(PREPROD))
+
+
+def test_api_receives_the_deployed_commit() -> None:
+    """Coolify sets SOURCE_COMMIT for the compose file (when "Include Source Commit in Build"
+    is on), not in the container: /api/health and answer_log.app_version only see it when the
+    compose file passes it on. The preprod file follows (test above)."""
+    assert "SOURCE_COMMIT=${SOURCE_COMMIT:-}" in PROD["services"]["api"]["environment"]

@@ -35,7 +35,7 @@ import yaml
 EVAL_DIR = Path(__file__).parent
 RESULTS_DIR = EVAL_DIR / "results"
 QUESTIONS = EVAL_DIR / "questions.yaml"
-QUESTION_SET = "v11"
+QUESTION_SET = "v13"  # the last version documented at the top of questions.yaml (tested)
 CONVERSATIONS = EVAL_DIR / "conversations.yaml"
 CONVERSATION_SET = "c2"
 SCHEMA_VERSION = 1
