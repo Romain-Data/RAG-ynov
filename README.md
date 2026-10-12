@@ -52,7 +52,7 @@ cp .env.example .env
 # 2. Start infrastructure (Qdrant + API)
 docker compose up -d
 
-# 3. Verify health endpoint
+# 3. Verify health endpoint (also tells the models, collection, threshold and deployed commit)
 curl http://localhost:8000/api/health
 
 # 4. Ingest documents (dense + BM25 index). Same as: python -m ingestion.run [--collection NAME]
@@ -224,6 +224,30 @@ uv run mypy app ingestion graph chat eval journal admin
 uv run pytest -q
 uv run python -m eval.retrieval --data eval/ci_corpus --check eval/ci_baseline.json
 ```
+
+## Evaluation
+
+Every evaluation run is saved in `eval/results/`, one JSON file per run (format described in
+`eval/results.py`), and summarised in [eval/REPORT.md](eval/REPORT.md) by
+`uv run python -m eval.report`.
+
+```bash
+uv run python -m eval.retrieval --save "label"    # retrieval only, local index, no LLM call
+uv run python -m eval.e2e --local --save "label"  # the graph in process, LLM of the local .env
+uv run python -m eval.e2e --url https://rag-preprod.romaincollery.com --environment preprod \
+  --save "label"                                  # the questions asked to a server
+```
+
+A run on a server (the `production.yml` workflow asks the preprod before each production
+deployment) reads `/api/health` before and after the questions and records what answered:
+`config.llm_model` (the configured model, `mammouth-recommended` is an alias: Mammouth does not
+tell the model behind it), `embedding_model`, `collection`, `grade_threshold`, `server_version`
+(the deployed commit, `SOURCE_COMMIT`, empty unless Coolify's "Include Source Commit in Build" is
+on) and the whole answer in `config.server`. A change between the two reads (a deployment during
+the run) is printed and added to `notes`. The runs on a server saved before 12 October 2026 only
+had the URL: their model comes from the documented history, marked
+`"llm_model_source": "reconstitué"`. `QUESTION_SET` must be the last version documented at the
+top of `eval/questions.yaml` (a test checks it).
 
 ## License
 
