@@ -10,6 +10,7 @@ from html import escape
 from urllib.parse import urlencode
 
 from chat.pages import APP_NAME
+from journal.gaps import GAP_KINDS, WITHOUT_ANSWER
 from journal.review import PAGE_SIZE, REVIEW_LABELS
 
 LABELS = {
@@ -28,6 +29,8 @@ CHANNELS = {"chat": "Chat", "api": "API"}
 # The users' thumbs (#19): the value of the journal, the words of the chat, the icon shown
 FEEDBACK = {1: ("Utile", "👍"), 0: ("Pas utile", "👎")}
 FEEDBACK_CHOICES = {"positif": "Utile", "negatif": "Pas utile", "sans": "Sans avis (chat)"}
+# The questions left without an answer (#20, journal/gaps.py)
+GAP_CHOICES = {"tous": "Tous genres confondus", "aucune": "Sans aucune réponse", **GAP_KINDS}
 
 _STYLE = """
 :root { color-scheme: light dark; --accent: #325A38; --bg: #EAF0EB; --card: #fff;
@@ -165,6 +168,7 @@ def entries_list(
     text: str,
     page: int,
     feedback: str = "",
+    gap: str = "",
     unreviewed_negative: int = 0,
 ) -> str:
     statuses = {"unreviewed": "Non revues", **{k: LABELS[k] for k in REVIEW_LABELS}}
@@ -182,6 +186,8 @@ def entries_list(
         f'<label>Canal<select name="canal">{_options(CHANNELS, channel, "Tous")}</select></label>'
         f'<label>Avis<select name="avis">{_options(FEEDBACK_CHOICES, feedback, "Tous")}</select>'
         "</label>"
+        f'<label>Sans réponse<select name="manque">{_options(GAP_CHOICES, gap, "Indifférent")}'
+        "</select></label>"
         f'<label>Recherche<input type="text" name="q" value="{escape(text)}" maxlength="100">'
         "</label><button>Filtrer</button></form>"
     )
@@ -190,11 +196,19 @@ def entries_list(
         question = row["question"]
         shown = question if len(question) <= 120 else question[:117] + "…"
         review_label = LABELS.get(row["review_label"] or "", "–")
+        # A refusal already says it went without an answer
+        kind = row.get("gap")
+        gap_tag = (
+            f' <span class="tag">{escape(GAP_KINDS[kind])}</span>'
+            if kind in GAP_KINDS and kind != "refus"
+            else ""
+        )
         lines.append(
             f"<tr><td>{escape(_date(row['created_at']))}</td>"
             f'<td class="hide-small">{escape(CHANNELS.get(row["channel"], row["channel"]))}</td>'
             f'<td><a href="/admin/reponses/{int(row["id"])}">{escape(shown)}</a></td>'
-            f'<td><span class="tag">{escape(ROUTES.get(row["route"], row["route"]))}</span></td>'
+            f'<td><span class="tag">{escape(ROUTES.get(row["route"], row["route"]))}</span>'
+            f"{gap_tag}</td>"
             f'<td class="num">{_score(row["top_score"])}</td>'
             f"<td>{_thumb(row.get('feedback'))}</td>"
             f"<td>{escape(review_label)}</td></tr>"
@@ -207,7 +221,14 @@ def entries_list(
         else '<p class="muted">Aucune réponse ne correspond.</p>'
     )
     last_page = max(1, -(-total // PAGE_SIZE))
-    base = {"statut": review, "issue": route, "canal": channel, "avis": feedback, "q": text}
+    base = {
+        "statut": review,
+        "issue": route,
+        "canal": channel,
+        "avis": feedback,
+        "manque": gap,
+        "q": text,
+    }
 
     def link(target: int, label: str) -> str:
         query = urlencode({**{k: v for k, v in base.items() if v}, "page": target})
@@ -304,12 +325,16 @@ def entry_detail(entry: dict, error: str | None = None) -> str:
     tokens = (
         f"{entry['tokens_in']} → {entry['tokens_out']}" if entry["tokens_in"] is not None else "–"
     )
+    # Greetings and errors are no question left without an answer, nor an answered one
+    gap = entry.get("gap") or ""
+    unanswered = GAP_KINDS.get(gap, "Non" if entry["route"] == "generate" else "–")
     latency = f"{entry['latency_ms']} ms" if entry["latency_ms"] is not None else "–"
     meta = _dl(
         [
             ("Date (UTC)", _date(entry["created_at"])),
             ("Canal", CHANNELS.get(entry["channel"], entry["channel"])),
             ("Issue", ROUTES.get(entry["route"], entry["route"])),
+            ("Sans réponse", unanswered),
             ("Modèle réel", dash(entry["llm_model"])),
             ("Alias demandé", dash(entry["llm_alias"])),
             ("Jetons (entrée → sortie)", tokens),
@@ -475,6 +500,40 @@ def _feedback_section(feedback: dict) -> str:
     return title + per_route + cross
 
 
+def _gaps_section(gaps: dict) -> str:
+    """The questions left without an answer (#20), per kind, out of the questions that went
+    to the search; each kind links to the list of its entries."""
+    title = "<h2>Questions sans réponse</h2>"
+    questions = gaps["questions"]
+    if not questions:
+        return title + '<p class="muted">Aucune question sur cette période (hors politesse).</p>'
+
+    def row(label: str, count: int, target: str, strong: bool = False) -> str:
+        name = f"<strong>{escape(label)}</strong>" if strong else escape(label)
+        query = escape(urlencode({"manque": target}))
+        link = f'<a href="/admin/?{query}">voir</a>' if count else ""
+        return (
+            f'<tr><td>{name}</td><td class="num">{count}</td>'
+            f'<td class="num">{_pct(count, questions)}</td><td>{link}</td></tr>'
+        )
+
+    kinds = gaps["by_kind"]
+    lines = [row(GAP_KINDS[kind], kinds[kind], kind) for kind in WITHOUT_ANSWER]
+    lines.append(row(GAP_CHOICES["aucune"], gaps["without_answer"], "aucune", strong=True))
+    lines += [row(GAP_KINDS[kind], kinds[kind], kind) for kind in ("incomplete", "pas_utile")]
+    return (
+        title + f'<p class="muted">Sur les {questions} question(s) de la période qui sont '
+        "allées jusqu'à la recherche (politesse et erreurs à part). Refus au seuil, refus du "
+        "modèle pour une question hors Ynov et aveux du modèle (« Je ne peux pas répondre… », "
+        "« Le contexte ne précise pas… ») n'ont reçu aucune réponse ; les réponses incomplètes "
+        "(une partie manque) et celles jugées « Pas utile » par l'utilisateur sont comptées à "
+        "part. Les liens mènent à tout le journal, pas seulement à la période.</p>"
+        '<table><thead><tr><th>Genre</th><th class="num">Nombre</th>'
+        '<th class="num">Part des questions</th><th></th></tr></thead>'
+        f"<tbody>{''.join(lines)}</tbody></table>"
+    )
+
+
 def stats_page(data: dict, threshold: float) -> str:
     """The summary: how the answers end, what the users thought of them, how they were
     reviewed, the scores against the threshold, the models that answered, the days and the
@@ -593,6 +652,8 @@ def stats_page(data: dict, threshold: float) -> str:
         else ""
     )
     feedback = _feedback_section(data["feedback"])
+    gaps = _gaps_section(data["gaps"])
     return layout(
-        "Synthèse", head + intro + by_route + feedback + by_label + by_model + per_day + errors
+        "Synthèse",
+        head + intro + by_route + gaps + feedback + by_label + by_model + per_day + errors,
     )

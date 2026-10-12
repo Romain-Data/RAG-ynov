@@ -7,6 +7,7 @@ from contextlib import contextmanager
 from pathlib import Path
 
 from app.core.config import settings
+from journal import gaps
 
 logger = logging.getLogger(__name__)
 
@@ -27,8 +28,10 @@ def db_path() -> Path:
 
 @contextmanager
 def db() -> Iterator[sqlite3.Connection]:
-    """A connection that commits on success, rolls back on error and always closes."""
+    """A connection that commits on success, rolls back on error and always closes. It knows
+    gap_kind(route, answer, feedback), the kind of an entry left without an answer (#20)."""
     conn = sqlite3.connect(db_path(), timeout=10)
+    gaps.register(conn)
     try:
         yield conn
         conn.commit()
