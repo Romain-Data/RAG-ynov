@@ -52,6 +52,7 @@ STYLE = """
 h3 { font-size: .9rem; margin: 1.1rem 0 .2rem; }
 .scroll { overflow-x: auto; }
 .cases td:first-child, .cases td:nth-child(3) { white-space: nowrap; }
+.weeks th, .weeks td { white-space: nowrap; }
 ol.changes { margin: .2rem 0 .6rem; padding-left: 1.4rem; }
 ol.changes li { font-size: .82rem; }
 .matrix { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px;
@@ -687,7 +688,8 @@ def dashboard_page(
     data: figures.Data, filters: Filters, *, usage_brief: str = "", usage: str = ""
 ) -> str:
     """The dashboard: in brief, the end-to-end quality and the retrieval over time, the
-    question × run matrix, the edge cases and how reliable the automatic check is.
+    question × run matrix, the edge cases, how reliable the automatic check is and the usage
+    (admin/usage.py).
 
     `usage_brief` is a card added to « En bref » and `usage` a section added after the
     measured quality: the indicators of the journal, as HTML (escaped by their author)."""

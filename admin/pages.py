@@ -598,8 +598,10 @@ def stats_page(data: dict, threshold: float) -> str:
         '<form class="filters" method="get" action="/admin/synthese">'
         f'<label>Période<select name="periode">{choose}</select></label>'
         "<button>Afficher</button></form>"
-        '<p class="muted">La qualité mesurée par les passages d\'évaluation et son évolution : '
-        '<a href="/admin/tableau-de-bord">tableau de bord</a>.</p>'
+        '<p class="muted">Ces chiffres semaine par semaine : <a '
+        'href="/admin/tableau-de-bord#usage">usage réel</a> ; la qualité mesurée par les '
+        'passages d\'évaluation et son évolution : <a href="/admin/tableau-de-bord">tableau de '
+        "bord</a>.</p>"
     )
     if not total:
         return layout("Synthèse", head + '<p class="muted">Aucune réponse sur cette période.</p>')
