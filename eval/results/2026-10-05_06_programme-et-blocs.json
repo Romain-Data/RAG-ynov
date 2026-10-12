@@ -713,7 +713,7 @@
       "question_id": "q11",
       "question": "Comment se passe l'entretien d'admission chez Ynov ?",
       "out_of_scope": null,
-      "passed": false,
+      "passed": true,
       "verdict": "correct",
       "auto_check": {
         "must": {
@@ -1816,7 +1816,7 @@
   ],
   "summary": {
     "total": 32,
-    "passed": 28,
+    "passed": 29,
     "correct": 29,
     "partial": 1,
     "wrong": 0,

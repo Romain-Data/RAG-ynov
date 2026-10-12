@@ -1750,7 +1750,7 @@
       "question_id": "q32",
       "question": "Quel niveau faut-il pour entrer en BTS ERA ?",
       "out_of_scope": null,
-      "passed": false,
+      "passed": true,
       "verdict": "correct",
       "auto_check": {
         "must": {
@@ -1831,7 +1831,7 @@
   ],
   "summary": {
     "total": 32,
-    "passed": 30,
+    "passed": 31,
     "correct": 31,
     "partial": 1,
     "wrong": 0,
