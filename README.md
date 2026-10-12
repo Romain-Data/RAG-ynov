@@ -106,7 +106,11 @@ entry after 180 days. `POST /api/query` has no feedback.
 
 `/admin` (set `ADMIN_PASSWORD`, otherwise it is not mounted) lists the entries, shows the detail of
 each one and lets the reviewer classify it (bonne, partielle, fausse, hors_sujet), then gives an
-excerpt to paste into `eval/questions.yaml`. `/admin/synthese` sums the journal up (how answers end
+excerpt to paste into `eval/questions.yaml`. The users' thumbs show there too: an "Avis" column and
+filter in the list (Utile, Pas utile, without feedback), a shortcut to the "Pas utile" answers not
+reviewed yet, and the feedback, its comment and its date on the detail page. `/admin/synthese` sums
+the journal up (how answers end crossed with the reviews, the users' feedback per route with the
+satisfaction rate next to the number of votes, a total without the replies to greetings, feedback
 crossed with the reviews, search scores per review next to the threshold, models that answered, days,
 errors) over all of it or the last 7 or 30 days. Login is a form with a signed 8-hour cookie, not HTTP
 Basic (the preprod already has one in front of the whole site).
