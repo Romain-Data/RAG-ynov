@@ -8,9 +8,13 @@
   "question_set": "v6",
   "milestone": true,
   "label": "prod-apres-prompt-seuil",
-  "notes": "Premier test en prod enregistré par l'outil, après déploiement des PR #7 et #8 (prompt et seuil 0,45) via le MCP Coolify. Index de prod inchangé (6 472 chunks). Verdicts relus à la main ; auto_check recalculé avec le jeu v6 (motif q07).",
+  "notes": "Premier test en prod enregistré par l'outil, après déploiement des PR #7 et #8 (prompt et seuil 0,45) via le MCP Coolify. Index de prod inchangé (6 472 chunks). Verdicts relus à la main ; auto_check recalculé avec le jeu v6 (motif q07). Modèle du LLM reconstitué le 12 octobre 2026 (#16) d'après : issue #16 : le modèle de la prod est passé de mistral-medium-3-5 à mammouth-recommended le 4 octobre 2026 ; documentation/integration-continue.md : « mistral-medium-3-5 (ancienne prod), 12/16 Ynov le 2 octobre ». Champs grade_threshold reconstitués le 12 octobre 2026 (#16) d'après ces notes.",
   "config": {
-    "url": "https://rag.romaincollery.com"
+    "url": "https://rag.romaincollery.com",
+    "llm_model": "mistral-medium-3-5",
+    "llm_model_source": "reconstitué",
+    "grade_threshold": 0.45,
+    "grade_threshold_source": "reconstitué"
   },
   "results": [
     {

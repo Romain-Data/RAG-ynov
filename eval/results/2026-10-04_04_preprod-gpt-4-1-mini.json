@@ -8,9 +8,11 @@
   "question_set": "v7",
   "milestone": false,
   "label": "preprod-gpt-4.1-mini",
-  "notes": "Comparaison de modèles du 4 octobre 2026 sur la préprod (code de la PR #38, corpus de 6 470 chunks). Verdicts automatiques, relus seulement pour q07 et q11 (réponses incomplètes : tarifs par formation sans la règle commune des 4 échéances ni les délais). Coût estimé pour 1 000 questions avec 2 500 tokens en entrée et 250 en sortie. Modèle : gpt-4-1-mini, environ 1,4 $ pour 1 000 questions.",
+  "notes": "Comparaison de modèles du 4 octobre 2026 sur la préprod (code de la PR #38, corpus de 6 470 chunks). Verdicts automatiques, relus seulement pour q07 et q11 (réponses incomplètes : tarifs par formation sans la règle commune des 4 échéances ni les délais). Coût estimé pour 1 000 questions avec 2 500 tokens en entrée et 250 en sortie. Modèle : gpt-4-1-mini, environ 1,4 $ pour 1 000 questions. Modèle du LLM reconstitué le 12 octobre 2026 (#16) d'après : notes de ce passage (« Modèle : gpt-4-1-mini »), comparaison de modèles du 4 octobre.",
   "config": {
-    "url": "https://rag-preprod.romaincollery.com"
+    "url": "https://rag-preprod.romaincollery.com",
+    "llm_model": "gpt-4-1-mini",
+    "llm_model_source": "reconstitué"
   },
   "results": [
     {

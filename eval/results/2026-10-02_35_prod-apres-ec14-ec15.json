@@ -8,9 +8,11 @@
   "question_set": "v7",
   "milestone": true,
   "label": "prod-apres-ec14-ec15",
-  "notes": "Test en prod après PR #10-#12 : fichier d'exemple fictif retiré (EC-15), pages d'information découpées par sous-titre (EC-14). Réingestion : 1 257 sections, 6 470 chunks. Verdicts relus à la main. Aucune source ne cite plus admissions_faq.md.",
+  "notes": "Test en prod après PR #10-#12 : fichier d'exemple fictif retiré (EC-15), pages d'information découpées par sous-titre (EC-14). Réingestion : 1 257 sections, 6 470 chunks. Verdicts relus à la main. Aucune source ne cite plus admissions_faq.md. Modèle du LLM reconstitué le 12 octobre 2026 (#16) d'après : issue #16 : le modèle de la prod est passé de mistral-medium-3-5 à mammouth-recommended le 4 octobre 2026 ; documentation/integration-continue.md : « mistral-medium-3-5 (ancienne prod), 12/16 Ynov le 2 octobre ».",
   "config": {
-    "url": "https://rag.romaincollery.com"
+    "url": "https://rag.romaincollery.com",
+    "llm_model": "mistral-medium-3-5",
+    "llm_model_source": "reconstitué"
   },
   "results": [
     {
