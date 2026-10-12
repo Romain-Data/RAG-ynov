@@ -25,6 +25,9 @@ ROUTES = {
     "error": "Erreur",
 }
 CHANNELS = {"chat": "Chat", "api": "API"}
+# The users' thumbs (#19): the value of the journal, the words of the chat, the icon shown
+FEEDBACK = {1: ("Utile", "👍"), 0: ("Pas utile", "👎")}
+FEEDBACK_CHOICES = {"positif": "Utile", "negatif": "Pas utile", "sans": "Sans avis (chat)"}
 
 _STYLE = """
 :root { color-scheme: light dark; --accent: #325A38; --bg: #EAF0EB; --card: #fff;
@@ -78,6 +81,8 @@ dd { margin: 0; font-size: .9rem; word-break: break-word; }
 .pager { display: flex; justify-content: space-between; margin-top: 1rem; }
 fieldset { border: 1px solid var(--border); border-radius: 8px; margin: 0 0 .8rem; }
 fieldset label { margin-right: 1rem; white-space: nowrap; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);
+      white-space: nowrap; }
 @media (max-width: 640px) { main { padding: 14px; } .hide-small { display: none; } }
 """
 
@@ -139,15 +144,44 @@ def _options(choices: dict[str, str], selected: str | None, blank: str) -> str:
     return "".join(out)
 
 
+def _thumb(value: int | None) -> str:
+    """👍 or 👎 with its words for screen readers and on hover; empty without a feedback."""
+    if value not in FEEDBACK:
+        return ""
+    words, icon = FEEDBACK[value]
+    return (
+        f'<span title="{escape(words)}"><span aria-hidden="true">{icon}</span>'
+        f'<span class="sr">{escape(words)}</span></span>'
+    )
+
+
 def entries_list(
-    rows: list[dict], total: int, *, review: str, route: str, channel: str, text: str, page: int
+    rows: list[dict],
+    total: int,
+    *,
+    review: str,
+    route: str,
+    channel: str,
+    text: str,
+    page: int,
+    feedback: str = "",
+    unreviewed_negative: int = 0,
 ) -> str:
     statuses = {"unreviewed": "Non revues", **{k: LABELS[k] for k in REVIEW_LABELS}}
+    shortcut_query = escape(urlencode({"avis": "negatif", "statut": "unreviewed"}))
+    shortcut = (
+        f'<p><a href="/admin/?{shortcut_query}">Avis négatifs non revus '
+        f"({int(unreviewed_negative)})</a> "
+        '<span class="muted">: les réponses jugées « Pas utile » par l\'utilisateur, à revoir '
+        "en premier.</span></p>"
+    )
     filters = (
         '<form class="filters" method="get" action="/admin/">'
         f'<label>Revue<select name="statut">{_options(statuses, review, "Toutes")}</select></label>'
         f'<label>Issue<select name="issue">{_options(ROUTES, route, "Toutes")}</select></label>'
         f'<label>Canal<select name="canal">{_options(CHANNELS, channel, "Tous")}</select></label>'
+        f'<label>Avis<select name="avis">{_options(FEEDBACK_CHOICES, feedback, "Tous")}</select>'
+        "</label>"
         f'<label>Recherche<input type="text" name="q" value="{escape(text)}" maxlength="100">'
         "</label><button>Filtrer</button></form>"
     )
@@ -162,17 +196,18 @@ def entries_list(
             f'<td><a href="/admin/reponses/{int(row["id"])}">{escape(shown)}</a></td>'
             f'<td><span class="tag">{escape(ROUTES.get(row["route"], row["route"]))}</span></td>'
             f'<td class="num">{_score(row["top_score"])}</td>'
+            f"<td>{_thumb(row.get('feedback'))}</td>"
             f"<td>{escape(review_label)}</td></tr>"
         )
     table = (
         '<table><thead><tr><th>Date (UTC)</th><th class="hide-small">Canal</th><th>Question</th>'
-        '<th>Issue</th><th class="num">Score</th><th>Revue</th></tr></thead>'
+        '<th>Issue</th><th class="num">Score</th><th>Avis</th><th>Revue</th></tr></thead>'
         f"<tbody>{''.join(lines)}</tbody></table>"
         if rows
         else '<p class="muted">Aucune réponse ne correspond.</p>'
     )
     last_page = max(1, -(-total // PAGE_SIZE))
-    base = {"statut": review, "issue": route, "canal": channel, "q": text}
+    base = {"statut": review, "issue": route, "canal": channel, "avis": feedback, "q": text}
 
     def link(target: int, label: str) -> str:
         query = urlencode({**{k: v for k, v in base.items() if v}, "page": target})
@@ -184,7 +219,7 @@ def entries_list(
         f'<div class="pager">{previous}'
         f'<span class="muted">{total} réponse(s) · page {page}/{last_page}</span>{following}</div>'
     )
-    return layout("Journal des réponses", filters + table + pager)
+    return layout("Journal des réponses", shortcut + filters + table + pager)
 
 
 def _sources(sources: list[dict]) -> str:
@@ -227,6 +262,34 @@ def _retrieved(hits: list[dict], threshold: float, top_score: float | None) -> s
     return (
         bar + '<table><thead><tr><th>#</th><th class="num">Score</th><th></th><th>Source</th>'
         f"<th>Section</th></tr></thead><tbody>{''.join(rows)}</tbody></table>"
+    )
+
+
+def _user_feedback(entry: dict) -> str:
+    """What the user of the chat thought of the answer (#19); the API has no thumbs."""
+    title = "<h2>Avis de l'utilisateur</h2>"
+    if entry["channel"] != "chat":
+        return (
+            title + '<p class="muted">Sans objet : les réponses de l\'API ne reçoivent pas '
+            "d'avis.</p>"
+        )
+    value = entry.get("feedback")
+    if value not in FEEDBACK:
+        return title + '<p class="muted">Aucun avis.</p>'
+    words, icon = FEEDBACK[value]
+    when = (
+        f"le {escape(_date(entry['feedback_at']))} (UTC)"
+        if entry.get("feedback_at")
+        else "date inconnue (avis antérieur au 12 octobre 2026)"
+    )
+    comment = (
+        f"<pre>{escape(entry['feedback_comment'])}</pre>"
+        if entry.get("feedback_comment")
+        else '<p class="muted">Sans commentaire.</p>'
+    )
+    return (
+        f'{title}<p><strong><span aria-hidden="true">{icon}</span> {escape(words)}</strong>'
+        f' <span class="muted">· {when}</span></p>{comment}'
     )
 
 
@@ -299,6 +362,7 @@ def entry_detail(entry: dict, error: str | None = None) -> str:
         f"{rewritten}"
         f"<h2>Réponse</h2><pre>{escape(entry['answer'] or '(vide)')}</pre>"
         f"{failure}"
+        f"{_user_feedback(entry)}"
         f"<h2>Sources citées au modèle</h2>{_sources(entry['sources_list'])}"
         f"<h2>Résultats de la recherche</h2>"
         f"{_retrieved(entry['retrieved_list'], entry['threshold'], entry['top_score'])}"
@@ -339,9 +403,82 @@ def _number(value: float | None, unit: str = "") -> str:
     return "–" if value is None else f"{value:.0f}{unit}"
 
 
+def _satisfaction(useful: int, votes: int) -> str:
+    """The share of "Utile" among the votes, always with the number of votes behind it."""
+    if not votes:
+        return "—"
+    return f"{100 * useful / votes:.0f} % ({votes} vote{'s' if votes > 1 else ''})"
+
+
+def _feedback_section(feedback: dict) -> str:
+    """The thumbs of the chat (#19): per route, in all without the greetings, and against the
+    review."""
+    title = "<h2>Avis des utilisateurs</h2>"
+    routes = feedback["by_route"]
+    if not routes:
+        return title + '<p class="muted">Aucune réponse du chat sur cette période.</p>'
+
+    def row(name: str, line: dict, strong: bool = False) -> str:
+        cells = (
+            f'<td class="num">{line["answers"]}</td><td class="num">{line["rated"]}</td>'
+            f'<td class="num">{_pct(line["rated"], line["answers"])}</td>'
+            f'<td class="num">{line["useful"]}</td><td class="num">{line["not_useful"]}</td>'
+            f'<td class="num">{_satisfaction(line["useful"], line["rated"])}</td>'
+        )
+        label = f"<strong>{escape(name)}</strong>" if strong else escape(name)
+        return f"<tr><td>{label}</td>{cells}</tr>"
+
+    lines = [row(name, routes[route]) for route, name in ROUTES.items() if route in routes]
+    lines.append(row("Total hors politesse", feedback["total_without_smalltalk"], strong=True))
+    per_route = (
+        '<p class="muted">Les pouces « Utile / Pas utile » sous les réponses du chat (l\'API '
+        "n'en a pas). La satisfaction est la part d'« Utile » parmi les votes ; le total laisse "
+        "de côté les réponses de politesse, qui ne disent rien de la qualité.</p>"
+        '<table><thead><tr><th>Issue</th><th class="num">Réponses du chat</th>'
+        '<th class="num">Avis</th><th class="num">Part notée</th><th class="num">Utile</th>'
+        '<th class="num">Pas utile</th><th class="num">Satisfaction</th></tr></thead>'
+        f"<tbody>{''.join(lines)}</tbody></table>"
+        f"<p>{feedback['comments']} avis avec un commentaire · "
+        f'<a href="/admin/?avis=negatif">voir les réponses jugées « Pas utile »</a></p>'
+    )
+
+    crosstab = feedback["crosstab"]
+    if not crosstab:
+        return title + per_route
+    labels = [*REVIEW_LABELS, ""]
+    cross_rows = "".join(
+        f"<tr><td>{escape(FEEDBACK[value][0])}</td>"
+        + "".join(f'<td class="num">{crosstab.get((value, label), 0)}</td>' for label in labels)
+        + "</tr>"
+        for value in (1, 0)
+    )
+    useful_but_false = crosstab.get((1, "fausse"), 0)
+    query = escape(urlencode({"avis": "positif", "statut": "fausse"}))
+    alert = (
+        f'<p class="error">{useful_but_false} réponse(s) jugée(s) « Utile » par l\'utilisateur '
+        f'mais classée(s) fausse(s) à la revue : à regarder en priorité. <a href="/admin/?{query}">'
+        "Les voir</a></p>"
+        if useful_but_false
+        else ""
+    )
+    cross = (
+        "<h2>Avis des utilisateurs et revue</h2>"
+        '<p class="muted">Un « Utile » sur une réponse classée fausse est le cas à regarder en '
+        "priorité : l'utilisateur a cru une réponse fausse. Un « Pas utile » sur une réponse "
+        "bonne signale plutôt une attente que le corpus ne couvre pas.</p>"
+        f"{alert}"
+        "<table><thead><tr><th>Avis</th>"
+        + "".join(f'<th class="num">{escape(LABELS[label])}</th>' for label in REVIEW_LABELS)
+        + '<th class="num">Non revues</th></tr></thead>'
+        f"<tbody>{cross_rows}</tbody></table>"
+    )
+    return title + per_route + cross
+
+
 def stats_page(data: dict, threshold: float) -> str:
-    """The summary: how the answers end, how they were reviewed, the scores against the
-    threshold, the models that answered, the days and the errors."""
+    """The summary: how the answers end, what the users thought of them, how they were
+    reviewed, the scores against the threshold, the models that answered, the days and the
+    errors."""
     totals = data["totals"]
     total = totals["total"] or 0
     period = data["period"]
@@ -455,4 +592,7 @@ def stats_page(data: dict, threshold: float) -> str:
         if error_rows
         else ""
     )
-    return layout("Synthèse", head + intro + by_route + by_label + by_model + per_day + errors)
+    feedback = _feedback_section(data["feedback"])
+    return layout(
+        "Synthèse", head + intro + by_route + feedback + by_label + by_model + per_day + errors
+    )

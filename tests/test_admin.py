@@ -13,7 +13,7 @@ from starlette.applications import Starlette
 from starlette.responses import PlainTextResponse
 from starlette.routing import Route
 
-from admin import auth
+from admin import auth, pages
 from admin.routes import mount_admin
 from app import main
 from app.core.config import settings
@@ -569,3 +569,208 @@ class TestSummary:
 
     def test_the_other_pages_link_to_it(self, signed_in):
         assert 'href="/admin/synthese"' in signed_in.get("/admin/").text
+
+
+def rate(entry_id: int, value: int, comment: str | None = None, at: str | None = "now") -> None:
+    """Give an entry the thumb that chat/feedback.py would copy (at=None: an earlier feedback
+    taken over by the migration, whose date is unknown)."""
+    when = datetime.now(UTC).isoformat() if at == "now" else at
+    with db() as conn:
+        conn.execute(
+            "UPDATE answer_log SET feedback = ?, feedback_comment = ?, feedback_at = ? "
+            "WHERE id = ?",
+            (value, comment, when, entry_id),
+        )
+
+
+class TestFeedbackInTheList:
+    @staticmethod
+    def _fill() -> dict[str, int]:
+        ids = {
+            "useful": add("Question utile"),
+            "not_useful": add("Question pas utile"),
+            "none": add("Question sans avis"),
+            "api": add("Question par API", channel="api"),
+        }
+        rate(ids["useful"], 1)
+        rate(ids["not_useful"], 0, "Il manque le prix")
+        return ids
+
+    @staticmethod
+    def _shown(client, **params) -> str:
+        return client.get("/admin/", params=params).text
+
+    def test_the_filters_match_the_choices_of_the_form(self):
+        assert set(pages.FEEDBACK_CHOICES) == set(review.FEEDBACK_FILTERS)
+
+    def test_each_feedback_filter(self, signed_in):
+        self._fill()
+        useful = self._shown(signed_in, avis="positif")
+        assert "Question utile" in useful and "Question pas utile" not in useful
+        assert "Question sans avis" not in useful
+        not_useful = self._shown(signed_in, avis="negatif")
+        assert "Question pas utile" in not_useful and "Question utile<" not in not_useful
+        none = self._shown(signed_in, avis="sans")
+        assert "Question sans avis" in none and "Question utile" not in none
+        assert "Question par API" not in none  # the API is never rated: not "without feedback"
+        anything = self._shown(signed_in, avis="nimporte")  # unknown: no filter
+        assert "4 réponse(s)" in anything
+
+    def test_the_feedback_filter_goes_with_the_review_filter(self, signed_in):
+        self._fill()
+        reviewed = add("Question pas utile et revue")
+        rate(reviewed, 0)
+        review.review(reviewed, "bonne")
+        text = self._shown(signed_in, avis="negatif", statut="unreviewed")
+        assert "Question pas utile<" in text and "Question pas utile et revue" not in text
+        assert "1 réponse(s)" in text
+
+    def test_the_column_shows_the_thumbs_with_words(self, signed_in):
+        self._fill()
+        text = self._shown(signed_in)
+        assert "<th>Avis</th>" in text
+        assert 'title="Utile"' in text and "👍" in text and '<span class="sr">Utile</span>' in text
+        assert 'title="Pas utile"' in text and "👎" in text
+
+    def test_the_shortcut_counts_the_unreviewed_negative_feedback(self, signed_in):
+        ids = self._fill()
+        other = add("Autre question pas utile")
+        rate(other, 0)
+        review.review(ids["not_useful"], "partielle")  # reviewed: no longer counted
+        assert review.count_unreviewed_negative() == 1
+        text = self._shown(signed_in)
+        assert "Avis négatifs non revus (1)" in text
+        assert 'href="/admin/?avis=negatif&amp;statut=unreviewed"' in text
+
+    def test_the_form_keeps_the_chosen_feedback(self, signed_in):
+        text = self._shown(signed_in, avis="negatif")
+        assert '<option value="negatif" selected>Pas utile</option>' in text
+
+    def test_the_pager_keeps_the_feedback_filter(self, signed_in):
+        for number in range(review.PAGE_SIZE + 1):
+            rate(add(f"Question {number}"), 0)
+        text = self._shown(signed_in, avis="negatif")
+        assert "avis=negatif&amp;page=2" in text
+
+
+class TestFeedbackInTheDetail:
+    def test_a_feedback_with_its_comment(self, signed_in):
+        entry_id = add()
+        comment = "Le prix est faux\n<script>alert(1)</script>"
+        rate(entry_id, 0, comment, "2026-10-12T09:30:00+00:00")
+        text = signed_in.get(f"/admin/reponses/{entry_id}").text
+        assert "Avis de l'utilisateur" in text
+        assert "Pas utile" in text and "12/10 09:30 (UTC)" in text
+        assert "<script>alert(1)" not in text
+        assert "Le prix est faux\n&lt;script&gt;alert(1)&lt;/script&gt;" in text
+
+    def test_a_feedback_without_comment(self, signed_in):
+        entry_id = add()
+        rate(entry_id, 1)
+        text = signed_in.get(f"/admin/reponses/{entry_id}").text
+        assert "👍" in text and "Utile" in text and "Sans commentaire." in text
+
+    def test_an_earlier_feedback_has_no_date(self, signed_in):
+        entry_id = add()
+        rate(entry_id, 1, at=None)
+        text = signed_in.get(f"/admin/reponses/{entry_id}").text
+        assert "date inconnue (avis antérieur au 12 octobre 2026)" in text
+
+    def test_no_feedback_yet(self, signed_in):
+        text = signed_in.get(f"/admin/reponses/{add()}").text
+        assert "Aucun avis." in text
+
+    def test_the_api_has_no_feedback(self, signed_in):
+        text = signed_in.get(f"/admin/reponses/{add(channel='api')}").text
+        assert "Sans objet" in text and "Aucun avis." not in text
+
+
+class TestFeedbackInTheSummary:
+    @staticmethod
+    def _fill() -> dict[str, int]:
+        refused = {"grade": "refuse", "retrieved": [], "sources": [], "llm_model": None}
+        hello = {"retrieved": [], "sources": [], "llm_model": None}
+        ids = {
+            "useful_false": add("Q1"),
+            "useful": add("Q2"),
+            "not_useful_good": add("Q3"),
+            "silent": add("Q4"),
+            "refused": add("Il fait beau ?", result=refused),
+            "hello": add("Bonjour", result=hello),
+            "api": add("Q par API", channel="api"),
+        }
+        rate(ids["useful_false"], 1)
+        rate(ids["useful"], 1, "Merci, très clair")
+        rate(ids["not_useful_good"], 0)
+        rate(ids["refused"], 0)
+        rate(ids["hello"], 1)
+        review.review(ids["useful_false"], "fausse")
+        review.review(ids["not_useful_good"], "bonne")
+        return ids
+
+    def test_counts_per_route_without_the_api(self):
+        self._fill()
+        feedback = stats.summary()["feedback"]
+        assert feedback["by_route"] == {
+            "generate": {"answers": 4, "rated": 3, "useful": 2, "not_useful": 1, "comments": 1},
+            "refuse": {"answers": 1, "rated": 1, "useful": 0, "not_useful": 1, "comments": 0},
+            "smalltalk": {"answers": 1, "rated": 1, "useful": 1, "not_useful": 0, "comments": 0},
+        }
+        # The greeting's thumb is left out of the total
+        assert feedback["total_without_smalltalk"] == {
+            "answers": 5,
+            "rated": 4,
+            "useful": 2,
+            "not_useful": 2,
+            "comments": 1,
+        }
+        assert feedback["comments"] == 1
+
+    def test_crosses_the_thumbs_with_the_review(self):
+        self._fill()
+        crosstab = stats.summary()["feedback"]["crosstab"]
+        assert crosstab == {(1, "fausse"): 1, (1, ""): 2, (0, "bonne"): 1, (0, ""): 1}
+
+    def test_the_page_shows_the_rates_with_their_votes(self, signed_in):
+        self._fill()
+        page = signed_in.get("/admin/synthese").text
+        assert "Avis des utilisateurs" in page and "Total hors politesse" in page
+        assert "67 % (3 votes)" in page  # generated answers
+        assert "0 % (1 vote)" in page  # the refusal
+        assert "50 % (4 votes)" in page  # in all, without the greeting
+        assert "1 avis avec un commentaire" in page
+
+    def test_the_page_points_at_useful_but_false_answers(self, signed_in):
+        self._fill()
+        page = signed_in.get("/admin/synthese").text
+        assert "1 réponse(s) jugée(s) « Utile »" in page
+        assert 'href="/admin/?avis=positif&amp;statut=fausse"' in page
+
+    def test_no_vote_shows_a_dash_not_a_rate(self, signed_in):
+        add()
+        page = signed_in.get("/admin/synthese").text
+        assert "—" in page and "Avis des utilisateurs et revue" not in page
+        assert stats.summary()["feedback"]["crosstab"] == {}
+
+    def test_a_period_with_only_api_answers(self, signed_in):
+        add(channel="api")
+        page = signed_in.get("/admin/synthese").text
+        assert "Aucune réponse du chat sur cette période." in page
+
+    def test_an_empty_journal_gives_zeros(self):
+        feedback = stats.summary("7")["feedback"]
+        assert feedback["by_route"] == {} and feedback["crosstab"] == {}
+        assert set(feedback["total_without_smalltalk"].values()) == {0}
+        assert pages._satisfaction(0, 0) == "—"
+
+    def test_the_period_applies_to_the_thumbs(self):
+        ids = self._fill()
+        old = (datetime.now(UTC) - timedelta(days=10)).isoformat()
+        with db() as conn:
+            conn.execute(
+                "UPDATE answer_log SET created_at = ? WHERE id IN (?, ?)",
+                (old, ids["useful_false"], ids["useful"]),
+            )
+        feedback = stats.summary("7")["feedback"]
+        assert feedback["by_route"]["generate"]["useful"] == 0
+        assert feedback["crosstab"].get((1, "fausse"), 0) == 0

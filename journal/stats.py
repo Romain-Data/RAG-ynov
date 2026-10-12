@@ -1,5 +1,8 @@
 """Figures about the journal for the /admin summary page (#18): how the answers end, how they
-were reviewed, which model answered, and the scores that tell whether the threshold fits."""
+were reviewed, which model answered, the scores that tell whether the threshold fits, and what
+the users of the chat thought of the answers (their thumbs, #19).
+
+Plain dictionaries of counts, so that the dashboard of #16 can reuse them as they are."""
 
 import sqlite3
 from datetime import UTC, datetime, timedelta
@@ -10,6 +13,24 @@ from journal.review import REVIEW_LABELS
 PERIODS = ("7", "30")  # days; anything else means the whole journal
 DAYS_SHOWN = 14  # lines of the per-day table
 ERRORS_SHOWN = 5
+FEEDBACK_COUNTS = ("answers", "rated", "useful", "not_useful", "comments")
+
+
+def _feedback(by_route: list[dict], crosstab: list[dict]) -> dict:
+    """The thumbs of the chat: counts per route, their total without the replies to greetings
+    (a "Utile" under "Bonjour !" says nothing about the answers), and thumbs x review."""
+    routes = {r["route"]: {key: r[key] or 0 for key in FEEDBACK_COUNTS} for r in by_route}
+    total = {
+        key: sum(line[key] for route, line in routes.items() if route != "smalltalk")
+        for key in FEEDBACK_COUNTS
+    }
+    return {
+        "by_route": routes,
+        "total_without_smalltalk": total,
+        "comments": sum(line["comments"] for line in routes.values()),
+        # (1 "Utile" or 0 "Pas utile", review label or "" for "not reviewed yet") -> count
+        "crosstab": {(r["feedback"], r["label"]): r["n"] for r in crosstab},
+    }
 
 
 def _since(period: str) -> str | None:
@@ -67,6 +88,18 @@ def summary(period: str = "") -> dict:
             f"FROM answer_log {where} {and_} error IS NOT NULL GROUP BY cause "
             f"ORDER BY n DESC LIMIT {ERRORS_SHOWN}"
         )
+        # Only the chat has thumbs: the answers of the API would lower the share rated
+        feedback_by_route = rows(
+            f"SELECT route, COUNT(*) AS answers, COUNT(feedback) AS rated, "
+            f"SUM(CASE WHEN feedback = 1 THEN 1 ELSE 0 END) AS useful, "
+            f"SUM(CASE WHEN feedback = 0 THEN 1 ELSE 0 END) AS not_useful, "
+            f"COUNT(feedback_comment) AS comments "
+            f"FROM answer_log {where} {and_} channel = 'chat' GROUP BY route"
+        )
+        feedback_crosstab = rows(
+            f"SELECT feedback, COALESCE(review_label, '') AS label, COUNT(*) AS n "
+            f"FROM answer_log {where} {and_} feedback IS NOT NULL GROUP BY feedback, label"
+        )
     return {
         "period": period if since else "",
         "totals": totals,
@@ -76,4 +109,5 @@ def summary(period: str = "") -> dict:
         "by_model": by_model,
         "per_day": per_day,
         "errors": errors,
+        "feedback": _feedback(feedback_by_route, feedback_crosstab),
     }
