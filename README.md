@@ -103,7 +103,8 @@ messages before the first question are left out, whatever their text.
 Every question asked in the chat or on `POST /api/query` is written to the `answer_log` table
 of the chat database (`journal/`): the answer, its sources, the search scores, the model that
 really answered (the `model` field of the LLM response, since `MAMMOUTH_CHAT_MODEL` is an alias),
-the collection and the threshold. No pseudo and no IP are kept, e-mail addresses and phone numbers
+the collection and the threshold (on 12 October 2026 the `model` field of `mammouth-recommended`
+only repeated the alias, so a change of model behind it may not show). No pseudo and no IP are kept, e-mail addresses and phone numbers
 are masked, and entries older than `ANSWER_LOG_RETENTION_DAYS` (180) are deleted by
 `python -m journal.purge`, a daily task in Coolify. `ANSWER_LOG_ENABLED=false` stops the writing.
 The journal never blocks an answer.
@@ -140,6 +141,20 @@ function on every connection to the chat database: the list of `/admin` has a "S
 filter (any kind, no answer at all, or one kind), the kind shows in the list and on the detail
 page, and `/admin/synthese` counts each kind out of the questions that went to the search.
 
+These questions are then grouped by theme by the LLM (`journal/themes.py`), on demand: a button of
+`/admin/sans-reponse` (or `python -m journal.themes`) sends at most 100 distinct questions per call,
+with the existing themes so that the LLM reuses them, two of them fixed ("Autres écoles", "Hors
+sujet"). The model that compares a question to a passage in the search cannot group two short
+questions worded differently, hence the LLM. Nothing is written when the call fails; an answer cut
+by `max_tokens` is asked again for half the batch. The theme is stored (`gap_theme` table,
+`answer_log.gap_theme_id`) so that it stays the same from one report to the next. Each theme page
+shows its questions, their kinds and conversations, a suggested cause and what the search finds
+today for its example question (no LLM), and records the cause decided by hand: nothing on the
+site (`contenu`), not a question about Ynov (`hors_sujet`), or a page the search missed
+(`recherche`), with a note. Themes can be renamed and merged, questions moved. The prompt was
+calibrated on 40 fictive questions (`tests/fixtures/gap_questions.yaml`); the two recorded answers
+of the LLM are replayed by the tests.
+
 ## Roadmap
 
 The project plan lives in [ROADMAP.md](ROADMAP.md), each item tracked in a GitHub issue labelled `roadmap`.
@@ -153,7 +168,7 @@ rag-ynov/
 │   ├── core/               # Configuration, logging, rate limits
 │   └── schemas/            # Pydantic models
 ├── chat/                   # Chat interface (Chainlit), accounts, feedback guard, SQLite schema, backups
-├── journal/                # Journal of the answers: writing, feedback, purge, review queries, summary, questions without an answer
+├── journal/                # Journal of the answers: writing, feedback, purge, review queries, summary, questions without an answer and their themes
 ├── admin/                  # /admin pages that review the journal
 ├── eval/                   # Question sets, retrieval and end-to-end evaluation
 ├── ingestion/              # Ingestion pipeline (fetch → load → chunk → embed → index)

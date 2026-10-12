@@ -1,4 +1,5 @@
-"""Admin routes: /admin (list), /admin/reponses/{id} (review), /admin/login.
+"""Admin routes: /admin (list), /admin/reponses/{id} (review), /admin/synthese (summary),
+/admin/sans-reponse (questions left without an answer, by theme), /admin/login.
 
 Every response goes through `_html` or `_redirect`, which add the security headers; every
 handler but the login starts with `_guard`.
@@ -6,6 +7,7 @@ handler but the login starts with `_guard`.
 
 import logging
 import re
+from urllib.parse import urlencode
 
 from fastapi import APIRouter, Depends, FastAPI, Form, Request
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
@@ -14,7 +16,7 @@ from admin import auth, pages
 from app.core.config import settings
 from app.core.security import rate_limit_admin_login
 from graph.nodes.grade import GRADE_THRESHOLD
-from journal import review, stats
+from journal import review, stats, themes
 
 logger = logging.getLogger(__name__)
 
@@ -154,6 +156,12 @@ def summary(request: Request, periode: str = "") -> Response:
     return _html(pages.stats_page(stats.summary(periode), GRADE_THRESHOLD))
 
 
+def _entry_page(
+    found: dict, error: str | None = None, theme_error: str | None = None, status: int = 200
+) -> Response:
+    return _html(pages.entry_detail(found, error, themes.choices(), theme_error), status)
+
+
 @router.get("/reponses/{entry_id}")
 def entry(request: Request, entry_id: int) -> Response:
     if (denied := _guard(request)) is not None:
@@ -161,7 +169,7 @@ def entry(request: Request, entry_id: int) -> Response:
     found = review.get_entry(entry_id)
     if found is None:
         return _html(pages.not_found(), 404)
-    return _html(pages.entry_detail(found))
+    return _entry_page(found)
 
 
 @router.post("/reponses/{entry_id}")
@@ -174,7 +182,7 @@ def classify(
     if found is None:
         return _html(pages.not_found(), 404)
     if label not in review.REVIEW_LABELS:
-        return _html(pages.entry_detail(found, "Choisissez un classement."), 400)
+        return _entry_page(found, "Choisissez un classement.", status=400)
     review.review(entry_id, label, note)
     following = review.next_unreviewed(entry_id)
     return _redirect(f"/admin/reponses/{following}" if following else "/admin/")
@@ -201,4 +209,138 @@ def promote(request: Request, entry_id: int, question_id: str = Form("")) -> Res
         return denied
     if not _QUESTION_ID.match(question_id) or not review.mark_promoted(entry_id, question_id):
         return _html(pages.not_found(), 404)
+    return _redirect(f"/admin/reponses/{entry_id}")
+
+
+# --- Questions left without an answer, by theme (#20) --------------------------------------
+
+
+@router.get("/sans-reponse")
+def unanswered(
+    request: Request,
+    periode: str = "",
+    resultat: str = "",
+    questions: int = 0,
+    nouveaux: int = 0,
+) -> Response:
+    if (denied := _guard(request)) is not None:
+        return denied
+    period = periode if periode in stats.PERIODS else ""
+    total, loose = themes.unthemed(period)
+    return _html(
+        pages.themes_page(
+            themes.list_themes(period),
+            total,
+            loose,
+            themes.pending_counts(),
+            period,
+            pages.grouping_message(resultat, max(questions, 0), max(nouveaux, 0)),
+        )
+    )
+
+
+@router.post("/sans-reponse/regrouper")
+def regroup(request: Request) -> Response:
+    """One call to the LLM: the button says so. The result travels in the query of the
+    redirect (numbers and a fixed code only), so that a reload does not group again."""
+    if (denied := _guard(request)) is not None:
+        return denied
+    result = themes.group_pending()
+    query = {
+        "resultat": result.error or "ok",
+        "questions": result.grouped,
+        "nouveaux": len(result.new_themes),
+    }
+    return _redirect(f"/admin/sans-reponse?{urlencode(query)}")
+
+
+def _theme_page(found: dict, error: str | None = None, status: int = 200) -> Response:
+    hits: list[dict] = []
+    search_error = None
+    if found["example"]:
+        try:
+            hits = themes.current_search(found["example"])
+        except Exception:
+            logger.exception("The search of the theme page failed")
+            search_error = (
+                "La recherche ne répond pas (Qdrant ou le modèle d'embedding) : réessayez plus "
+                "tard."
+            )
+    return _html(
+        pages.theme_page(found, themes.choices(), hits, search_error, GRADE_THRESHOLD, error),
+        status,
+    )
+
+
+@router.get("/sans-reponse/{theme_id}")
+def theme(request: Request, theme_id: int) -> Response:
+    if (denied := _guard(request)) is not None:
+        return denied
+    found = themes.get_theme(theme_id)
+    if found is None:
+        return _html(pages.not_found(), 404)
+    return _theme_page(found)
+
+
+@router.post("/sans-reponse/{theme_id}/nom")
+def rename(request: Request, theme_id: int, nom: str = Form("")) -> Response:
+    if (denied := _guard(request)) is not None:
+        return denied
+    problem = themes.rename(theme_id, nom[:200])
+    found = themes.get_theme(theme_id)
+    if found is None:
+        return _html(pages.not_found(), 404)
+    if problem:
+        return _theme_page(found, problem, 400)
+    return _redirect(f"/admin/sans-reponse/{theme_id}")
+
+
+@router.post("/sans-reponse/{theme_id}/cause")
+def cause(request: Request, theme_id: int, cause: str = Form(""), note: str = Form("")) -> Response:
+    if (denied := _guard(request)) is not None:
+        return denied
+    found = themes.get_theme(theme_id)
+    if found is None:
+        return _html(pages.not_found(), 404)
+    if cause and cause not in themes.CAUSES:
+        return _theme_page(found, "Choisissez une cause.", 400)
+    themes.set_cause(theme_id, cause or None, note)
+    return _redirect(f"/admin/sans-reponse/{theme_id}")
+
+
+@router.post("/sans-reponse/{theme_id}/fusion")
+def merge(request: Request, theme_id: int, cible: str = Form("")) -> Response:
+    if (denied := _guard(request)) is not None:
+        return denied
+    found = themes.get_theme(theme_id)
+    if found is None:
+        return _html(pages.not_found(), 404)
+    target = int(cible) if cible.isdigit() else 0
+    if not themes.merge(theme_id, target):
+        return _theme_page(found, "Choisissez un autre thème.", 400)
+    return _redirect(f"/admin/sans-reponse/{target}")
+
+
+@router.post("/reponses/{entry_id}/theme")
+def move(
+    request: Request,
+    entry_id: int,
+    theme: str = Form(""),
+    nouveau: str = Form(""),
+    retour: str = Form(""),
+) -> Response:
+    """Move a question to a theme, a new one or none. `retour` is the id of the theme page
+    the form was on (only a number: no redirect anywhere else)."""
+    if (denied := _guard(request)) is not None:
+        return denied
+    found = review.get_entry(entry_id)
+    if found is None:
+        return _html(pages.not_found(), 404)
+    if theme and not theme.isdigit():
+        return _entry_page(found, theme_error="Thème introuvable.", status=400)
+    problem = themes.move(entry_id, int(theme) if theme else None, nouveau[:200])
+    if problem:
+        return _entry_page(found, theme_error=problem, status=400)
+    if retour.isdigit() and themes.get_theme(int(retour)) is not None:
+        return _redirect(f"/admin/sans-reponse/{int(retour)}")
     return _redirect(f"/admin/reponses/{entry_id}")

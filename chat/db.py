@@ -19,6 +19,8 @@ ANSWER_LOG_ADDED_COLUMNS = {
     "feedback": "INTEGER CHECK (feedback IN (0, 1))",
     "feedback_comment": "TEXT",
     "feedback_at": "TEXT",
+    # The theme of a question left without an answer (#20, table gap_theme)
+    "gap_theme_id": "INTEGER",
 }
 
 
@@ -48,11 +50,15 @@ def _migrate(conn: sqlite3.Connection) -> None:
     for name, decl in missing.items():
         conn.execute(f"ALTER TABLE answer_log ADD COLUMN {name} {decl}")
     conn.execute("CREATE INDEX IF NOT EXISTS idx_answer_log_feedback ON answer_log (feedback)")
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_answer_log_gap_theme ON answer_log (gap_theme_id)")
+    # Only the columns of the feedback (#19) have earlier data to copy
     if "feedback" in missing:
         from journal.store import backfill_feedback  # journal.store imports this module
 
         copied = backfill_feedback(conn)
         logger.info("answer_log: feedback columns added, %d earlier feedbacks copied", copied)
+    if "gap_theme_id" in missing:
+        logger.info("answer_log: gap_theme_id column added (themes of the unanswered questions)")
 
 
 def init_db() -> None:

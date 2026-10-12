@@ -49,7 +49,8 @@ def _feedback(by_route: list[dict], crosstab: list[dict]) -> dict:
     }
 
 
-def _since(period: str) -> str | None:
+def since(period: str) -> str | None:
+    """The ISO date `period` days ago ("7", "30"), or None for the whole journal."""
     if period not in PERIODS:
         return None
     return (datetime.now(UTC) - timedelta(days=int(period))).isoformat()
@@ -57,10 +58,10 @@ def _since(period: str) -> str | None:
 
 def summary(period: str = "") -> dict:
     """Aggregates over the entries of the last `period` days ("7", "30"), or of all of them."""
-    since = _since(period)
-    where = "WHERE created_at >= :since" if since else ""
-    and_ = "AND" if since else "WHERE"
-    params = {"since": since} if since else {}
+    since_date = since(period)
+    where = "WHERE created_at >= :since" if since_date else ""
+    and_ = "AND" if since_date else "WHERE"
+    params = {"since": since_date} if since_date else {}
     with db() as conn:
         conn.row_factory = sqlite3.Row
 
@@ -122,7 +123,7 @@ def summary(period: str = "") -> dict:
             f"{where} {and_} route IN ('generate', 'refuse') GROUP BY kind"
         )
     return {
-        "period": period if since else "",
+        "period": period if since_date else "",
         "totals": totals,
         "by_route": {r["route"]: r for r in by_route},
         "crosstab": {(r["route"], r["label"]): r["n"] for r in crosstab},
