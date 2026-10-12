@@ -112,6 +112,7 @@ def entries(
     issue: str = "",
     canal: str = "",
     avis: str = "",
+    manque: str = "",
     q: str = "",
     page: int = 1,
 ) -> Response:
@@ -120,12 +121,14 @@ def entries(
     page = max(page, 1)
     q = q.strip()[:100]
     avis = avis if avis in review.FEEDBACK_FILTERS else ""
+    manque = manque if manque in pages.GAP_CHOICES else ""
     rows, total = review.list_entries(
         review=statut or None,
         route=issue or None,
         channel=canal or None,
         text=q or None,
         feedback=avis or None,
+        gap=manque or None,
         page=page,
     )
     return _html(
@@ -138,6 +141,7 @@ def entries(
             text=q,
             page=page,
             feedback=avis,
+            gap=manque,
             unreviewed_negative=review.count_unreviewed_negative(),
         )
     )

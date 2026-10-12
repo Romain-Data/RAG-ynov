@@ -1,6 +1,7 @@
 """Figures about the journal for the /admin summary page (#18): how the answers end, how they
-were reviewed, which model answered, the scores that tell whether the threshold fits, and what
-the users of the chat thought of the answers (their thumbs, #19).
+were reviewed, which model answered, the scores that tell whether the threshold fits, what
+the users of the chat thought of the answers (their thumbs, #19) and which questions went
+without an answer (#20).
 
 Plain dictionaries of counts, so that the dashboard of #16 can reuse them as they are."""
 
@@ -8,12 +9,27 @@ import sqlite3
 from datetime import UTC, datetime, timedelta
 
 from chat.db import db
+from journal.gaps import GAP_KINDS, WITHOUT_ANSWER
 from journal.review import REVIEW_LABELS
 
 PERIODS = ("7", "30")  # days; anything else means the whole journal
 DAYS_SHOWN = 14  # lines of the per-day table
 ERRORS_SHOWN = 5
 FEEDBACK_COUNTS = ("answers", "rated", "useful", "not_useful", "comments")
+
+
+def _gaps(by_kind: list[dict]) -> dict:
+    """The questions left without an answer, per kind (journal/gaps.py), out of the questions
+    that went to the search: greetings and errors are left out of both. `without_answer` is
+    the kinds that got no answer at all; the incomplete and "Pas utile" ones come apart."""
+    counts = {r["kind"]: r["n"] for r in by_kind}
+    kinds = {kind: counts.get(kind, 0) for kind in GAP_KINDS}
+    return {
+        "questions": sum(counts.values()),
+        "by_kind": kinds,
+        "without_answer": sum(kinds[kind] for kind in WITHOUT_ANSWER),
+        "flagged": sum(kinds.values()),
+    }
 
 
 def _feedback(by_route: list[dict], crosstab: list[dict]) -> dict:
@@ -100,6 +116,11 @@ def summary(period: str = "") -> dict:
             f"SELECT feedback, COALESCE(review_label, '') AS label, COUNT(*) AS n "
             f"FROM answer_log {where} {and_} feedback IS NOT NULL GROUP BY feedback, label"
         )
+        # kind None: the question got an answer
+        gaps_by_kind = rows(
+            f"SELECT gap_kind(route, answer, feedback) AS kind, COUNT(*) AS n FROM answer_log "
+            f"{where} {and_} route IN ('generate', 'refuse') GROUP BY kind"
+        )
     return {
         "period": period if since else "",
         "totals": totals,
@@ -110,4 +131,5 @@ def summary(period: str = "") -> dict:
         "per_day": per_day,
         "errors": errors,
         "feedback": _feedback(feedback_by_route, feedback_crosstab),
+        "gaps": _gaps(gaps_by_kind),
     }

@@ -19,7 +19,7 @@ from app import main
 from app.core.config import settings
 from app.core.security import add_security_middleware, limiter
 from chat.db import db, init_db
-from journal import review, stats, store
+from journal import gaps, review, stats, store
 
 # Generated for each run: no password-like literal in the repository
 PASSWORD = secrets.token_urlsafe(24)
@@ -774,3 +774,87 @@ class TestFeedbackInTheSummary:
         feedback = stats.summary("7")["feedback"]
         assert feedback["by_route"]["generate"]["useful"] == 0
         assert feedback["crosstab"].get((1, "fausse"), 0) == 0
+
+
+DOES_NOT_KNOW = "Le contexte ne précise pas quels BTS sont accessibles via Parcoursup."
+
+
+class TestUnansweredQuestions:
+    """The questions left without an answer (#20) in the list, the detail and the summary."""
+
+    @staticmethod
+    def _fill() -> dict[str, int]:
+        refused = {"grade": "refuse", "retrieved": [], "sources": [], "llm_model": None}
+        ids = {
+            "answered": add("Question avec réponse"),
+            "refused": add("Question refusée", result=refused),
+            "unknown": add("Question sans info", result={"answer": DOES_NOT_KNOW}),
+            "partial": add(
+                "Question en partie",
+                result={"answer": "Environ 7 000 €. Le contexte ne précise pas la rentrée."},
+            ),
+            "not_useful": add("Question pas utile"),
+        }
+        rate(ids["not_useful"], 0)
+        return ids
+
+    def test_the_choices_of_the_form_are_the_filters(self):
+        assert set(pages.GAP_CHOICES) == set(review.GAP_GROUPS) | set(gaps.GAP_KINDS)
+
+    def test_the_filter_of_the_list(self, signed_in):
+        self._fill()
+
+        def shown(**params) -> str:
+            return signed_in.get("/admin/", params=params).text
+
+        any_kind = shown(manque="tous")
+        assert "4 réponse(s)" in any_kind and "Question avec réponse" not in any_kind
+        none = shown(manque="aucune")
+        assert "Question refusée" in none and "Question sans info" in none
+        assert "Question en partie" not in none and "Question pas utile" not in none
+        assert "1 réponse(s)" in shown(manque="incomplete")
+        assert "5 réponse(s)" in shown(manque='"><script>x</script>')  # unknown: no filter
+        assert "<script>x" not in shown(manque='"><script>x</script>')
+
+    def test_the_form_and_the_pager_keep_the_filter(self, signed_in):
+        for number in range(review.PAGE_SIZE + 1):
+            add(f"Question {number}", result={"answer": DOES_NOT_KNOW})
+        text = signed_in.get("/admin/", params={"manque": "aveu"}).text
+        assert '<option value="aveu" selected>Le modèle ne sait pas</option>' in text
+        assert "manque=aveu&amp;page=2" in text
+
+    def test_the_list_tags_the_kind_but_not_twice_a_refusal(self, signed_in):
+        self._fill()
+        text = signed_in.get("/admin/").text
+        assert '<span class="tag">Le modèle ne sait pas</span>' in text
+        assert '<span class="tag">Réponse incomplète</span>' in text
+        assert '<span class="tag">Jugée « Pas utile »</span>' in text
+        assert text.count("Refus au seuil</span>") == 1  # the route only
+
+    def test_the_detail_says_whether_the_question_went_without_an_answer(self, signed_in):
+        ids = self._fill()
+
+        def line(entry_id: int) -> str:
+            text = signed_in.get(f"/admin/reponses/{entry_id}").text
+            return text.split("<dt>Sans réponse</dt><dd>")[1].split("</dd>")[0]
+
+        assert line(ids["unknown"]) == "Le modèle ne sait pas"
+        assert line(ids["refused"]) == "Refus au seuil"
+        assert line(ids["answered"]) == "Non"
+        hello = add("Bonjour", result={"retrieved": [], "sources": [], "llm_model": None})
+        assert line(hello) == "–"
+
+    def test_the_summary_counts_them_with_links(self, signed_in):
+        self._fill()
+        add("Bonjour", result={"retrieved": [], "sources": [], "llm_model": None})
+        page = signed_in.get("/admin/synthese").text
+        assert "Questions sans réponse" in page and "Sur les 5 question(s)" in page
+        assert "<strong>Sans aucune réponse</strong>" in page
+        assert 'href="/admin/?manque=aucune"' in page and 'href="/admin/?manque=refus"' in page
+        assert 'href="/admin/?manque=hors_ynov"' not in page  # nothing to show: no link
+        assert "40 %" in page  # 2 of the 5 questions got no answer at all
+
+    def test_a_summary_with_greetings_only(self, signed_in):
+        add("Bonjour", result={"retrieved": [], "sources": [], "llm_model": None})
+        page = signed_in.get("/admin/synthese").text
+        assert "Aucune question sur cette période (hors politesse)." in page

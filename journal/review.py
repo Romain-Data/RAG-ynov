@@ -13,6 +13,7 @@ from pathlib import Path
 import yaml
 
 from chat.db import db
+from journal.gaps import GAP_KINDS, WITHOUT_ANSWER, gap_kind
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +25,9 @@ FEEDBACK_FILTERS = {
     "negatif": "feedback = 0",
     "sans": "feedback IS NULL AND channel = 'chat'",
 }
+# The entries left without an answer (#20): one of GAP_KINDS, or one of these groups of kinds
+GAP_GROUPS = {"tous": tuple(GAP_KINDS), "aucune": WITHOUT_ANSWER}
+_GAP_SQL = "gap_kind(route, answer, feedback)"
 MAX_NOTE = 1000
 QUESTIONS_FILE = Path(__file__).resolve().parent.parent / "eval" / "questions.yaml"
 _QUESTION_ID = re.compile(r"^q(\d+)$")
@@ -42,12 +46,14 @@ def list_entries(
     channel: str | None = None,
     text: str | None = None,
     feedback: str | None = None,
+    gap: str | None = None,
     page: int = 1,
 ) -> tuple[list[dict], int]:
     """One page (PAGE_SIZE, newest first) of the entries that match the filters, and how many
     match in all. `review` is "unreviewed" or one of REVIEW_LABELS; an unknown value matches
-    nothing rather than everything. `feedback` is one of FEEDBACK_FILTERS; any other value
-    filters nothing."""
+    nothing rather than everything. `feedback` is one of FEEDBACK_FILTERS and `gap` one of
+    GAP_KINDS or GAP_GROUPS; any other value of these two filters nothing. Each row carries its
+    `gap` kind (None when the entry got an answer)."""
     where: list[str] = []
     params: dict[str, object] = {}
     if review == "unreviewed":
@@ -57,6 +63,11 @@ def list_entries(
         params["review"] = review
     if feedback in FEEDBACK_FILTERS:
         where.append(FEEDBACK_FILTERS[feedback])
+    kinds = GAP_GROUPS.get(gap or "") or ((gap,) if gap in GAP_KINDS else ())
+    if kinds:
+        marks = ", ".join(f":gap{number}" for number in range(len(kinds)))
+        where.append(f"{_GAP_SQL} IN ({marks})")
+        params.update({f"gap{number}": kind for number, kind in enumerate(kinds)})
     if route:
         where.append("route = :route")
         params["route"] = route
@@ -77,7 +88,7 @@ def list_entries(
         total = conn.execute(f"SELECT COUNT(*) FROM answer_log {clause}", params).fetchone()[0]
         rows = conn.execute(
             "SELECT id, created_at, channel, question, route, top_score, llm_model, "
-            f"review_label, feedback FROM answer_log {clause} "
+            f"review_label, feedback, {_GAP_SQL} AS gap FROM answer_log {clause} "
             "ORDER BY id DESC LIMIT :limit OFFSET :offset",
             params,
         ).fetchall()
@@ -103,7 +114,8 @@ def _load_list(raw: str | None) -> list[dict]:
 
 
 def get_entry(entry_id: int) -> dict | None:
-    """The full entry, its JSON columns decoded into `sources_list` and `retrieved_list`."""
+    """The full entry, its JSON columns decoded into `sources_list` and `retrieved_list`, and
+    its `gap` kind (None when it got an answer)."""
     with db() as conn:
         conn.row_factory = sqlite3.Row
         found = conn.execute("SELECT * FROM answer_log WHERE id = ?", (entry_id,)).fetchone()
@@ -112,6 +124,7 @@ def get_entry(entry_id: int) -> dict | None:
     entry = dict(found)
     entry["sources_list"] = _load_list(entry["sources"])
     entry["retrieved_list"] = _load_list(entry["retrieved"])
+    entry["gap"] = gap_kind(entry["route"], entry["answer"], entry["feedback"])
     return entry
 
 

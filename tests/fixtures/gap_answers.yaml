@@ -1,0 +1,359 @@
+# Answers of the LLM saved in eval/results/ (no user data), labelled by hand, for the detector
+# of the answers that went without an answer (journal/gaps.py, #20). `kind` is what
+# journal.gaps.answer_gap must return: aveu, hors_ynov, incomplete, or null for an answer that
+# reports nothing missing. `note` explains the cases at the limit. Built from the result files
+# by a one-off script: the texts are copied, never retyped.
+- id: 2026-10-02_01 q02
+  kind: aveu
+  answer: Le contexte fourni ne contient pas d'information sur les villes où est proposé le Mastère Expert
+    en intelligence artificielle. Je ne peux donc pas répondre à cette question.
+- id: 2026-10-02_23 q16
+  kind: aveu
+  answer: Le contexte fourni ne mentionne pas explicitement si les BTS sont accessibles via Parcoursup.
+    Par conséquent, je ne peux pas répondre à cette question en me basant uniquement sur les informations
+    fournies.
+  note: « Par conséquent, je ne peux pas répondre »
+- id: 2026-10-02_27 q16
+  kind: aveu
+  answer: Je ne peux pas répondre à cette question car le contexte fourni ne mentionne pas si les BTS
+    Ynov sont accessibles via Parcoursup ou non.
+- id: 2026-10-03_04 c02.3
+  kind: aveu
+  answer: Je ne peux pas répondre à cette question car le contexte fourni ne mentionne pas les conditions
+    d'admission ou le niveau requis pour intégrer le **BTS ERA - Étude et Réalisation d'Agencement**.
+  note: relance d'une conversation
+- id: 2026-10-04_02 q16
+  kind: aveu
+  answer: D'après le contexte fourni, aucun passage ne mentionne explicitement les BTS accessibles via
+    Parcoursup. Je ne peux donc pas répondre à cette question. [Source 1 à 10]
+  note: « aucun passage ne mentionne »
+- id: 2026-10-04_04 q16
+  kind: aveu
+  answer: Le contexte ne précise pas quels BTS Ynov sont accessibles via Parcoursup. Je ne peux donc pas
+    répondre à cette question à partir des informations fournies.
+- id: 2026-10-04_05 q16
+  kind: aveu
+  answer: Le contexte ne précise pas quels BTS sont accessibles via Parcoursup. [Sources 1–10]
+  note: 'une seule phrase de manque, suivie d''un renvoi aux sources : pas de « je ne peux pas »'
+- id: 2026-10-05_03 q16
+  kind: aveu
+  answer: Le contexte ne précise pas quels BTS sont accessibles via Parcoursup. Je ne peux donc pas répondre
+    à cette question.
+- id: 2026-10-05_03 q32
+  kind: aveu
+  answer: |-
+    Je ne peux pas répondre à cette question car le contexte fourni ne mentionne pas les conditions d'admission pour le **BTS ERA**. Les informations disponibles concernent uniquement les modalités d'évaluation et les équivalences pour d'autres BTS (comme le BTS SIO SLAM ou le BTS CIEL).
+
+    Pour obtenir cette information, il faudrait consulter une source spécifique sur les prérequis du BTS ERA.
+  note: « je ne peux pas répondre » puis une phrase sur ce que couvrent les sources et un renvoi
+- id: 2026-10-05_06 q32
+  kind: aveu
+  answer: Je ne peux pas répondre à cette question car le contexte fourni ne contient pas d'information
+    sur les prérequis ou le niveau d'entrée pour le **BTS ERA**.
+  note: « ne contient pas d'information »
+- id: 2026-10-02_25 q19
+  kind: aveu
+  answer: Je ne peux pas répondre à cette question car les frais de scolarité de HEC Paris ne sont pas
+    mentionnés dans le contexte fourni. Les informations disponibles concernent uniquement les tarifs
+    des formations Ynov.
+  note: 'autre école (HEC) sans la formule de la règle 5 : aveu ; que ce soit hors sujet se décide au
+    niveau du thème'
+- id: 2026-10-02_25 q26
+  kind: aveu
+  answer: Je suis désolé, mais les conditions d'admission à Polytechnique ne sont pas mentionnées dans
+    le contexte fourni. Les sources disponibles concernent uniquement des formations spécifiques proposées
+    par Ynov (Bachelor, Mastère, BTS, RNCP, etc.).
+  note: « Je suis désolé, mais … ne sont pas mentionnées » ; la phrase sur ce que concernent les sources
+    ne compte pas comme une information
+- id: 2026-10-02_26 q19
+  kind: hors_ynov
+  answer: Je ne peux répondre qu'aux questions sur Ynov Campus.
+- id: 2026-10-04_02 q19
+  kind: hors_ynov
+  answer: Je ne peux répondre qu'aux questions sur Ynov.
+- id: 2026-10-04_02 q26
+  kind: hors_ynov
+  answer: Je ne peux répondre qu'aux questions concernant les formations Ynov. Les conditions d'admission
+    à Polytechnique ne sont pas disponibles dans le contexte fourni.
+  note: « qu'aux questions concernant les formations Ynov »
+- id: 2026-10-04_04 q19
+  kind: hors_ynov
+  answer: Je ne peux répondre qu'aux questions concernant les formations Ynov. Je n'ai pas d'information
+    sur les frais de scolarité de HEC Paris dans le contexte fourni.
+- id: 2026-10-04_04 q26
+  kind: hors_ynov
+  answer: Je ne dispose d'aucune information sur les conditions d'admission à Polytechnique dans le contexte
+    fourni. Je ne peux répondre qu'aux questions concernant Ynov Campus.
+  note: 'aveu puis règle 5 : la règle 5 l''emporte'
+- id: 2026-10-04_05 q19
+  kind: hors_ynov
+  answer: Je ne peux répondre qu’aux questions sur Ynov Campus. Le contexte fourni ne contient pas d’informations
+    sur les frais de scolarité de HEC Paris.
+  note: apostrophe typographique « qu’aux »
+- id: 2026-10-06_07 q26
+  kind: hors_ynov
+  answer: Je ne peux répondre qu’aux questions sur Ynov Campus, pas sur les conditions d’admission à Polytechnique.
+- id: 2026-10-09_01 q26
+  kind: hors_ynov
+  answer: 'Je ne peux pas renseigner les conditions d’admission à Polytechnique : je réponds uniquement
+    aux questions sur Ynov. [Source 8]'
+  note: « je réponds uniquement aux questions sur Ynov »
+- id: 2026-10-02_01 q08
+  kind: incomplete
+  answer: |-
+    D'après le contexte fourni, les blocs de compétences mentionnés pour le titre **RNCP40897 Expert en cybersécurité** sont :
+
+    1. **RNCP40897BC01** - Élaborer la stratégie de cybersécurité d’une organisation
+    2. **RNCP40897BC04** - Gérer stratégiquement et opérationnellement une crise cyber
+
+    [Source 1, Source 2, Source 3, Source 4, Source 5]
+
+    *Note* : Le contexte ne mentionne que ces deux blocs. Si d'autres blocs existent, ils ne sont pas indiqués dans les sources fournies.
+  note: « ils ne sont pas indiqués dans les sources »
+- id: 2026-10-02_23 q07
+  kind: incomplete
+  answer: |-
+    Oui, il est possible de payer les frais de scolarité en plusieurs fois. Plusieurs formations mentionnent explicitement des options de **règlement échelonné** en plus du règlement au comptant.
+
+    Par exemple :
+    - **BTS MEC** : Règlement échelonné disponible (Année 1 : 7 400 €, Année 2 : 7 700 €) [Source 3].
+    - **BTS ERA** : Règlement échelonné disponible (Année 1 : 7 400 €, Année 2 : 7 700 €) [Source 8].
+    - **BTS CIEL** : Règlement échelonné disponible (Année 1 : 4 950 €, Année 2 : 5 250 €) [Source 9].
+    - **Mastère Expert en Jumeaux numériques** : Règlement échelonné disponible (M1 : 9 400 €, M2 : 9 400 €) [Source 7].
+    - **Mastère Expert développement mobile & IoT** : Règlement échelonné disponible (M1 : 9 500 €, M2 : 9 500 €) [Source 10].
+
+    Pour les autres formations (Bachelor Informatique, Bachelor Développement IA & Data Engineering, Bachelor Audiovisuel, Bachelor Architecture d'intérieur), les pages mentionnent uniquement que les tarifs sont indiqués pour le statut étudiant, mais ne précisent pas explicitement les modalités de paiement. Cependant, la [Source 4] indique que des modalités de paiement existent pour toutes les formations, ce qui suggère que le règlement échelonné est probablement disponible pour l'ensemble des programmes.
+
+    **Conclusion** : Oui, le paiement en plusieurs fois est possible pour les formations où les tarifs échelonnés sont explicitement mentionnés. Pour les autres, il est probable que cette option existe, mais il faudrait vérifier auprès d'Ynov pour confirmation. [Sources 3, 4, 7, 8, 9, 10].
+  note: « ne précisent pas explicitement » dans une réponse longue
+- id: 2026-10-02_23 q10
+  kind: incomplete
+  answer: |-
+    D'après le contexte fourni, le module enseigné en **Mastère 2** du Mastère Expert en intelligence artificielle est :
+
+    - **Intelligence artificielle avancée** [Source 1].
+
+    Aucun autre module spécifique au Mastère 2 n'est mentionné dans les sources fournies.
+  note: « aucun autre module spécifique au mastère 2 n'est mentionné » (sept mots entre les deux)
+- id: 2026-10-02_26 q08
+  kind: incomplete
+  answer: |-
+    Les informations fournies dans le contexte mentionnent un bloc de compétences pour le titre RNCP Expert en cybersécurité :
+
+    - **RNCP40897BC01 - Élaborer la stratégie de cybersécurité d’une organisation** [Source 8, Source 10].
+
+    Cependant, le contexte ne liste pas l'intégralité des blocs de compétences de cette certification. Pour une réponse complète, il faudrait consulter une source plus exhaustive.
+  note: « le contexte ne liste pas l'intégralité »
+- id: 2026-10-02_27 q07
+  kind: incomplete
+  answer: |-
+    Oui, il est possible de payer les frais de scolarité en plusieurs fois pour toutes les formations Ynov. Les tarifs échelonnés sont proposés en plus des tarifs au comptant pour certaines formations comme le BTS MEC, le BTS ERA, le BTS CIEL, le Mastère Expert en Jumeaux numériques et le Mastère Expert développement mobile & IoT [Source 3, Source 8, Source 9, Source 7, Source 10].
+
+    Pour les autres formations (Bachelors), les pages mentionnent uniquement que les tarifs sont indiqués pour une inscription sous statut étudiant, sans préciser explicitement les modalités de paiement. Cependant, la règle commune à toutes les formations indique que des modalités de paiement échelonné existent [Source 4].
+  note: « sans préciser explicitement »
+- id: 2026-10-02_27 q08
+  kind: incomplete
+  answer: |-
+    D'après le contexte fourni, seul **un bloc de compétences** est explicitement mentionné pour le titre RNCP **Expert en cybersécurité (RNCP40897)** :
+
+    - **RNCP40897BC01 - Élaborer la stratégie de cybersécurité d’une organisation** [Source 8, Source 10].
+
+    Les autres sources ne citent pas d'autres blocs. Je ne peux donc pas confirmer l'existence d'autres blocs de compétences pour cette certification.
+  note: « je ne peux donc pas confirmer » n'est pas « je ne peux pas répondre »
+- id: 2026-10-02_34 q08
+  kind: incomplete
+  answer: |-
+    D'après le contexte fourni, le titre **RNCP40897 Expert en cybersécurité** est structuré en **4 blocs de compétences**, dont l'un est explicitement cité :
+    - **Bloc RNCP40897BC02** : *Piloter le cycle de conception, d’intégration et d’évaluation de solutions de sécurité du système d’information* [Source 3, Source 5].
+
+    Les autres blocs ne sont pas détaillés dans les extraits fournis. On sait seulement que **l’obtention de la certification nécessite obligatoirement la validation des 4 blocs** [Source 4].
+
+    Pour une liste complète des blocs, il faudrait consulter la fiche RNCP officielle.
+  note: « ne sont pas détaillés dans les extraits »
+- id: 2026-10-04_02 q07
+  kind: incomplete
+  answer: |-
+    Oui, le règlement échelonné est possible pour certaines formations sous statut étudiant. Voici les détails :
+
+    - **BTS MEC** (2 ans, 9 campus) :
+      - Année 1 : 7 400 €
+      - Année 2 : 7 700 €
+      [Source 3]
+
+    - **BTS ERA** (2 ans, campus de Strasbourg) :
+      - Année 1 : 7 400 €
+      - Année 2 : 7 700 €
+      [Source 8]
+
+    - **BTS CIEL option A** (2 ans, 9 campus) :
+      - Année 1 : 4 950 €
+      - Année 2 : 5 250 €
+      [Source 9]
+
+    - **Mastère Expert en Jumeaux numériques du bâtiment, de la ville et des territoires** (2 ans, 3 campus et en ligne) :
+      - Mastère 1 : 9 400 €
+      - Mastère 2 : 9 400 €
+      [Source 7]
+
+    - **Mastère Expert développement mobile & IoT** (2 ans, 9 campus et en ligne) :
+      - Mastère 1 : 9 500 €
+      - Mastère 2 : 9 500 €
+      [Source 10]
+
+    Pour les autres formations (Bachelors Informatique, Développement IA & Data Engineering, Création de contenus et audiovisuel, Architecture d'intérieur), le contexte ne précise pas de modalité de paiement en plusieurs fois. [Sources 1, 2, 5, 6]
+  note: le verdict de l'évaluation disait no_answer
+- id: 2026-10-04_02 q08
+  kind: incomplete
+  answer: |-
+    Les blocs de compétences du titre RNCP **Expert en cybersécurité** (RNCP40897) sont :
+
+    1. **RNCP40897BC01 - Élaborer la stratégie de cybersécurité d’une organisation**
+       *Objectif* : Identifier les obligations et opportunités d’amélioration en matière de sécurité du système d’information, avec une représentation détaillée du SI de l’organisation. [Source 8, Source 10]
+
+    2. **RNCP40897BC02 - Garantir une vision exhaustive du fonctionnement opérationnel de l’organisation**
+       *Objectif* : Assurer une couverture complète des aspects opérationnels liés à la cybersécurité. [Source 2]
+
+    *(Note : Le contexte ne mentionne pas d’autres blocs de compétences pour ce titre.)* [Source 5]
+  note: '« (Note : Le contexte ne mentionne pas …) »'
+- id: 2026-10-04_04 q08
+  kind: incomplete
+  answer: |-
+    Le contexte fourni ne mentionne explicitement que le bloc de compétence suivant du titre RNCP Expert en cybersécurité :
+
+    - RNCP40897BC01 - Élaborer la stratégie de cybersécurité d’une organisation, afin d’identifier les obligations et les opportunités d’amélioration en matière de sécurité du système d’information, et disposer d’une représentation détaillée du système d’information de l’organisation [Source 8, Source 10].
+
+    Aucun autre bloc de compétences n'est précisé dans le contexte.
+  note: « ne mentionne explicitement que » n'est pas un manque ; « Aucun autre bloc … n'est précisé »
+    en est un
+- id: 2026-10-04_05 q07
+  kind: incomplete
+  answer: Le contexte ne précise pas si le paiement en plusieurs fois est possible pour toutes les formations.
+    Il indique toutefois un « règlement échelonné » pour certaines, par exemple le BTS CIEL et le BTS
+    MEC [Sources 3, 9].
+  note: commence par un manque mais donne ensuite une information (« Il indique toutefois ») ; le verdict
+    de l'évaluation disait no_answer
+- id: 2026-10-04_05 q08
+  kind: incomplete
+  answer: 'Le contexte fourni mentionne un seul bloc de compétences : **RNCP40897BC01 — Élaborer la stratégie
+    de cybersécurité d’une organisation**. Il ne contient pas la liste complète des blocs du titre. [Source
+    8]'
+  note: « Il ne contient pas la liste complète »
+- id: 2026-10-05_03 q15
+  kind: incomplete
+  answer: |-
+    Le taux de réussite au titre **Expert en développement logiciel** (Mastère Expert développement full stack) pour l’année académique 2024/2025 est de **76%** (310 certifiés sur 408 candidats présentés) [Source 5].
+
+    Pour les années précédentes (2020-2022), les taux de réussite ne sont pas explicitement mentionnés dans les sources, mais les taux d'insertion sont disponibles [Source 6].
+  note: 'réponse juste, avec une remarque sur des années non données : d''où une rubrique à part pour
+    les réponses incomplètes'
+- id: 2026-10-05_03 q28
+  kind: incomplete
+  answer: |-
+    En Bachelor 1 Cybersécurité, les modules enseignés incluent :
+    - Les fondamentaux de la cybersécurité, avec l'apprentissage de la construction, de l'administration et de la protection des serveurs, des réseaux et des applications, en local comme dans le cloud.
+    - Une **spécialité Cybersécurité de 100h** [Source 1].
+
+    *Aucun autre détail sur les modules spécifiques n'est fourni dans le contexte.*
+  note: « aucun autre détail … n'est fourni »
+- id: 2026-10-09_02 q01
+  kind: null
+  answer: |-
+    Pour l’année **2027/2028**, sous **statut étudiant** :
+
+    - **Règlement au comptant** : 9 000 € en Mastère 1 et 9 000 € en Mastère 2.
+    - **Règlement échelonné** : 9 500 € en Mastère 1 et 9 500 € en Mastère 2.
+
+    Le statut étudiant est disponible sur tous les campus sauf Ynov Connect. [Source 2]
+- id: 2026-10-04_02 q01
+  kind: null
+  answer: |-
+    Le Mastère Expert en intelligence artificielle coûte :
+
+    - **En règlement au comptant** :
+      - Mastère 1 : 9 000 €
+      - Mastère 2 : 9 000 €
+      *(statut étudiant, année 2027/2028)* [Source 2]
+
+    - **En règlement échelonné** :
+      - Mastère 1 : 9 500 €
+      - Mastère 2 : 9 500 €
+      *(statut étudiant, année 2027/2028)* [Source 2]
+
+    *Le statut étudiant n'est pas disponible sur Ynov Connect.* [Source 2]
+  note: « le statut étudiant n'est pas disponible sur Ynov Connect »
+- id: 2026-10-02_26 q04
+  kind: null
+  answer: Non, le Mastère Expert en cybersécurité - Pentester se fait **100 % en ligne** et n'est proposé
+    sur **aucun campus** [Source 1, Source 5].
+  note: « n'est proposé sur aucun campus »
+- id: 2026-10-04_05 q03
+  kind: null
+  answer: Non. Le Mastère Game Programmer est proposé **100 % en ligne, sans campus**. Lyon est mentionné
+    pour certaines voies d’accès, mais cela ne signifie pas que la formation y est proposée. [Source 1]
+  note: « cela ne signifie pas que la formation y est proposée »
+- id: 2026-10-06_07 q12
+  kind: null
+  answer: 'VAE (6 à 12 mois, lieux non précisés) — Coût : les frais de jury du dossier de recevabilité
+    sont de **500 € TTC** et les frais de jury VAE de **2 000 € TTC**. Les tarifs sont calculés avec une
+    TVA de 20 %. [Source 1] [Source 4]'
+  note: '« lieux non précisés » recopié de l''en-tête du passage : pas un manque de la réponse'
+- id: 2026-10-06_06 q31
+  kind: null
+  answer: |-
+    Non, les Bachelors Ynov ne passent **pas par Parcoursup**. Ils sont accessibles directement via une candidature hors Parcoursup, avec une réponse rapide et sans obligation de moyenne. [Source 1]
+
+    *Seuls les BTS Ynov (CIEL Option A, SIO SLAM, SIO SISR) sont proposés via Parcoursup pour la rentrée 2026-2027.* [Source 1]
+  note: « les bachelors Ynov ne passent pas par Parcoursup »
+- id: 2026-10-09_01 q04
+  kind: null
+  answer: Non. Le Mastère Expert en cybersécurité - Pentester est proposé à 100 % en ligne, sans campus.
+    Une passerelle vers le format présentiel peut toutefois être étudiée ; elle n’est pas présentée comme
+    automatique. [Sources 4, 8]
+  note: « elle n'est pas présentée comme automatique »
+- id: 2026-10-06_06 q07
+  kind: null
+  answer: |-
+    Oui, le paiement échelonné est possible pour toutes les formations Ynov. Il correspond à un paiement en **4 échéances** (sans remise, contrairement au paiement comptant qui offre une réduction de 500 €).
+    [Source 4]
+  note: « sans remise »
+- id: 2026-10-02_23 q11
+  kind: null
+  answer: |-
+    D'après les sources fournies, l'entretien d'admission chez Ynov est décrit comme un **moment d'échange mutuel chaleureux et professionnel**. Il peut se dérouler **en présentiel sur le campus** ou **à distance**.
+
+    Lors de ce rendez-vous, un accueil est organisé et une visite du campus, des salles est proposée. Il est également possible de croiser des étudiants actuels pour échanger rapidement avec eux [Source 9].
+
+    De plus, une fois le dossier déposé, si la candidature est retenue, l'étudiant est contacté pour cet entretien avant de recevoir une décision d'admission définitive [Source 5].
+
+    [Sources : 5, 9]
+  note: « D'après les sources fournies »
+- id: 2026-10-02_23 q14
+  kind: null
+  answer: |-
+    D'après le contexte fourni, les métiers accessibles après le Mastère Data Engineer sont :
+
+    - Data Engineer
+    - Analytics Engineer
+    - Ingénieur plateforme data
+    - Ingénieur DataOps
+    - Ingénieur cloud data
+    - Lead Data Engineer (avec l'expérience)
+    - Architecte data (avec l'expérience)
+    - Head of Data (avec l'expérience)
+
+    [Source 2]
+  note: '« D''après le contexte fourni, les métiers … sont : »'
+- id: 2026-10-02_26 q16
+  kind: null
+  answer: |-
+    Les BTS proposés par Ynov Campus accessibles via Parcoursup sont :
+
+    - **BTS SIO SISR** (2 ans, 12 campus) [Source 1, 3, 5]
+    - **BTS CIEL option A - Informatique et réseaux** (2 ans, 9 campus) [Source 2]
+    - **BTS Communication** (2 ans, 12 campus) [Source 4, 7]
+    - **BTS NDRC Négociation et Digitalisation de la Relation Client** (2 ans, 8 campus) [Source 6, 8, 10]
+    - **BTS SIO SLAM** (2 ans, 12 campus) [Source 9]
+
+    *Note* : Tous les BTS Ynov sont post-bac et donc éligibles à Parcoursup, sauf indication contraire non mentionnée dans le contexte.
+  note: 'limite connue : réponse fausse (« tous les BTS … éligibles à Parcoursup ») avec seulement « sauf
+    indication contraire non mentionnée » ; la revue et les pouces la repèrent, pas ce détecteur'
