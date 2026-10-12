@@ -1,5 +1,6 @@
 """Tests for the admin pages that review the answer journal (no LLM)."""
 
+import json
 import secrets
 import time
 from datetime import UTC, datetime, timedelta
@@ -14,11 +15,14 @@ from starlette.responses import PlainTextResponse
 from starlette.routing import Route
 
 from admin import auth, pages
+from admin import dashboard as admin_dashboard
 from admin.routes import mount_admin
 from app import main
 from app.core.config import settings
 from app.core.security import add_security_middleware, limiter
 from chat.db import db, init_db
+from eval import dashboard as eval_dashboard
+from eval import results as eval_results
 from journal import gaps, report, review, stats, store, themes
 
 # Generated for each run: no password-like literal in the repository
@@ -1246,3 +1250,130 @@ class TestReportPage:
         for jargon in ("seuil", "score", "chunk", "LLM"):
             body = page[page.index("<h2>En bref</h2>") :]
             assert jargon not in body, jargon
+
+
+class TestDashboardPage:
+    """/admin/tableau-de-bord (#16): the measured quality, from fictitious run files."""
+
+    @staticmethod
+    def write_run(folder: Path, run_id: str, environment: str = "local", **extra) -> None:
+        lines = extra.pop(
+            "results",
+            [{"question_id": "q01", "question": "Combien ?", "verdict": "correct", "passed": True}],
+        )
+        run = {
+            "schema_version": eval_results.SCHEMA_VERSION,
+            "run_id": run_id,
+            "date": run_id[:10],
+            "kind": "e2e",
+            "environment": environment,
+            "question_set": "v13",
+            "milestone": True,
+            "label": run_id[14:],
+            "config": {},
+            "summary": {},
+            "results": lines,
+            **extra,
+        }
+        (folder / f"{run_id}.json").write_text(json.dumps(run), encoding="utf-8")
+
+    @pytest.fixture
+    def runs_dir(self, tmp_path, monkeypatch) -> Path:
+        folder = tmp_path / "results"
+        folder.mkdir()
+        monkeypatch.setattr(eval_results, "RESULTS_DIR", folder)
+        return folder
+
+    def test_redirects_to_the_login_without_a_cookie(self, client, runs_dir):
+        resp = client.get("/admin/tableau-de-bord")
+        assert resp.status_code == 303 and resp.headers["location"] == "/admin/login"
+
+    def test_sections_without_script(self, signed_in, runs_dir):
+        self.write_run(runs_dir, "2026-10-02_01_local", config={"llm_model": "model-a"})
+        self.write_run(runs_dir, "2026-10-03_01_preprod", "preprod")
+        resp = signed_in.get("/admin/tableau-de-bord")
+        assert resp.status_code == 200
+        assert "script-src" not in resp.headers["content-security-policy"]
+        page = resp.text
+        assert "<script" not in page
+        for title in (
+            "En bref",
+            "Qualité de bout en bout dans le temps",
+            "Matrice question × passage",
+            "Cas limites",
+            "Fiabilité de la vérification automatique",
+        ):
+            assert f"<h2>{title}</h2>" in page, title
+        assert 'role="img"' in page
+        assert "model-a" in page
+        assert '<a href="/admin/tableau-de-bord">Tableau de bord</a>' in page  # navigation
+
+    def test_texts_of_the_run_files_are_escaped(self, signed_in, runs_dir):
+        self.write_run(
+            runs_dir,
+            "2026-10-02_01_evil",
+            label="<script>alert(1)</script>",
+            config={"llm_model": "<b>model</b>"},
+            results=[
+                {
+                    "question_id": "q01",
+                    "question": "Combien ?",
+                    "verdict": "partial",
+                    "passed": False,
+                    "review_note": "<img src=x onerror=alert(1)>",
+                }
+            ],
+        )
+        page = signed_in.get("/admin/tableau-de-bord?passages=tous").text
+        assert "<script>alert" not in page and "<img src=x" not in page and "<b>model" not in page
+        assert "&lt;script&gt;alert(1)&lt;/script&gt;" in page
+        assert "partielle — &lt;img src=x onerror=alert(1)&gt;" in page
+        assert "&lt;b&gt;model&lt;/b&gt;" in page
+
+    def test_invalid_filters_fall_back_to_their_default(self, signed_in, runs_dir):
+        self.write_run(runs_dir, "2026-10-02_01_local")
+        resp = signed_in.get("/admin/tableau-de-bord?environnement=<x>&matrice=nope&passages=0")
+        assert resp.status_code == 200
+        page = resp.text
+        assert '<option value="" selected>Tous</option>' in page
+        assert '<option value="e2e" selected>Bout en bout</option>' in page
+        assert '<option value="etapes" selected>Étapes clés</option>' in page
+
+    def test_the_environment_filters_the_matrix(self, signed_in, runs_dir):
+        self.write_run(runs_dir, "2026-10-02_01_local")
+        self.write_run(runs_dir, "2026-10-03_01_preprod", "preprod")
+        page = signed_in.get("/admin/tableau-de-bord?environnement=preprod").text
+        matrix = page[page.index("<h2>Matrice question × passage</h2>") :]
+        matrix = matrix[: matrix.index("<h2>Cas limites</h2>")]
+        assert "<code>10-03_01</code> (préprod)" in matrix
+        assert "10-02_01" not in matrix
+        assert '<option value="preprod" selected>Préprod</option>' in page
+
+    def test_unreadable_files_are_listed(self, signed_in, runs_dir):
+        self.write_run(runs_dir, "2026-10-02_01_local")
+        (runs_dir / "2026-10-02_02_broken.json").write_text("{", encoding="utf-8")
+        page = signed_in.get("/admin/tableau-de-bord").text
+        assert "<h2>Fichiers écartés</h2>" in page
+        assert "2026-10-02_02_broken.json : JSON illisible" in page
+
+    def test_no_run_at_all(self, signed_in, runs_dir):
+        resp = signed_in.get("/admin/tableau-de-bord")
+        assert resp.status_code == 200
+        assert "Aucun passage d'évaluation lisible." in resp.text
+
+    def test_the_summary_links_to_the_dashboard(self, signed_in):
+        page = signed_in.get("/admin/synthese").text
+        assert 'href="/admin/tableau-de-bord"' in page
+
+    def test_room_for_the_indicators_of_the_journal(self, runs_dir):
+        """The usage of the journal (#16, PR 3) comes in as HTML: a card and a section."""
+        self.write_run(runs_dir, "2026-10-02_01_local")
+        page = admin_dashboard.dashboard_page(
+            eval_dashboard.load(),
+            admin_dashboard.parse_filters(),
+            usage_brief='<div class="card">USAGE-CARD</div>',
+            usage="<h2>Usage réel</h2>",
+        )
+        brief = page[page.index("<h2>En bref</h2>") : page.index('<h2 class="sr">Filtres</h2>')]
+        assert "USAGE-CARD" in brief
+        assert page.index("Fiabilité de la vérification automatique") < page.index("Usage réel")

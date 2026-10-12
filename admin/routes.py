@@ -1,6 +1,6 @@
 """Admin routes: /admin (list), /admin/reponses/{id} (review), /admin/synthese (summary),
 /admin/sans-reponse (questions left without an answer, by theme), /admin/rapport (their
-monthly report), /admin/login.
+monthly report), /admin/tableau-de-bord (the measured quality over time), /admin/login.
 
 Every response goes through `_html` or `_redirect`, which add the security headers; every
 handler but the login starts with `_guard`.
@@ -13,9 +13,10 @@ from urllib.parse import urlencode
 from fastapi import APIRouter, Depends, FastAPI, Form, Request
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
 
-from admin import auth, pages
+from admin import auth, dashboard, pages
 from app.core.config import settings
 from app.core.security import rate_limit_admin_login
+from eval import dashboard as figures
 from graph.nodes.grade import GRADE_THRESHOLD
 from journal import report, review, stats, themes
 
@@ -172,6 +173,18 @@ def summary(request: Request, periode: str = "") -> Response:
     if (denied := _guard(request)) is not None:
         return denied
     return _html(pages.stats_page(stats.summary(periode), GRADE_THRESHOLD))
+
+
+@router.get("/tableau-de-bord")
+def quality_dashboard(
+    request: Request, environnement: str = "", matrice: str = "", passages: str = ""
+) -> Response:
+    """The evolution of the measured quality (#16), from the runs of eval/results/ shipped
+    with the code. An unknown filter falls back to its default."""
+    if (denied := _guard(request)) is not None:
+        return denied
+    filters = dashboard.parse_filters(environnement, matrice, passages)
+    return _html(dashboard.dashboard_page(figures.load(), filters))
 
 
 def _entry_page(

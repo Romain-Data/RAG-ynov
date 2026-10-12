@@ -44,38 +44,38 @@
 |  | `2026-10-02_26_local-apres-prompt-seuil` | e2e | local | v5 | chunks 300, k=10 | 12/16 ✅ · 3 🟡 · 1 ❌ · hors périmètre 10/10 |
 | ★ | `2026-10-02_27_local-apres-prompt-v2` | e2e | local | v5 | chunks 300, k=10 | 12/16 ✅ · 3 🟡 · 0 ❌ · hors périmètre 10/10 |
 | ★ | `2026-10-02_28_calibration-seuil-0-45` | retrieval | local | v5 | chunks 300, k=10, cand=40, plafond=2 | 14/16 · hors périmètre 8/8 ⛔ |
-| ★ | `2026-10-02_29_prod-apres-prompt-seuil` | e2e | prod | v6 | chunks ?, k=? | 12/16 ✅ · 3 🟡 · 0 ❌ · hors périmètre 10/10 |
+| ★ | `2026-10-02_29_prod-apres-prompt-seuil` | e2e | prod | v6 | modèle mistral-medium-3-5 | 12/16 ✅ · 3 🟡 · 0 ❌ · hors périmètre 10/10 |
 | ★ | `2026-10-02_30_modele-minilm-300` | retrieval | local | v6 | chunks 300, k=10, cand=40, plafond=2 | 14/16 · hors périmètre 8/8 ⛔ |
 | ★ | `2026-10-02_31_modele-mpnet-300` | retrieval | local | v6 | chunks 300, k=10, cand=40, plafond=2 | 12/16 · hors périmètre 7/8 ⛔ |
 | ★ | `2026-10-02_32_modele-e5-large-300` | retrieval | local | v6 | chunks 300, k=10, cand=40, plafond=2 | 15/16 · hors périmètre 0/8 ⛔ |
 | ★ | `2026-10-02_33_modele-e5-large-500` | retrieval | local | v6 | chunks 500, k=10, cand=40, plafond=2 | 15/16 · hors périmètre 0/8 ⛔ |
 | ★ | `2026-10-02_34_local-e5-large-300` | e2e | local | v7 | chunks 300, k=10 | 12/16 ✅ · 3 🟡 · 1 ❌ · hors périmètre 10/10 |
-| ★ | `2026-10-02_35_prod-apres-ec14-ec15` | e2e | prod | v7 | chunks ?, k=? | 12/16 ✅ · 3 🟡 · 0 ❌ · hors périmètre 10/10 |
+| ★ | `2026-10-02_35_prod-apres-ec14-ec15` | e2e | prod | v7 | modèle mistral-medium-3-5 | 12/16 ✅ · 3 🟡 · 0 ❌ · hors périmètre 10/10 |
 | ★ | `2026-10-02_36_modele-e5-large-300-corpus-corrige` | retrieval | local | v7 | chunks 300, k=10, cand=40, plafond=2 | 15/16 · hors périmètre 0/8 ⛔ |
 | ★ | `2026-10-02_37_modele-minilm-300-corpus-corrige` | retrieval | local | v7 | chunks 300, k=10, cand=40, plafond=2 | 14/16 · hors périmètre 8/8 ⛔ |
 | ★ | `2026-10-02_38_local-e5-large-300-corpus-corrige` | e2e | local | v7 | chunks 300, k=10 | 13/16 ✅ · 3 🟡 · 0 ❌ · hors périmètre 10/10 |
 |  | `2026-10-03_01_local-avant-graphe-conversation` | e2e | local | v7 | chunks 300, k=10 | 11/16 ✅ · 4 🟡 · 0 ❌ · hors périmètre 10/10 |
 | ★ | `2026-10-03_02_local-apres-graphe-conversation` | e2e | local | v7 | chunks 300, k=10 | 11/16 ✅ · 4 🟡 · 0 ❌ · hors périmètre 10/10 |
 | ★ | `2026-10-03_04_local-conversations-jeu-c2` | conversation | local | c2 | chunks 300, k=10 | 14/17 ✅ · 0 🟡 · 0 ❌ · hors périmètre 1/1 |
-|  | `2026-10-04_02_preprod-mistral-small-2603` | e2e | preprod | v7 | chunks ?, k=? | 11/16 ✅ · 2 🟡 · 1 ❌ · hors périmètre 10/10 |
-|  | `2026-10-04_03_preprod-mistral-medium-3-1` | e2e | preprod | v7 | chunks ?, k=? | 11/16 ✅ · 2 🟡 · 2 ❌ · hors périmètre 10/10 |
-|  | `2026-10-04_04_preprod-gpt-4-1-mini` | e2e | preprod | v7 | chunks ?, k=? | 11/16 ✅ · 3 🟡 · 1 ❌ · hors périmètre 10/10 |
-| ★ | `2026-10-04_05_preprod-mammouth-recommended` | e2e | preprod | v7 | chunks ?, k=? | 11/16 ✅ · 3 🟡 · 0 ❌ · hors périmètre 10/10 |
+|  | `2026-10-04_02_preprod-mistral-small-2603` | e2e | preprod | v7 | modèle mistral-small-2603 | 11/16 ✅ · 2 🟡 · 1 ❌ · hors périmètre 10/10 |
+|  | `2026-10-04_03_preprod-mistral-medium-3-1` | e2e | preprod | v7 | modèle mistral-medium-3-1 | 11/16 ✅ · 2 🟡 · 2 ❌ · hors périmètre 10/10 |
+|  | `2026-10-04_04_preprod-gpt-4-1-mini` | e2e | preprod | v7 | modèle gpt-4-1-mini | 11/16 ✅ · 3 🟡 · 1 ❌ · hors périmètre 10/10 |
+| ★ | `2026-10-04_05_preprod-mammouth-recommended` | e2e | preprod | v7 | modèle mammouth-recommended | 11/16 ✅ · 3 🟡 · 0 ❌ · hors périmètre 10/10 |
 | ★ | `2026-10-05_01_contexte-reference` | retrieval | local | v8 | chunks 300, k=10, cand=40, plafond=2 | 18/22 · hors périmètre 8/8 ⛔ |
 | ★ | `2026-10-05_02_section-entiere` | retrieval | local | v8 | chunks 300, k=10, cand=40, plafond=2 | 18/22 · hors périmètre 8/8 ⛔ |
-| ★ | `2026-10-05_03_section-entiere` | e2e | local | v8 | chunks 300, k=10 | 15/22 ✅ · 4 🟡 · 1 ❌ · hors périmètre 10/10 |
+| ★ | `2026-10-05_03_section-entiere` | e2e | local | v8 | chunks 300, k=10 | 15/22 ✅ · 5 🟡 · 0 ❌ · hors périmètre 10/10 |
 |  | `2026-10-05_04_programme-et-blocs` | retrieval | local | v8 | chunks 300, k=10, cand=40, plafond=2 | 18/22 · hors périmètre 7/8 ⛔ |
 | ★ | `2026-10-05_05_programme-et-blocs-seuil-0-47` | retrieval | local | v8 | chunks 300, k=10, cand=40, plafond=2 | 18/22 · hors périmètre 8/8 ⛔ |
-| ★ | `2026-10-05_06_programme-et-blocs` | e2e | local | v9 | chunks 300, k=10 | 18/22 ✅ · 2 🟡 · 0 ❌ · hors périmètre 10/10 |
+| ★ | `2026-10-05_06_programme-et-blocs` | e2e | local | v9 | chunks 300, k=10 | 19/22 ✅ · 1 🟡 · 0 ❌ · hors périmètre 10/10 |
 | ★ | `2026-10-06_01_hybride-bm25` | retrieval | local | v9 | chunks 300, k=10, cand=40, plafond=2 | 22/22 · hors périmètre 8/8 ⛔ |
-| ★ | `2026-10-06_02_hybride-bm25` | e2e | local | v9 | chunks 300, k=10 | 20/22 ✅ · 1 🟡 · 1 ❌ · hors périmètre 10/10 |
+| ★ | `2026-10-06_02_hybride-bm25` | e2e | local | v9 | chunks 300, k=10 | 21/22 ✅ · 1 🟡 · 0 ❌ · hors périmètre 10/10 |
 |  | `2026-10-06_03_hybride-bm25-c02` | conversation | local | c2 | chunks 300, k=10 | 3/3 ✅ · 0 🟡 · 0 ❌ |
 |  | `2026-10-06_04_smalltalk` | conversation | local | c2 | chunks 300, k=10 | 3/3 ✅ · 0 🟡 · 0 ❌ |
 | ★ | `2026-10-06_05_conversations-lot5` | conversation | local | c2 | chunks 300, k=10 | 17/17 ✅ · 0 🟡 · 0 ❌ · hors périmètre 1/1 |
 | ★ | `2026-10-06_06_regle-4` | e2e | local | v10 | chunks 300, k=10 | 22/22 ✅ · 0 🟡 · 0 ❌ · hors périmètre 10/10 |
-| ★ | `2026-10-06_07_preprod-lot7` | e2e | preprod | v10 | chunks ?, k=? | 22/22 ✅ · 0 🟡 · 0 ❌ · hors périmètre 10/10 |
-|  | `2026-10-09_01_liste-des-campus-q33` | e2e | preprod | v12 | chunks ?, k=? | 23/23 ✅ · 0 🟡 · 0 ❌ · hors périmètre 10/10 |
-|  | `2026-10-09_02_liste-des-campus-formulations-courtes-q34` | e2e | preprod | v13 | chunks ?, k=? | 24/24 ✅ · 0 🟡 · 0 ❌ · hors périmètre 10/10 |
+| ★ | `2026-10-06_07_preprod-lot7` | e2e | preprod | v10 | modèle mammouth-recommended, collection ynov_rag_v2 | 22/22 ✅ · 0 🟡 · 0 ❌ · hors périmètre 10/10 |
+|  | `2026-10-09_01_liste-des-campus-q33` | e2e | preprod | v12 | modèle mammouth-recommended | 23/23 ✅ · 0 🟡 · 0 ❌ · hors périmètre 10/10 |
+|  | `2026-10-09_02_liste-des-campus-formulations-courtes-q34` | e2e | preprod | v13 | modèle mammouth-recommended | 24/24 ✅ · 0 🟡 · 0 ❌ · hors périmètre 10/10 |
 
 ## Matrice par question (étapes clés)
 
@@ -99,15 +99,15 @@ Recherche : ✅ rang de la bonne section · ✅ ctx = fait présent dans le cont
 | **q14** Quels métiers peut-on exercer après le Mastère Data engineer | · | ✅ 1 | ✅ 1 | ❌ | ✅ 2 | ✅ 2 | ✅ | ✅ | ✅ | ✅ 2 | ✅ | ✅ 2 | ✅ 3 | ✅ 1 | ✅ 2 | ✅ | ✅ | ✅ 1 | ✅ 2 | ✅ | ✅ | ✅ | ✅ 2 | ✅ 2 | ✅ | ✅ 2 | ✅ | ✅ 2 | ✅ | ✅ | ✅ |
 | **q15** Quel est le taux de réussite du titre Expert en développemen | · | ✅ 1 | ✅ 1 | ✅ 3 | ❌ | ✅ 6 | ✅ | ✅ | ✅ | ✅ 6 | ✅ | ✅ 6 | ❌ | ✅ 2 | ✅ 1 | ❌ | ✅ | ✅ 1 | ✅ 6 | ✅ | ✅ | ✅ | ✅ 6 | ✅ 6 | ✅ | ✅ 6 | ✅ | ✅ 6 | ✅ | ✅ | ✅ |
 | **q16** Quels BTS sont accessibles via Parcoursup ? | · | ❌ | ❌ | ❌ | ❌ | ❌ | ∅ | ∅ | ∅ | ❌ | ∅ | ❌ | ❌ | ✅ 1 | ✅ 1 | ✅ | ∅ | ✅ 1 | ❌ | ✅ | ∅ | ∅ | ❌ | ❌ | ∅ | ❌ | ∅ | ✅ 9 | ✅ | ✅ | ✅ |
-| **q17** Quelle est la capitale de l'Australie ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ None ⛔ | ✅ | ✅ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ | ✅ |
-| **q18** Donne-moi une recette de pâte à crêpes. | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ None ⛔ | ✅ | ✅ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ | ✅ |
+| **q17** Quelle est la capitale de l'Australie ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ ⛔ | ✅ | ✅ ⛔ | ✅ ⛔ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ ⛔ | ✅ | ✅ | ✅ | ✅ ⛔ | ✅ ⛔ | ✅ | ✅ ⛔ | ✅ | ✅ ⛔ | ✅ | ✅ | ✅ |
+| **q18** Donne-moi une recette de pâte à crêpes. | · | · | · | · | · | · | · | ✅ | ✅ | ✅ ⛔ | ✅ | ✅ ⛔ | ✅ ⛔ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ ⛔ | ✅ | ✅ | ✅ | ✅ ⛔ | ✅ ⛔ | ✅ | ✅ ⛔ | ✅ | ✅ ⛔ | ✅ | ✅ | ✅ |
 | **q19** Quels sont les frais de scolarité de HEC Paris ? | · | · | · | · | · | · | · | ✅ | ✅ | · | ✅ | · | · | · | · | ✅ | ✅ | · | · | ✅ | ✅ | ✅ | · | · | ✅ | · | ✅ | · | ✅ | ✅ | ✅ |
-| **q20** Quel temps fera-t-il demain à Lyon ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ None ⛔ | ✅ | ✅ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ | ✅ |
-| **q21** Comment réparer une fuite d'eau sous un évier ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ None ⛔ | ✅ | ✅ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ | ✅ |
-| **q22** Qui a gagné la Coupe du monde de football 2018 ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ None ⛔ | ✅ | ✅ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ | ✅ |
-| **q23** Quel est le meilleur langage de programmation pour débuter ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ None ⛔ | ✅ | ✅ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ | ✅ |
-| **q24** Peux-tu m'écrire un poème sur l'automne ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ None ⛔ | ✅ | ✅ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ | ✅ |
-| **q25** Combien coûte un abonnement Netflix ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ None ⛔ | ✅ | ✅ | ✅ | ✅ None ⛔ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ None ⛔ | ✅ | ✅ | ✅ |
+| **q20** Quel temps fera-t-il demain à Lyon ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ ⛔ | ✅ | ✅ ⛔ | ✅ ⛔ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ ⛔ | ✅ | ✅ | ✅ | ✅ ⛔ | ✅ ⛔ | ✅ | ✅ ⛔ | ✅ | ✅ ⛔ | ✅ | ✅ | ✅ |
+| **q21** Comment réparer une fuite d'eau sous un évier ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ ⛔ | ✅ | ✅ ⛔ | ✅ ⛔ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ ⛔ | ✅ | ✅ | ✅ | ✅ ⛔ | ✅ ⛔ | ✅ | ✅ ⛔ | ✅ | ✅ ⛔ | ✅ | ✅ | ✅ |
+| **q22** Qui a gagné la Coupe du monde de football 2018 ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ ⛔ | ✅ | ✅ ⛔ | ✅ ⛔ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ ⛔ | ✅ | ✅ | ✅ | ✅ ⛔ | ✅ ⛔ | ✅ | ✅ ⛔ | ✅ | ✅ ⛔ | ✅ | ✅ | ✅ |
+| **q23** Quel est le meilleur langage de programmation pour débuter ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ ⛔ | ✅ | ✅ ⛔ | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ ⛔ | ✅ | ✅ | ✅ | ✅ ⛔ | ✅ ⛔ | ✅ | ✅ ⛔ | ✅ | ✅ ⛔ | ✅ | ✅ | ✅ |
+| **q24** Peux-tu m'écrire un poème sur l'automne ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ ⛔ | ✅ | ✅ ⛔ | ✅ ⛔ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ ⛔ | ✅ | ✅ | ✅ | ✅ ⛔ | ✅ ⛔ | ✅ | ✅ ⛔ | ✅ | ✅ ⛔ | ✅ | ✅ | ✅ |
+| **q25** Combien coûte un abonnement Netflix ? | · | · | · | · | · | · | · | ✅ | ✅ | ✅ ⛔ | ✅ | ✅ ⛔ | ✅ ⛔ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ ⛔ | ✅ | ✅ | ✅ | ✅ ⛔ | ✅ ⛔ | ✅ | ✅ ⛔ | ✅ | ✅ ⛔ | ✅ | ✅ | ✅ |
 | **q26** Quelles sont les conditions d'admission à Polytechnique ? | · | · | · | · | · | · | · | ✅ | ✅ | · | ✅ | · | · | · | · | ✅ | ✅ | · | · | ✅ | ✅ | ✅ | · | · | ✅ | · | ✅ | · | ✅ | ✅ | ✅ |
 | **q27** Quels sont les blocs de compétences du titre RNCP Expert en  | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | ❌ 3 (2/4) | ❌ 3 (2/4) | 🟡 | ❌ 4 (2/4) | ✅ | ✅ 1 | ✅ | ✅ | ✅ |
 | **q28** Quels modules sont enseignés en Bachelor 1 Cybersécurité ? | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | ✅ 1 | ✅ 1 | 🟡 | ✅ 1 | ✅ | ✅ 1 | ✅ | ✅ | ✅ |
