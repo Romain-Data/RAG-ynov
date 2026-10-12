@@ -128,6 +128,18 @@ crossed with the reviews, search scores per review next to the threshold, models
 errors) over all of it or the last 7 or 30 days. Login is a form with a signed 8-hour cookie, not HTTP
 Basic (the preprod already has one in front of the whole site).
 
+The questions left without an answer (#20, `journal/gaps.py`) are worked out when the journal is
+read, never stored, so that a better rule applies to the older entries too. Each entry gets at
+most one kind: a refusal at the threshold (`refus`), a refusal of the LLM for a question outside
+Ynov (`hors_ynov`, rule 5 of the prompt), an LLM that says it cannot answer from the context
+(`aveu`: "Je ne peux pas répondre…", or nothing but "Le contexte ne précise pas…"), an answer
+that also says part of it is missing (`incomplete`), or any other answer rated "Pas utile"
+(`pas_utile`); greetings and errors have none. The wordings come from the answers saved in
+`eval/results/` (`tests/fixtures/gap_answers.yaml`, labelled by hand). `gap_kind` is also an SQL
+function on every connection to the chat database: the list of `/admin` has a "Sans réponse"
+filter (any kind, no answer at all, or one kind), the kind shows in the list and on the detail
+page, and `/admin/synthese` counts each kind out of the questions that went to the search.
+
 ## Roadmap
 
 The project plan lives in [ROADMAP.md](ROADMAP.md), each item tracked in a GitHub issue labelled `roadmap`.
@@ -141,7 +153,7 @@ rag-ynov/
 │   ├── core/               # Configuration, logging, rate limits
 │   └── schemas/            # Pydantic models
 ├── chat/                   # Chat interface (Chainlit), accounts, feedback guard, SQLite schema, backups
-├── journal/                # Journal of the answers: writing, feedback, purge, review queries, summary
+├── journal/                # Journal of the answers: writing, feedback, purge, review queries, summary, questions without an answer
 ├── admin/                  # /admin pages that review the journal
 ├── eval/                   # Question sets, retrieval and end-to-end evaluation
 ├── ingestion/              # Ingestion pipeline (fetch → load → chunk → embed → index)
