@@ -118,8 +118,8 @@
           "yourFeedback": "Facultatif : ce qui manquait ou ce qui était faux…"
         },
         "status": {
-          "updating": "Mise à jour",
-          "updated": "Commentaire mis à jour"
+          "updating": "Enregistrement de l'avis…",
+          "updated": "Avis enregistré"
         }
       }
     },

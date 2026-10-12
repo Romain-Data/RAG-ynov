@@ -18,6 +18,12 @@ logger = logging.getLogger(__name__)
 
 PAGE_SIZE = 50
 REVIEW_LABELS = ("bonne", "partielle", "fausse", "hors_sujet")
+# The users' thumbs (#19). Only the chat has them: "sans" leaves out the API, never rated.
+FEEDBACK_FILTERS = {
+    "positif": "feedback = 1",
+    "negatif": "feedback = 0",
+    "sans": "feedback IS NULL AND channel = 'chat'",
+}
 MAX_NOTE = 1000
 QUESTIONS_FILE = Path(__file__).resolve().parent.parent / "eval" / "questions.yaml"
 _QUESTION_ID = re.compile(r"^q(\d+)$")
@@ -35,11 +41,13 @@ def list_entries(
     route: str | None = None,
     channel: str | None = None,
     text: str | None = None,
+    feedback: str | None = None,
     page: int = 1,
 ) -> tuple[list[dict], int]:
     """One page (PAGE_SIZE, newest first) of the entries that match the filters, and how many
     match in all. `review` is "unreviewed" or one of REVIEW_LABELS; an unknown value matches
-    nothing rather than everything."""
+    nothing rather than everything. `feedback` is one of FEEDBACK_FILTERS; any other value
+    filters nothing."""
     where: list[str] = []
     params: dict[str, object] = {}
     if review == "unreviewed":
@@ -47,6 +55,8 @@ def list_entries(
     elif review:
         where.append("review_label = :review")
         params["review"] = review
+    if feedback in FEEDBACK_FILTERS:
+        where.append(FEEDBACK_FILTERS[feedback])
     if route:
         where.append("route = :route")
         params["route"] = route
@@ -67,10 +77,21 @@ def list_entries(
         total = conn.execute(f"SELECT COUNT(*) FROM answer_log {clause}", params).fetchone()[0]
         rows = conn.execute(
             "SELECT id, created_at, channel, question, route, top_score, llm_model, "
-            f"review_label FROM answer_log {clause} ORDER BY id DESC LIMIT :limit OFFSET :offset",
+            f"review_label, feedback FROM answer_log {clause} "
+            "ORDER BY id DESC LIMIT :limit OFFSET :offset",
             params,
         ).fetchall()
     return [dict(row) for row in rows], total
+
+
+def count_unreviewed_negative() -> int:
+    """How many "Pas utile" answers have not been reviewed yet: the first ones to look at."""
+    with db() as conn:
+        return int(
+            conn.execute(
+                "SELECT COUNT(*) FROM answer_log WHERE feedback = 0 AND review_label IS NULL"
+            ).fetchone()[0]
+        )
 
 
 def _load_list(raw: str | None) -> list[dict]:

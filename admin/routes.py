@@ -111,6 +111,7 @@ def entries(
     statut: str = "",
     issue: str = "",
     canal: str = "",
+    avis: str = "",
     q: str = "",
     page: int = 1,
 ) -> Response:
@@ -118,12 +119,26 @@ def entries(
         return denied
     page = max(page, 1)
     q = q.strip()[:100]
+    avis = avis if avis in review.FEEDBACK_FILTERS else ""
     rows, total = review.list_entries(
-        review=statut or None, route=issue or None, channel=canal or None, text=q or None, page=page
+        review=statut or None,
+        route=issue or None,
+        channel=canal or None,
+        text=q or None,
+        feedback=avis or None,
+        page=page,
     )
     return _html(
         pages.entries_list(
-            rows, total, review=statut, route=issue, channel=canal, text=q, page=page
+            rows,
+            total,
+            review=statut,
+            route=issue,
+            channel=canal,
+            text=q,
+            page=page,
+            feedback=avis,
+            unreviewed_negative=review.count_unreviewed_negative(),
         )
     )
 
