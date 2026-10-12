@@ -181,6 +181,20 @@ verdicts as reviewed by hand (`eval/dashboard.py`, shared with `eval/REPORT.md`)
 inline SVG drawn by Python (`admin/charts.py`), each followed by its table, with no script (the CSP
 of `/admin` allows none). A run file that cannot be read is listed at the bottom of the page.
 
+The same page ends with the real usage, from the journal week by week (Monday to Sunday, UTC, the
+last 12 weeks at most; `journal/stats.py::weekly`, drawn by `admin/usage.py`), with the
+definitions of `/admin/synthese`: questions per week (chat and API, greetings apart), the share left
+without an answer and the refusals at the threshold, the satisfaction of the chat (share of « Utile »
+among the votes, greetings apart), then a table per week that adds the incomplete answers, the
+errors, the reviews, the median time of a generated answer and its tokens. A rate always comes with
+its count, and a point computed on fewer than 10 questions or votes is drawn hollow; with less than
+two weeks of data, the table comes alone. The evaluation runs of the preprod and the production and
+the values of the configuration seen for the first time in the journal (model of the LLM,
+collection, embedding model, threshold, version: `config_changes`) are numbered marks on the same
+weeks, and the configurations are listed with their first and last date. A card of « En bref » sums
+up the last four weeks. The version stays empty while Coolify does not give `SOURCE_COMMIT` (its
+« Include Source Commit in Build » setting is off). Read-only, no LLM call.
+
 ## Roadmap
 
 The project plan lives in [ROADMAP.md](ROADMAP.md), each item tracked in a GitHub issue labelled `roadmap`.
