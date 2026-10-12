@@ -161,6 +161,21 @@ class TestTheme:
         ):
             assert needle in script, needle
 
+    def test_the_thumbs_speak_of_a_feedback_not_of_a_comment(self):
+        # The comment is optional: Chainlit's words ("Ajouter un commentaire", "Commentaire mis
+        # à jour" after a mere vote) made it look mandatory
+        translations = self.PUBLIC.parent / ".chainlit" / "translations" / "fr-FR.json"
+        feedback = json.loads(translations.read_text(encoding="utf-8"))["chat"]["messages"][
+            "feedback"
+        ]
+        assert feedback["dialog"]["title"] == "Votre avis sur cette réponse"
+        assert feedback["dialog"]["submit"] == "Envoyer l'avis"
+        assert feedback["dialog"]["yourFeedback"].startswith("Facultatif")
+        assert feedback["status"] == {
+            "updating": "Enregistrement de l'avis…",
+            "updated": "Avis enregistré",
+        }
+
     def test_the_assistant_avatar_file_matches_the_message_author(self):
         # chainlit/server.py get_avatar: lowercase, spaces and dots turned into "_"
         name = AUTHOR.lower().replace(" ", "_").replace(".", "_")
