@@ -1832,14 +1832,14 @@
   "summary": {
     "total": 32,
     "passed": 30,
-    "correct": 30,
+    "correct": 31,
     "partial": 1,
-    "wrong": 1,
+    "wrong": 0,
     "refused": 0,
     "no_answer": 0,
     "error": 0,
     "in_scope_total": 22,
-    "in_scope_correct": 20,
+    "in_scope_correct": 21,
     "out_of_scope_total": 10,
     "out_of_scope_correct": 10
   }

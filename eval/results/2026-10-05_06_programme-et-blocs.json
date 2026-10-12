@@ -1817,14 +1817,14 @@
   "summary": {
     "total": 32,
     "passed": 28,
-    "correct": 28,
-    "partial": 2,
+    "correct": 29,
+    "partial": 1,
     "wrong": 0,
     "refused": 0,
     "no_answer": 2,
     "error": 0,
     "in_scope_total": 22,
-    "in_scope_correct": 18,
+    "in_scope_correct": 19,
     "out_of_scope_total": 10,
     "out_of_scope_correct": 10
   }
