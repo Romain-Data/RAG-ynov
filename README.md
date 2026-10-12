@@ -155,6 +155,17 @@ site (`contenu`), not a question about Ynov (`hors_sujet`), or a page the search
 calibrated on 40 fictive questions (`tests/fixtures/gap_questions.yaml`); the two recorded answers
 of the LLM are replayed by the tests.
 
+Each month gets a report (`/admin/rapport?mois=AAAA-MM`, `journal/report.py`) written for someone
+who is not technical: the questions of the month next to the month before, the themes the site
+does not cover (cause `contenu`, then the themes not decided yet), the ones the chatbot should have
+answered (`recherche`, with the note of the theme), the off-topic ones, and how to read it. Per
+theme: questions, conversations, trend and up to two example questions, quoted only when the theme
+came up in at least two conversations of the month (a question asked once may tell who asked it).
+`&telecharger=1` returns the same report as a standalone HTML file (styles inside, no link, form
+or script, printable to PDF), the archive of a month once its questions are purged;
+`python -m journal.report --mois AAAA-MM --out report.html` writes it from a local copy of the
+database. Read-only, no LLM call.
+
 ## Roadmap
 
 The project plan lives in [ROADMAP.md](ROADMAP.md), each item tracked in a GitHub issue labelled `roadmap`.
@@ -168,7 +179,7 @@ rag-ynov/
 │   ├── core/               # Configuration, logging, rate limits
 │   └── schemas/            # Pydantic models
 ├── chat/                   # Chat interface (Chainlit), accounts, feedback guard, SQLite schema, backups
-├── journal/                # Journal of the answers: writing, feedback, purge, review queries, summary, questions without an answer and their themes
+├── journal/                # Journal of the answers: writing, feedback, purge, review queries, summary, questions without an answer, their themes and their monthly report
 ├── admin/                  # /admin pages that review the journal
 ├── eval/                   # Question sets, retrieval and end-to-end evaluation
 ├── ingestion/              # Ingestion pipeline (fetch → load → chunk → embed → index)
